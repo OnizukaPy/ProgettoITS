@@ -6,7 +6,7 @@ Ivan Catalano
 Alessio Canessa
 Francesco Bindi
 Ruben Uremassi
-Mirco Castìno
+Mirco Càstino
 
 # Definizione delle caratteristiche del progetto
 
@@ -30,3 +30,7 @@ Per ogni entità devono essere previste le operazioni di:
 
 I dati devono essere salvati in modo da poter essere utilizzati dopo un riavvio dell’applicazione. (usare preferibilmente un database)
 L’applicazione dovrebbe essere composta da un modulo client e da un modulo server. (requisito opzionale)
+
+
+# Analisi dei requisiti
+
