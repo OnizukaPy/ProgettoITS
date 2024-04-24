@@ -6,7 +6,7 @@ Ivan Catalano
 Alessio Canessa
 Francesco Bindi
 Ruben Uremassi
-Mirco Castìno
+Mirco Càstino
 
 # Definizione delle caratteristiche del progetto
 
