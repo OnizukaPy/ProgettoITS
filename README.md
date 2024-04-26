@@ -34,3 +34,20 @@ L’applicazione dovrebbe essere composta da un modulo client e da un modulo ser
 
 # Analisi dei requisiti
 
+## Funzionamento del client/server
+
+# Creazione Account
+
+La creazione dell'account avviene tramite il client. Una volta creato l'account viene salvato in un file json con nome file uguale allo username dell'account. Il jSON ha questo formato:
+
+{
+	"nome":	"ivan",
+	"cognome":	"catalano",
+	"username":	"ivan",
+	"password":	"sdvvzrug",
+	"email":	"ivan@ivan.it",
+	"status":	false,
+    "login":    false
+}
+
+La password viene criptata con il cifrario di cesare con chiave 3. Lo status indica se l'account è connesso o meno e viene aggiornato dal server. Il campo login viene usato invece per determinare una richiesta di connessione
