@@ -92,15 +92,16 @@ char *decifra(char *stringa, int chiave){
     return stringa;
 }
 
-// funzioni effettive per il client
+// FUNZIONI EFFETTIVE LATO CLIENT
 // funzione per stampare la guida
 void print_guida(){
     printf("-------------------------------------------------\n");
     printf("Per creare un account digitare -c\n");
     printf("Per visualizzare la guida digitare -help\n");
 }
+
 // funzione per creare un account
-cJSON crea_account(char *path){
+cJSON crea_account(char *path_account){
 
     // creiamo un oggetto cJSON per contenere i dati dell'account
     cJSON *account = cJSON_CreateObject();
@@ -137,7 +138,7 @@ cJSON crea_account(char *path){
 
     // salviamo l'account in un file json con il nome dell'username
     char save_path[50];
-    sprintf(save_path, "%s/%s.json", path, username);        // la funzione sprintf permette di concatenare stringhe
+    sprintf(save_path, "%s/%s.json", path_account, username);        // la funzione sprintf permette di concatenare stringhe
     salva_file_json(account, save_path);
 
     // creiamo un ciclo che controllo se l'account è stato approvato dal server fino a che non sarà approvato l'account non potrà fare il login
@@ -161,13 +162,198 @@ cJSON crea_account(char *path){
     return *account;
 }
 
-// funzioni effettive per il server
-// funzione per approvare un account
-void approva_account(char *nome_file, char *path){
+// funzione per effettuare il login
+void login(char *username, char *path_account, char *login_path){
 
     // carichiamo l'account
     char save_path[50];
-    sprintf(save_path, "%s/%s", path, nome_file);
+    sprintf(save_path, "%s/%s.json", path_account, username);
+    
+    // controlliamo che il file esista
+    FILE *file = fopen(save_path, "r");
+    if(file == NULL){
+        printf("Account non esistente\n");
+    
+        return;
+    } else {
+        // chiediamo di inserire la password
+        // carichiamo il file json
+        cJSON *account = carica_file_json(save_path);
+        // verifichiamo se l'account è già loggato
+        if(cJSON_IsTrue(cJSON_GetObjectItem(account, "login"))){
+            printf("Account già loggato\n");
+            fclose(file);
+            return;
+        } else {
+            fclose(file);
+            char password[50];
+            printf("Inserisci la password: ");
+            scanf("%s", password);
+            // cifriamo la password
+            char *password_cifrata = cifra(password, CHIAVE);
+            // creiamo un file json che contenga username e password cifrata e una chiave di status per indicare se l'utente è loggato o meno
+            // inizialmente questa chiave sarà espressa in "pending"
+            cJSON *login = cJSON_CreateObject();
+            cJSON_AddStringToObject(login, "username", username);
+            cJSON_AddStringToObject(login, "password", password_cifrata);
+            cJSON_AddStringToObject(login, "status", "pending");
+
+            // salviamo il file json nella cartella temp
+            char save_login[50];
+            sprintf(save_login, "%s/%s", login_path, "/login.json");
+            salva_file_json(login, save_login);
+
+            // attendiamo la risposta del server con un ciclo che controlla se lo status è uguale a "pending"
+            cJSON *risposta = carica_file_json(save_login);
+            while(strcmp(cJSON_GetObjectItem(risposta, "status")->valuestring, "pending") == 0){
+                printf("In attesa di risposta\n");
+                risposta = carica_file_json(save_login);
+                Sleep(1000);
+            }
+            // stampiamo la risposta del server
+            time_t t = time(NULL);
+            struct tm tm = *localtime(&t);
+            printf("%d-%02d-%02d %02d:%02d:%02d: Account %s\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, cJSON_GetObjectItem(risposta, "status")->valuestring);
+
+            // se la risposta del server è "connesso" allora modifichiamo il valore del campo login in 1 in account
+            if (strcmp(cJSON_GetObjectItem(risposta, "status")->valuestring, "connesso") == 0){
+                // modifichiamo il valore del campo login in 1
+                cJSON_ReplaceItemInObject(account, "login", cJSON_CreateBool(1));
+                // salviamo l'account
+                salva_file_json(account, save_path);
+            } else {
+                printf("Ripeti l'operazione di login\n");
+            }
+            // eliminiamo il file temp.json
+            remove(save_login);
+        }
+    }
+}
+
+// funzione per creare una sala
+cJSON crea_sala(char *path_sala, int n_tavoli){
+    
+    // creiamo un oggetto cJSON per contenere i dati della sala
+    cJSON *sala = cJSON_CreateObject();
+
+    // nel file json inseriamo un array di oggetti che rappresentano i tavoli, come una array di array
+    // ogni array avrà 3 elementi: 0/1 che indica se è occupato, il numero di posti liberi e il numero di posti occupati
+    cJSON *tavoli = cJSON_CreateArray();
+    for (int i = 0; i < n_tavoli; i++){
+        cJSON *tavolo = cJSON_CreateObject();
+        cJSON_AddBoolToObject(tavolo, "occupato", 0);
+        cJSON_AddNumberToObject(tavolo, "posti_liberi", 4);
+        cJSON_AddNumberToObject(tavolo, "posti_occupati", 0);
+        cJSON_AddItemToArray(tavoli, tavolo);
+    }
+
+    // inseriamo l'array di oggetti nell'oggetto sala
+    cJSON_AddItemToObject(sala, "tavoli", tavoli);
+
+    // aggiungiamo uno status per dire se la sala è piena
+    cJSON_AddBoolToObject(sala, "piena", 0);
+
+    // salviamo la sala in un file json con il nome template.json nella cartella sala
+    char save_path[50];
+    sprintf(save_path, "%s/template.json", path_sala);        // la funzione sprintf permette di concatenare stringhe
+    salva_file_json(sala, save_path);
+
+}
+
+
+// funzione per visualizzare la disposizione della sala
+void visualizza_sala(char *data){
+
+    // carichiamo il file json
+    cJSON *sala = carica_file_json(data);
+
+    // visualizziamo il contenuto del file json
+    //printf("%s\n", cJSON_Print(sala));
+
+    // rappresentiamo la disposizione della sala come una matrice
+    /*int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
+    for (int i = 0; i < n_tavoli; i++){
+        cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i);
+        printf("Tavolo %d: ", i + 1);
+        if(cJSON_IsTrue(cJSON_GetObjectItem(tavolo, "occupato"))){
+            printf("Occupato\n");
+        } else {
+            printf("Libero\n");
+        }
+    }*/
+
+    int x = 8, y = 33;
+    int matrice_sala[x][y];
+
+    // inizializziamo la matrice mettendo i contorni della sala al valore 3 che corrisponde al muro #
+    // ed il numero dei tavoli sopra ogni tavolo
+    for (int i = 0; i < x; i++){
+        for (int j = 0; j < y; j++){
+            if(i == 0 || i == x - 1 || j == 0 || j == y - 1){
+                matrice_sala[i][j] = 3;
+            } else {
+                matrice_sala[i][j] = 0;
+            }
+        }
+    }
+
+    // inseriamo i tavoli nella matrice
+    int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
+    for (int i = 2; i < x; i += 2){
+        for (int j = 0; j < n_tavoli/3; j++){
+            cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i * n_tavoli/3 + j);
+            if(cJSON_IsTrue(cJSON_GetObjectItem(tavolo, "occupato"))){
+                // se il tavolo è occupato mettiamo il valore 1
+                for (int k = 0; k < 4; k++){
+                    for (int l = 0; l < 4; l++){
+                        matrice_sala[i][j * 9 + l + 1] = 1;
+                    }
+                }
+            } else {
+                // se il tavolo è libero mettiamo il valore 2
+                for (int k = 0; k < 4; k++){
+                    for (int l = 0; l < 4; l++){
+                        matrice_sala[i][j * 9 + l + 1] = 2;
+                    }
+                }
+            }
+        }
+    }
+
+
+    // visualizziamo la matrice
+    for (int i = 0; i < x; i++){
+        for (int j = 0; j < y; j++){
+            if (matrice_sala[i][j] == 3){
+                // stampiamo il muro di colore rosso
+                printf("\033[0;31m#\033[0m");
+            } else if (matrice_sala[i][j] == 1){
+                // stampiamo il tavolo occupato di colore verde
+                printf("\033[0;32mO\033[0m");
+            } else if (matrice_sala[i][j] == 2){
+                // stampiamo il tavolo libero di colore blu
+                printf("\033[0;34mL\033[0m");
+            } else {
+                printf(" ");
+            }
+        }
+        printf("\n");
+    }
+
+}
+
+
+
+
+
+
+// FUNZIONI EFFETTIVE LATO SERVER
+// funzione per approvare un account
+void approva_account(char *nome_file, char *path_account){
+
+    // carichiamo l'account
+    char save_path[50];
+    sprintf(save_path, "%s/%s", path_account, nome_file);
     cJSON *account = carica_file_json(save_path);
 
     // modifichiamo il valore del campo status in attivo
@@ -178,13 +364,13 @@ void approva_account(char *nome_file, char *path){
 }
 
 // funzione per controllare gli account presenti nella cartella
-void controlla_account(char *path){
+void controlla_account(char *path_account){
 
     // creiamo un array di stringhe per contenere i nomi dei file presenti nella cartella
     char *files[100];
     int count = 0;
     // opendir returns NULL if couldn't open directory
-    DIR *dr = opendir(path);
+    DIR *dr = opendir(path_account);
     if (dr == NULL){
         printf("Could not open current directory" );
     } else {
@@ -196,7 +382,7 @@ void controlla_account(char *path){
             files[count] = de->d_name;
             // carichiamo il file json
             char save_path[50];
-            sprintf(save_path, "%s/%s", path, files[count]);
+            sprintf(save_path, "%s/%s", path_account, files[count]);
             cJSON *json = carica_file_json(save_path);                          // carichiamo il file json
             // se lo status dell'account è uguale a 0 allora approviamo l'account
             // https://stackoverflow.com/questions/50979077/how-to-test-for-a-boolean-being-true-false-in-cjson
@@ -207,7 +393,7 @@ void controlla_account(char *path){
             cJSON *status = cJSON_GetObjectItemCaseSensitive(json, "status");   // prendiamo il campo status
             // printf("Status: %d\n", cJSON_IsFalse(status));                   // stampiamo il valore del campo status per controllo
             if(cJSON_IsFalse(status) == 1 && strcmp(files[count], ".") != 0 && strcmp(files[count], "..") != 0){
-                approva_account(files[count], path);
+                approva_account(files[count], path_account);
                 time_t t = time(NULL);
                 struct tm tm = *localtime(&t);
                 printf("%d-%02d-%02d %02d:%02d:%02d: Account %s approvato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, files[count]);
@@ -217,3 +403,45 @@ void controlla_account(char *path){
         closedir(dr);
     }
 }
+
+// funzione per controllare il login
+void login_check(char *temp_path, char *path){
+
+    // carichiamo il file json
+    cJSON *login = carica_file_json(temp_path);
+
+    // visualizziamo il contenuto del file json
+    //printf("%s\n", cJSON_Print(login));
+
+    // estraiamo la stringa username dal file json
+    cJSON *username = cJSON_GetObjectItemCaseSensitive(login, "username");
+    printf("Username: %s\n", username->valuestring);
+
+    // carichiamo l'account
+    char save_path[50];
+    // salviamo lo username in una variabile
+    
+    sprintf(save_path, "%s/%s.json", path, username->valuestring);
+    cJSON *account = carica_file_json(save_path);
+
+    // controlliamo se la password è corretta
+    // imposto il contatore del tempo
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    if(strcmp(cJSON_GetObjectItem(login, "password")->valuestring, cJSON_GetObjectItem(account, "password")->valuestring) == 0){
+        // modifichiamo il valore del campo status in connesso
+        cJSON_ReplaceItemInObject(login, "status", cJSON_CreateString("connesso"));
+        printf("%d-%02d-%02d %02d:%02d:%02d: Account %s connesso\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, username->valuestring);
+        // salviamo il file json
+        salva_file_json(login, temp_path);
+    } else {
+        // modifichiamo il valore del campo status in rifiutato
+        cJSON_ReplaceItemInObject(login, "status", cJSON_CreateString("rifiutato"));
+        printf("%d-%02d-%02d %02d:%02d:%02d: Account %s rifiutato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, username->valuestring);
+        // salviamo il file json
+        salva_file_json(login, temp_path);
+    }
+}
+
+
+            

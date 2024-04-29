@@ -7,6 +7,8 @@
 
 // definizioni delle costanti che saranno necessarire
 #define ACCOUNT "../account"    // definiamo la cartella dove saranno salvati gli account
+#define TEMP    "../temp"       // definiamo la cartella temporanea di comunicazione client server
+#define SALA    "../sala"       // definiamo la cartella dove saranno salvati i file della sala
 
 // protitipi delle funzioni che saranno utilizzate nel main
 
@@ -31,11 +33,26 @@ int main(int argc, char *argv[]){
             // approviamo gli account presenti nella cartella
             cJSON account = crea_account(ACCOUNT);
         }
+        if(strcmp(argv[1], "-login") == 0){
+            // controlliamo se dopo -login c'è un argomento
+            if(argc == 2){
+                printf("Non è stato digitato l'username riprova\n");
+            } else {
+                // effettuiamo il login
+                login(argv[2], ACCOUNT, TEMP);
+            }
+        }
+        if (strcmp(argv[1], "-sala") == 0){
+            // visualizziamo la sala
+            char sala[100];
+            sprintf(sala, "%s/%s.json", SALA, argv[2]);
+            printf("Il tavolo selezionato è: %s\n", sala);
+            visualizza_sala(sala);
+        }
     } 
 
     // creiamo un account
     return 0;
-
 }
 
 // definizione delle funzioni che saranno utilizzate nel main
