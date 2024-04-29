@@ -8,7 +8,9 @@
 
 
 // definizioni delle costanti che saranno necessarire
-#define ACCOUNT "../account"    // definiamo la cartella dove saranno salvati gli account
+#define ACCOUNT       "../account"            // definiamo la cartella dove saranno salvati gli account
+#define TEMP_LOGIN    "../temp/login.json"    // definiamo il file temporaneo di scambio informazioni
+#define SALA          "../sala"               // definiamo la cartella dove saranno salvati i file della sala
 
 // protitipi delle funzioni che saranno utilizzate nel main
 
@@ -20,10 +22,35 @@ int main(int argc, char *argv[]){
 
     // approviamo gli account presenti nella cartella
     // creiamo un ciclo che controlla tutti gli account presenti nella cartella e termina con exit da tastiera
-    while(1){
-        controlla_account(ACCOUNT);
-        Sleep(1000);
+
+    // se l'argomento è uguale a -start
+    if (argc == 1){
+        printf("Il server è stato compilato o avviato senza istruzioni\n");
+    } else {
+        if(strcmp(argv[1], "-help") == 0){
+            printf("questa e' la guida per l'uso del server\n");
+            //print_guida_server();
+        }
+        if (strcmp(argv[1], "-start") == 0){
+            printf("Il server è stato avviato ed è in attesa..\n");
+            while(1){
+                // controlla i nuovi account
+                controlla_account(ACCOUNT);
+                // controlla i login se c'è un file di login in attesa
+                if(access(TEMP_LOGIN, F_OK) != -1){
+                    login_check(TEMP_LOGIN, ACCOUNT);
+                }
+                Sleep(5000);
+            }
+        }
+        if (strcmp(argv[1], "-c_sala") == 0){
+            // creiamo una sala
+            cJSON sala = crea_sala(SALA, 12);
+        }
     }
+
+
+
     //controlla_account(ACCOUNT);
 
 }
