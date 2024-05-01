@@ -1,0 +1,23 @@
+
+########################################################################
+########### BENVENUTO NELLA GUIDA ALL'UTILIZZO DEL CLIENT ##############
+########################################################################
+#
+# Ecco una breve lista dei comandi:
+#   
+#   la sintassi dei comandi e' ./client.exe [PARAM] [OPTION]
+#   
+#    - Aiuto e visualizzazione della presente guida:
+#       PARAM:  -help,      no OPTION
+#    
+#    - Creazione account:
+#       PARAM:  -c,         no OPTION
+#    
+#    - Login/logout:
+#       PARAM:  -login,     OPTION: "username"
+#       PARAM:  -logout,    OPTION: "username"
+#    
+#    - Visualizzazione della sala ad una data:
+#       PARAM:  -sala,      OPTION: "dd/mm/aaaa"
+#
+#
