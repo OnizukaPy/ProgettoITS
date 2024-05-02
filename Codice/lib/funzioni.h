@@ -10,6 +10,7 @@ void salva_file_json(cJSON *root, char *nome_file);     // funzione per salvare 
 cJSON *carica_file_json(char *nome_file);               // funzione per caricare un file json
 
 // funzioni per la gestione dei file
+void svuota_cartella(char *path);                       // funzione per svuotare una cartella
 
 // cifratura e decifratura
 char *cifra(char *stringa, int chiave);                         // funzione per cifrare una stringa
@@ -22,9 +23,10 @@ cJSON crea_account(char *path_account);                           // funzione pe
 void login(char *username, char *path_account, char *login_path);                   // funzione per effettuare il login
 void logout(char *username, char *path_account, char *login_path);                                    // funzione per effettuare il logout
 void visualizza_sala(char *data);                                      // funzione per la disposizione della sala
-cJSON crea_sala(char *path_sala, int n_tavoli);                                      // funzione per creare una sala
+void crea_sala(char *path_sala, int n_tavoli);                                      // funzione per creare una sala
 
 // FUNZIONI EFFETTIVE LATO SERVER
+void print_guida_server();                                        // funzione per stampare la guida
 void return_status(char *temp_path);                              // funzione per ritornare lo stato del server
 void approva_account(char *nome_file, char *path_account);        // funzione per approvare un account
 void controlla_account(char *path_account);                       // funzione per controllare un account

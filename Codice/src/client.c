@@ -18,8 +18,6 @@ void visualizza_logo(char *path);
 
 int main(int argc, char *argv[]){
 
-
-
     // verifichiamo gli argomenti passati da riga di comando
     if(argc == 1){
         // carichiamo dal file ../sala/Logo.txt il logo del ristorante e lo visualizziamo. Il file contiene un testo ASCII
@@ -30,57 +28,82 @@ int main(int argc, char *argv[]){
         // controlliamo lo stato del server
         printf("Controllo lo stato del server\n");
         if(status_server(TEMP) == true){
-            printf("Il server è attivo\n\n");
+            printf("Il server e' attivo\n\n");
         } else {
-            printf("Il server è inattivo\n\n");
+            printf("Il server e' inattivo\n\n");
         }
     } else {
-        // se l'argomento è uguale a -help
+        // se l'argomento e' uguale a -help
         if(strcmp(argv[1], "-help") == 0){
-            print_guida("guida.txt");
+            if (argc == 2){
+                print_guida("guida.txt");
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
         }
+        // se l'argomento e' uguale a -c
         if(strcmp(argv[1], "-c") == 0){
             // approviamo gli account presenti nella cartella
+            if (argc == 2) {
             cJSON account = crea_account(ACCOUNT);
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
         }
         if(strcmp(argv[1], "-login") == 0){
-            // controlliamo se dopo -login c'è un argomento
+            // controlliamo se dopo -login c'e' un argomento
             if(argc == 2){
-                printf("Non è stato digitato l'username riprova\n");
-            } else {
+                printf("Non e' stato digitato l'username riprova\n");
+            } else if (argc == 3){
                 // controlliamo che il server sia attivo
                 if(status_server(TEMP) == false){
-                    printf("Il server è inattivo\n");
+                    printf("Il server e' inattivo\n");
                 } else {
                 // effettuiamo il login
                     login(argv[2], ACCOUNT, TEMP);
                 }
+                // svuotiamo la cartella temp per evitare problemi
+                svuota_cartella(TEMP);
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
             }
         }
         if(strcmp(argv[1], "-logout") == 0){
-            // controlliamo se dopo -logout c'è un argomento
+            // controlliamo se dopo -logout c'e' un argomento
             if(argc == 2){
-                printf("Non è stato digitato l'username riprova\n");
-            } else {
+                printf("Non e' stato digitato l'username riprova\n");
+            } else if (argc == 3){
                 // controlliamo che il server sia attivo
                 if(status_server(TEMP) == false){
-                    printf("Il server è inattivo\n");
+                    printf("Il server e' inattivo\n");
                 } else {
                     // effettuiamo il logout
                     logout(argv[2], ACCOUNT, TEMP);
                 }
+                // svuotiamo la cartella temp per evitare problemi
+                svuota_cartella(TEMP);
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
             }
         }
         if (strcmp(argv[1], "-sala") == 0){
             // visualizziamo la sala
-            char sala[100];
-            sprintf(sala, "%s/%s.json", SALA, argv[2]);
-            printf("Il tavolo selezionato è: %s\n", sala);
-            visualizza_sala(sala);
+                // se data è uguale a NULL allora visualizziamo la sala template
+            if(argc == 2){
+                char sala[100];
+                sprintf(sala, "%s/%s.json", SALA, "template");
+                printf("Il tavolo selezionato e': %s\n", sala);
+                visualizza_sala(sala);
+            } else if (argc == 3){
+                char sala[100];
+                sprintf(sala, "%s/%s.json", SALA, argv[2]);
+                printf("Il tavolo selezionato e': %s\n", sala);
+                visualizza_sala(sala);
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
         }
     } 
-
-    // creiamo un account
     return 0;
 }
 

@@ -35,6 +35,28 @@ cJSON *carica_file_json(char *nome_file){
     return root;                                // ritorniamo l'oggetto cJSON
 }
 
+// funzioni per la gestione dei file
+// funzione per svuotare una cartella
+void svuota_cartella(char *path){
+
+    // apriamo la cartella
+    DIR *dir = opendir(path);
+    struct dirent *entry;
+    char file_path[50];
+    // scorriamo tutti i file presenti nella cartella
+    while((entry = readdir(dir)) != NULL){
+        // creiamo il path del file se diverso da . e ..
+        if(strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0){
+            sprintf(file_path, "%s/%s", path, entry->d_name);
+            // eliminiamo il file
+            remove(file_path);
+        }
+    }
+    // chiudiamo la cartella
+    closedir(dir);
+}
+
+
 // cifratura e decifratura
 // funzione per cifrare una stringa
 char *cifra(char *stringa, int chiave){
@@ -46,21 +68,6 @@ char *cifra(char *stringa, int chiave){
             stringa[i] = ((stringa[i] - 'A' + chiave) % 26) + 'A';
         }
     }
-    /*for(int i = 0; stringa[i] != '\0'; i++){
-        if(stringa[i] >= 'a' && stringa[i] <= 'z'){
-            if(stringa[i] > 'x'){
-                stringa[i] = stringa[i] - 26 + 3;
-            }else{
-                stringa[i] = stringa[i] + 3;
-            }
-        }else if(stringa[i] >= 'A' && stringa[i] <= 'Z'){
-            if(stringa[i] > 'X'){
-                stringa[i] = stringa[i] - 26 + 3;
-            }else{
-                stringa[i] = stringa[i] + 3;
-            }
-        }
-    }*/
     return stringa;
 }
 
@@ -75,21 +82,6 @@ char *decifra(char *stringa, int chiave){
             stringa[i] = ((stringa[i] - 'A' - chiave) % 26) + 'A';
         }
     }
-    /*for(int i = 0; stringa[i] != '\0'; i++){
-        if(stringa[i] >= 'a' && stringa[i] <= 'z'){
-            if(stringa[i] < 'd'){
-                stringa[i] = stringa[i] + 26 - 3;
-            }else{
-                stringa[i] = stringa[i] - 3;
-            }
-        }else if(stringa[i] >= 'A' && stringa[i] <= 'Z'){
-            if(stringa[i] < 'D'){
-                stringa[i] = stringa[i] + 26 - 3;
-            }else{
-                stringa[i] = stringa[i] - 3;
-            }
-        }
-    }*/
     return stringa;
 }
 
@@ -355,7 +347,7 @@ void logout(char *username, char *path_account, char *login_path){
 }
 
 // funzione per creare una sala
-cJSON crea_sala(char *path_sala, int n_tavoli){
+void crea_sala(char *path_sala, int n_tavoli){
     
     // creiamo un oggetto cJSON per contenere i dati della sala
     cJSON *sala = cJSON_CreateObject();
@@ -388,24 +380,40 @@ cJSON crea_sala(char *path_sala, int n_tavoli){
 // funzione per visualizzare la disposizione della sala
 void visualizza_sala(char *data){
 
+
     // carichiamo il file json
     cJSON *sala = carica_file_json(data);
 
-    // visualizziamo il contenuto del file json
-    //printf("%s\n", cJSON_Print(sala));
+    // analizziamo il contenuto del file json e visualizziamo la disposizione della sala
+    // visualizziamo se la sala è piena o meno
+    if(cJSON_IsTrue(cJSON_GetObjectItem(sala, "piena"))){
+        printf("La sala e' piena\n");
+    } else {
+        printf("La sala non e' piena\n");
+        // visualizziamo il numero di tavoli
+        int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
+        printf("Il numero di tavoli e': %d\n", n_tavoli);
 
-    // rappresentiamo la disposizione della sala come una matrice
-    /*int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
-    for (int i = 0; i < n_tavoli; i++){
-        cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i);
-        printf("Tavolo %d: ", i + 1);
-        if(cJSON_IsTrue(cJSON_GetObjectItem(tavolo, "occupato"))){
-            printf("Occupato\n");
-        } else {
-            printf("Libero\n");
+        // visualizziamo il numero di posti liberi e occupati per ogni tavolo
+        for (int i = 0; i < n_tavoli; i++){
+            cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i);
+            printf("Tavolo %d: ", i + 1);
+            printf("Posti liberi: %d ", cJSON_GetObjectItem(tavolo, "posti_liberi")->valueint);
+            printf("Posti occupati: %d\n", cJSON_GetObjectItem(tavolo, "posti_occupati")->valueint);
+
+            // diegnamo un tavolo con i posti liberi e occupati
+            printf("###################################################\n");
+            printf("#            #            #           #           #\n");
+            printf("#            #            #           #           #\n");
+            printf("#            #            #           #           #\n");
+            printf("#            #            #           #           #\n");
+            printf("###################################################\n");
         }
-    }*/
+    }
 
+    // visualizziamo il contenuto del file json
+  
+    /*
     int x = 8, y = 33;
     int matrice_sala[x][y];
 
@@ -462,7 +470,7 @@ void visualizza_sala(char *data){
             }
         }
         printf("\n");
-    }
+    }*/
 
 }
 
@@ -472,6 +480,20 @@ void visualizza_sala(char *data){
 
 
 // FUNZIONI EFFETTIVE LATO SERVER
+// funzione per stampare la guida
+void print_guida_server(){
+    // apriamo il file txt in lettura
+    FILE *file = fopen("guida_server.txt", "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return;
+    }
+    // leggiamo il file e lo visualizziamo
+    char c;
+    while((c = fgetc(file)) != EOF){
+        printf("%c", c);
+    }
+}
 
 // funzione per ritornare lo stato del server
 void return_status(char *temp_path){
