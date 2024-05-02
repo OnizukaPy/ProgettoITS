@@ -70,7 +70,7 @@
 			CodeGeneration
 		</plugin>
 </profile>
-<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Mon Apr 29 15:17:35 CEST 2024'>
+<XMI xmi.version = '1.2' xmlns:UML = 'org.omg.xmi.namespace.UML' timestamp = 'Thu May 02 15:13:36 CEST 2024'>
   <XMI.header>    <XMI.documentation>
       <XMI.exporter>ArgoUML (using Netbeans XMI Writer version 1.0)</XMI.exporter>
       <XMI.exporterVersion>0.34(6) revised on $Date: 2010-01-11 22:20:14 +0100 (Mon, 11 Jan 2010) $ </XMI.exporterVersion>
@@ -440,8 +440,8 @@
         <UML:Comment xmi.id = '-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FB'
           isSpecification = 'false' body = 'server'/>
         <UML:UseCase xmi.id = '-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FC'
-          name = 'Visualizza Sala/Selezione tavolo' isSpecification = 'false' isRoot = 'false'
-          isLeaf = 'false' isAbstract = 'false'>
+          name = 'Visualizza Sala' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'>
           <UML:ModelElement.clientDependency>
             <UML:Dependency xmi.idref = '-64--88-11--106-e73bb0d:18f2936d720:-8000:0000000000001100'/>
           </UML:ModelElement.clientDependency>
@@ -533,6 +533,7 @@
           </UML:Namespace.ownedElement>
           <UML:UseCase.include>
             <UML:Include xmi.idref = '-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C05'/>
+            <UML:Include xmi.idref = '-64--88-11--106-58369077:18f395439ab:-8000:0000000000001396'/>
           </UML:UseCase.include>
         </UML:UseCase>
         <UML:Comment xmi.id = '-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C02'
@@ -553,6 +554,24 @@
         </UML:Include>
         <UML:Comment xmi.id = '-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C06'
           isSpecification = 'false' body = '*reindirizzamento MENU'/>
+        <UML:UseCase xmi.id = '-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C08'
+          name = 'selezione tavolo' isSpecification = 'false' isRoot = 'false' isLeaf = 'false'
+          isAbstract = 'false'/>
+        <UML:UseCase xmi.id = '-64--88-11--106-58369077:18f395439ab:-8000:0000000000001394'
+          name = 'Visualizza sala (x prenotare)' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false'/>
+        <UML:UseCase xmi.id = '-64--88-11--106-58369077:18f395439ab:-8000:0000000000001395'
+          name = 'Rigido Prenotazioni' isSpecification = 'false' isRoot = 'false'
+          isLeaf = 'false' isAbstract = 'false'/>
+        <UML:Include xmi.id = '-64--88-11--106-58369077:18f395439ab:-8000:0000000000001396'
+          isSpecification = 'false'>
+          <UML:Include.addition>
+            <UML:UseCase xmi.idref = '-64--88-11--106-58369077:18f395439ab:-8000:0000000000001395'/>
+          </UML:Include.addition>
+          <UML:Include.base>
+            <UML:UseCase xmi.idref = '-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C01'/>
+          </UML:Include.base>
+        </UML:Include>
       </UML:Namespace.ownedElement>
     </UML:Model>
   </XMI.content>
@@ -2208,7 +2227,7 @@ mail, cellulare, password)</text>
             y="256" />
   </path>
   <group name="Fig2"
-       description="org.argouml.sequence2.diagram.FigClassifierRole[112, 120, 150, 533]pathVisible=false;stereotypeView=0;"
+       description="org.argouml.sequence2.diagram.FigClassifierRole[112, 120, 150, 529]pathVisible=false;stereotypeView=0;"
        href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C96"
        fill="1"
        fillcolor="white"
@@ -2222,7 +2241,7 @@ mail, cellulare, password)</text>
       x="112"
       y="120"
       width="150"
-      height="533"
+      height="529"
       fill="0"
       fillcolor="white"
       stroke="0"
@@ -2240,7 +2259,7 @@ mail, cellulare, password)</text>
       strokecolor="black"
     />
     <group name="Fig2.2"
-         description="org.argouml.sequence2.diagram.FigLifeLine[112, 169, 150, 483]"
+         description="org.argouml.sequence2.diagram.FigLifeLine[112, 169, 150, 479]"
          href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C96"
          fill="1"
          fillcolor="white"
@@ -2254,7 +2273,7 @@ mail, cellulare, password)</text>
         x="112"
         y="169"
         width="150"
-        height="483"
+        height="479"
         fill="0"
         fillcolor="white"
         stroke="0"
@@ -2270,10 +2289,10 @@ mail, cellulare, password)</text>
         <moveto x="187"
                 y="169" />
         <lineto x="187"
-                y="652" />
+                y="648" />
       </path>
       <group name="Fig2.2.2"
-           description="org.argouml.sequence2.diagram.FigActivation[177, 169, 20, 483]"
+           description="org.argouml.sequence2.diagram.FigActivation[177, 169, 20, 479]"
            href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C96"
            fill="1"
            fillcolor="white"
@@ -2287,7 +2306,7 @@ mail, cellulare, password)</text>
           x="177"
           y="169"
           width="20"
-          height="483"
+          height="479"
           fill="1"
           fillcolor="white"
           stroke="1"
@@ -2357,7 +2376,7 @@ mail, cellulare, password)</text>
     </group>
   </group>
   <group name="Fig3"
-       description="org.argouml.sequence2.diagram.FigClassifierRole[448, 120, 150, 533]pathVisible=false;stereotypeView=0;"
+       description="org.argouml.sequence2.diagram.FigClassifierRole[448, 120, 150, 529]pathVisible=false;stereotypeView=0;"
        href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C99"
        fill="1"
        fillcolor="white"
@@ -2371,7 +2390,7 @@ mail, cellulare, password)</text>
       x="448"
       y="120"
       width="150"
-      height="533"
+      height="529"
       fill="0"
       fillcolor="white"
       stroke="0"
@@ -2389,7 +2408,7 @@ mail, cellulare, password)</text>
       strokecolor="black"
     />
     <group name="Fig3.2"
-         description="org.argouml.sequence2.diagram.FigLifeLine[448, 169, 150, 483]"
+         description="org.argouml.sequence2.diagram.FigLifeLine[448, 169, 150, 479]"
          href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C99"
          fill="1"
          fillcolor="white"
@@ -2403,7 +2422,7 @@ mail, cellulare, password)</text>
         x="448"
         y="169"
         width="150"
-        height="483"
+        height="479"
         fill="0"
         fillcolor="white"
         stroke="0"
@@ -2419,10 +2438,10 @@ mail, cellulare, password)</text>
         <moveto x="523"
                 y="169" />
         <lineto x="523"
-                y="652" />
+                y="648" />
       </path>
       <group name="Fig3.2.2"
-           description="org.argouml.sequence2.diagram.FigActivation[513, 169, 20, 483]"
+           description="org.argouml.sequence2.diagram.FigActivation[513, 169, 20, 479]"
            href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C99"
            fill="1"
            fillcolor="white"
@@ -2436,7 +2455,7 @@ mail, cellulare, password)</text>
           x="513"
           y="169"
           width="20"
-          height="483"
+          height="479"
           fill="1"
           fillcolor="white"
           stroke="1"
@@ -2506,7 +2525,7 @@ mail, cellulare, password)</text>
     </group>
   </group>
   <group name="Fig4"
-       description="org.argouml.sequence2.diagram.FigClassifierRole[856, 120, 150, 533]pathVisible=false;stereotypeView=0;"
+       description="org.argouml.sequence2.diagram.FigClassifierRole[856, 120, 150, 529]pathVisible=false;stereotypeView=0;"
        href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C9C"
        fill="1"
        fillcolor="white"
@@ -2520,7 +2539,7 @@ mail, cellulare, password)</text>
       x="856"
       y="120"
       width="150"
-      height="533"
+      height="529"
       fill="0"
       fillcolor="white"
       stroke="0"
@@ -2538,7 +2557,7 @@ mail, cellulare, password)</text>
       strokecolor="black"
     />
     <group name="Fig4.2"
-         description="org.argouml.sequence2.diagram.FigLifeLine[856, 169, 150, 483]"
+         description="org.argouml.sequence2.diagram.FigLifeLine[856, 169, 150, 479]"
          href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C9C"
          fill="1"
          fillcolor="white"
@@ -2552,7 +2571,7 @@ mail, cellulare, password)</text>
         x="856"
         y="169"
         width="150"
-        height="483"
+        height="479"
         fill="0"
         fillcolor="white"
         stroke="0"
@@ -2568,10 +2587,10 @@ mail, cellulare, password)</text>
         <moveto x="931"
                 y="169" />
         <lineto x="931"
-                y="652" />
+                y="648" />
       </path>
       <group name="Fig4.2.2"
-           description="org.argouml.sequence2.diagram.FigActivation[921, 169, 20, 483]"
+           description="org.argouml.sequence2.diagram.FigActivation[921, 169, 20, 479]"
            href="-64--88-11--106-119f358a:18f28ffe786:-8000:0000000000000C9C"
            fill="1"
            fillcolor="white"
@@ -2585,7 +2604,7 @@ mail, cellulare, password)</text>
           x="921"
           y="169"
           width="20"
-          height="483"
+          height="479"
           fill="1"
           fillcolor="white"
           stroke="1"
@@ -3698,7 +3717,7 @@ mail, cellulare, password)</text>
     </group>
   </group>
   <group name="Fig1"
-       description="org.argouml.uml.diagram.use_case.ui.FigActor[1112, 48, 61, 79]pathVisible=false;stereotypeView=0;"
+       description="org.argouml.uml.diagram.use_case.ui.FigActor[1344, 280, 61, 79]pathVisible=false;stereotypeView=0;"
        href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010F9"
        fill="1"
        fillcolor="white"
@@ -3709,8 +3728,8 @@ mail, cellulare, password)</text>
     </private>
     
     <rectangle name="Fig1.0"
-      x="1112"
-      y="48"
+      x="1344"
+      y="280"
       width="61"
       height="79"
       fill="0"
@@ -3719,8 +3738,8 @@ mail, cellulare, password)</text>
       strokecolor="black"
     />
     <text name="Fig1.1"
-      x="1123"
-      y="103"
+      x="1355"
+      y="335"
       width="38"
       height="24"
       fill="0"
@@ -3735,8 +3754,8 @@ mail, cellulare, password)</text>
       justification="Center"
     ></text>
     <ellipse name="Fig1.2"
-      x="1142"
-      y="65"
+      x="1374"
+      y="297"
       rx="8"
       ry="7"
       fill="1"
@@ -3751,10 +3770,10 @@ mail, cellulare, password)</text>
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="1142"
-              y="73" />
-      <lineto x="1142"
-              y="88" />
+      <moveto x="1374"
+              y="305" />
+      <lineto x="1374"
+              y="320" />
     </path>
     <path name="Fig1.4"
       description="org.tigris.gef.presentation.FigLine"
@@ -3763,10 +3782,10 @@ mail, cellulare, password)</text>
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="1132"
-              y="78" />
-      <lineto x="1152"
-              y="78" />
+      <moveto x="1364"
+              y="310" />
+      <lineto x="1384"
+              y="310" />
     </path>
     <path name="Fig1.5"
       description="org.tigris.gef.presentation.FigLine"
@@ -3775,10 +3794,10 @@ mail, cellulare, password)</text>
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="1142"
-              y="88" />
-      <lineto x="1137"
-              y="103" />
+      <moveto x="1374"
+              y="320" />
+      <lineto x="1369"
+              y="335" />
     </path>
     <path name="Fig1.6"
       description="org.tigris.gef.presentation.FigLine"
@@ -3787,13 +3806,13 @@ mail, cellulare, password)</text>
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="1142"
-              y="88" />
-      <lineto x="1147"
-              y="103" />
+      <moveto x="1374"
+              y="320" />
+      <lineto x="1379"
+              y="335" />
     </path>
     <group name="Fig1.7"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[1142, 127, 0, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[1374, 359, 0, 0]"
          href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010F9"
          fill="0"
          fillcolor="white"
@@ -3804,8 +3823,8 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig1.7.0"
-        x="1142"
-        y="127"
+        x="1374"
+        y="359"
         width="0"
         height="0"
         fill="0"
@@ -3913,7 +3932,7 @@ mail, cellulare, password)</text>
     >client</text>
   </group>
   <group name="Fig3"
-       description="org.argouml.uml.diagram.static_structure.ui.FigComment[1112, 24, 79, 22]pathVisible=false;stereotypeView=0;"
+       description="org.argouml.uml.diagram.static_structure.ui.FigComment[1344, 256, 79, 22]pathVisible=false;stereotypeView=0;"
        href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FB"
        fill="1"
        fillcolor="white"
@@ -3924,8 +3943,8 @@ mail, cellulare, password)</text>
     </private>
     
     <rectangle name="Fig3.0"
-      x="1112"
-      y="24"
+      x="1344"
+      y="256"
       width="79"
       height="22"
       fill="0"
@@ -3940,18 +3959,18 @@ mail, cellulare, password)</text>
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="1112"
-              y="24" />
-      <lineto x="1180"
-              y="24" />
-      <lineto x="1190"
-              y="34" />
-      <lineto x="1190"
-              y="45" />
-      <lineto x="1112"
-              y="45" />
-      <lineto x="1112"
-              y="24" />
+      <moveto x="1344"
+              y="256" />
+      <lineto x="1412"
+              y="256" />
+      <lineto x="1422"
+              y="266" />
+      <lineto x="1422"
+              y="277" />
+      <lineto x="1344"
+              y="277" />
+      <lineto x="1344"
+              y="256" />
     </path>
     <path name="Fig3.2"
       description="org.tigris.gef.presentation.FigPoly"
@@ -3960,17 +3979,17 @@ mail, cellulare, password)</text>
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="1180"
-              y="24" />
-      <lineto x="1190"
-              y="34" />
-      <lineto x="1180"
-              y="34" />
-      <lineto x="1180"
-              y="24" />
+      <moveto x="1412"
+              y="256" />
+      <lineto x="1422"
+              y="266" />
+      <lineto x="1412"
+              y="266" />
+      <lineto x="1412"
+              y="256" />
     </path>
     <group name="Fig3.3"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[1114, 26, 65, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[1346, 258, 65, 0]"
          href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FB"
          fill="0"
          fillcolor="white"
@@ -3982,8 +4001,8 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig3.3.0"
-        x="1114"
-        y="26"
+        x="1346"
+        y="258"
         width="65"
         height="0"
         fill="0"
@@ -3993,8 +4012,8 @@ mail, cellulare, password)</text>
       />
     </group>
     <text name="Fig3.4"
-      x="1114"
-      y="26"
+      x="1346"
+      y="258"
       width="65"
       height="18"
       fill="0"
@@ -4010,7 +4029,7 @@ mail, cellulare, password)</text>
     >server</text>
   </group>
   <group name="Fig4"
-       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[168, 48, 200, 62]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
+       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[168, 48, 136, 48]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
        href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FC"
        fill="1"
        fillcolor="white"
@@ -4021,19 +4040,19 @@ mail, cellulare, password)</text>
     </private>
     
     <ellipse name="Fig4.0"
-      x="268"
-      y="79"
-      rx="100"
-      ry="31"
+      x="236"
+      y="72"
+      rx="68"
+      ry="24"
       fill="1"
       fillcolor="white"
       stroke="1"
       strokecolor="black"
     />
     <text name="Fig4.1"
-      x="177"
-      y="67"
-      width="182"
+      x="191"
+      y="60"
+      width="90"
       height="23"
       fill="0"
       fillcolor="white"
@@ -4045,9 +4064,9 @@ mail, cellulare, password)</text>
       bold="false"
       textsize="12"
       justification="Center"
-    >Visualizza Sala/Selezione tavolo</text>
+    >Visualizza Sala</text>
     <group name="Fig4.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[191, 57, 64, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[191, 60, 90, 0]"
          href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FC"
          fill="0"
          fillcolor="white"
@@ -4060,8 +4079,8 @@ mail, cellulare, password)</text>
       
       <rectangle name="Fig4.2.0"
         x="191"
-        y="57"
-        width="64"
+        y="60"
+        width="90"
         height="0"
         fill="0"
         fillcolor="white"
@@ -4070,8 +4089,8 @@ mail, cellulare, password)</text>
       />
     </group>
     <rectangle name="Fig4.3"
-      x="-110"
-      y="-14"
+      x="10"
+      y="10"
       width="11"
       height="1"
       fill="1"
@@ -4081,7 +4100,7 @@ mail, cellulare, password)</text>
       visibility="0"
     />
     <group name="Fig4.4"
-         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[-110, -14, 64, 19]"
+         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[10, 10, 64, 19]"
          href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FC"
          fill="1"
          fillcolor="white"
@@ -4093,8 +4112,8 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig4.4.0"
-        x="-110"
-        y="-14"
+        x="10"
+        y="10"
         width="64"
         height="19"
         fill="0"
@@ -4106,7 +4125,7 @@ mail, cellulare, password)</text>
     </group>
   </group>
   <group name="Fig5"
-       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[472, 56, 130, 48]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
+       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[696, 288, 130, 48]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
        href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FD"
        fill="1"
        fillcolor="white"
@@ -4117,8 +4136,8 @@ mail, cellulare, password)</text>
     </private>
     
     <ellipse name="Fig5.0"
-      x="537"
-      y="80"
+      x="761"
+      y="312"
       rx="65"
       ry="24"
       fill="1"
@@ -4127,8 +4146,8 @@ mail, cellulare, password)</text>
       strokecolor="black"
     />
     <text name="Fig5.1"
-      x="493"
-      y="68"
+      x="717"
+      y="300"
       width="87"
       height="23"
       fill="0"
@@ -4143,7 +4162,7 @@ mail, cellulare, password)</text>
       justification="Center"
     >check up login</text>
     <group name="Fig5.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[482, 68, 110, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[717, 300, 87, 0]"
          href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FD"
          fill="0"
          fillcolor="white"
@@ -4155,9 +4174,9 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig5.2.0"
-        x="482"
-        y="68"
-        width="110"
+        x="717"
+        y="300"
+        width="87"
         height="0"
         fill="0"
         fillcolor="white"
@@ -4166,8 +4185,8 @@ mail, cellulare, password)</text>
       />
     </group>
     <rectangle name="Fig5.3"
-      x="2"
-      y="-6"
+      x="10"
+      y="10"
       width="11"
       height="1"
       fill="1"
@@ -4177,7 +4196,7 @@ mail, cellulare, password)</text>
       visibility="0"
     />
     <group name="Fig5.4"
-         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[2, -6, 64, 19]"
+         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[10, 10, 64, 19]"
          href="-64--88-11--106-e73bb0d:18f2936d720:-8000:00000000000010FD"
          fill="1"
          fillcolor="white"
@@ -4189,8 +4208,8 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig5.4.0"
-        x="2"
-        y="-6"
+        x="10"
+        y="10"
         width="64"
         height="19"
         fill="0"
@@ -4220,10 +4239,10 @@ mail, cellulare, password)</text>
     stroke="1"
     strokecolor="black"
   >
-    <moveto x="368"
-            y="80" />
+    <moveto x="304"
+            y="72" />
     <lineto x="472"
-            y="80" />
+            y="136" />
   </path>
   <path name="Fig8"
     description="org.argouml.gefext.ArgoFigLine"
@@ -4232,10 +4251,10 @@ mail, cellulare, password)</text>
     stroke="1"
     strokecolor="black"
   >
-    <moveto x="600"
-            y="80" />
-    <lineto x="680"
-            y="80" />
+    <moveto x="824"
+            y="312" />
+    <lineto x="904"
+            y="312" />
   </path>
   <group name="Fig9"
        description="org.argouml.uml.diagram.static_structure.ui.FigComment[192, 112, 79, 64]pathVisible=false;stereotypeView=0;"
@@ -4281,7 +4300,7 @@ mail, cellulare, password)</text>
     <path name="Fig9.2"
       description="org.tigris.gef.presentation.FigPoly"
       fill="1"
-      fillcolor="178 178 178"
+      fillcolor="white"
       stroke="1"
       strokecolor="black"
     >
@@ -4301,6 +4320,7 @@ mail, cellulare, password)</text>
          fillcolor="white"
          stroke="0"
          strokecolor="black"
+         visibility="0"
     >
       <private>
       </private>
@@ -4379,7 +4399,7 @@ mail, cellulare, password)</text>
     <path name="Fig10.2"
       description="org.tigris.gef.presentation.FigPoly"
       fill="1"
-      fillcolor="178 178 178"
+      fillcolor="white"
       stroke="1"
       strokecolor="black"
     >
@@ -4399,6 +4419,7 @@ mail, cellulare, password)</text>
          fillcolor="white"
          stroke="0"
          strokecolor="black"
+         visibility="0"
     >
       <private>
       </private>
@@ -4477,7 +4498,7 @@ mail, cellulare, password)</text>
     <path name="Fig11.2"
       description="org.tigris.gef.presentation.FigPoly"
       fill="1"
-      fillcolor="178 178 178"
+      fillcolor="white"
       stroke="1"
       strokecolor="black"
     >
@@ -4497,6 +4518,7 @@ mail, cellulare, password)</text>
          fillcolor="white"
          stroke="0"
          strokecolor="black"
+         visibility="0"
     >
       <private>
       </private>
@@ -4575,7 +4597,7 @@ mail, cellulare, password)</text>
     <path name="Fig12.2"
       description="org.tigris.gef.presentation.FigPoly"
       fill="1"
-      fillcolor="178 178 178"
+      fillcolor="white"
       stroke="1"
       strokecolor="black"
     >
@@ -4595,6 +4617,7 @@ mail, cellulare, password)</text>
          fillcolor="white"
          stroke="0"
          strokecolor="black"
+         visibility="0"
     >
       <private>
       </private>
@@ -4628,7 +4651,7 @@ mail, cellulare, password)</text>
     >viene mostrata disponibilità nell&apos;arco settimana /mese</text>
   </group>
   <group name="Fig13"
-       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[672, 32, 340, 90]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
+       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[904, 264, 340, 90]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
        href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C01"
        fill="1"
        fillcolor="white"
@@ -4639,8 +4662,8 @@ mail, cellulare, password)</text>
     </private>
     
     <ellipse name="Fig13.0"
-      x="842"
-      y="77"
+      x="1074"
+      y="309"
       rx="170"
       ry="45"
       fill="1"
@@ -4649,8 +4672,8 @@ mail, cellulare, password)</text>
       strokecolor="black"
     />
     <text name="Fig13.1"
-      x="679"
-      y="65"
+      x="911"
+      y="297"
       width="325"
       height="23"
       fill="0"
@@ -4665,7 +4688,7 @@ mail, cellulare, password)</text>
       justification="Center"
     >scelta tavolo/aggiornamento file temp prenotazioni(server)</text>
     <group name="Fig13.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[683, 41, 87, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[911, 297, 325, 0]"
          href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C01"
          fill="0"
          fillcolor="white"
@@ -4677,9 +4700,9 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig13.2.0"
-        x="683"
-        y="41"
-        width="87"
+        x="911"
+        y="297"
+        width="325"
         height="0"
         fill="0"
         fillcolor="white"
@@ -4688,8 +4711,8 @@ mail, cellulare, password)</text>
       />
     </group>
     <rectangle name="Fig13.3"
-      x="682"
-      y="42"
+      x="10"
+      y="10"
       width="11"
       height="1"
       fill="1"
@@ -4699,7 +4722,7 @@ mail, cellulare, password)</text>
       visibility="0"
     />
     <group name="Fig13.4"
-         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[682, 42, 64, 19]"
+         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[10, 10, 64, 19]"
          href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C01"
          fill="1"
          fillcolor="white"
@@ -4711,8 +4734,8 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig13.4.0"
-        x="682"
-        y="42"
+        x="10"
+        y="10"
         width="64"
         height="19"
         fill="0"
@@ -4730,13 +4753,13 @@ mail, cellulare, password)</text>
     stroke="1"
     strokecolor="black"
   >
-    <moveto x="1016"
-            y="80" />
-    <lineto x="1128"
-            y="80" />
+    <moveto x="1248"
+            y="312" />
+    <lineto x="1360"
+            y="312" />
   </path>
   <group name="Fig15"
-       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[1040, 200, 132, 48]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
+       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[1272, 432, 132, 48]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
        href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C04"
        fill="1"
        fillcolor="white"
@@ -4747,8 +4770,8 @@ mail, cellulare, password)</text>
     </private>
     
     <ellipse name="Fig15.0"
-      x="1106"
-      y="224"
+      x="1338"
+      y="456"
       rx="66"
       ry="24"
       fill="1"
@@ -4757,8 +4780,8 @@ mail, cellulare, password)</text>
       strokecolor="black"
     />
     <text name="Fig15.1"
-      x="1050"
-      y="212"
+      x="1282"
+      y="444"
       width="111"
       height="23"
       fill="0"
@@ -4773,7 +4796,7 @@ mail, cellulare, password)</text>
       justification="Center"
     >TEMP Prenotazioni</text>
     <group name="Fig15.2"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[1051, 209, 87, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[1282, 444, 111, 0]"
          href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C04"
          fill="0"
          fillcolor="white"
@@ -4785,9 +4808,9 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig15.2.0"
-        x="1051"
-        y="209"
-        width="87"
+        x="1282"
+        y="444"
+        width="111"
         height="0"
         fill="0"
         fillcolor="white"
@@ -4796,8 +4819,8 @@ mail, cellulare, password)</text>
       />
     </group>
     <rectangle name="Fig15.3"
-      x="1050"
-      y="210"
+      x="10"
+      y="10"
       width="11"
       height="1"
       fill="1"
@@ -4807,7 +4830,7 @@ mail, cellulare, password)</text>
       visibility="0"
     />
     <group name="Fig15.4"
-         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[1050, 210, 64, 19]"
+         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[10, 10, 64, 19]"
          href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C04"
          fill="1"
          fillcolor="white"
@@ -4819,8 +4842,8 @@ mail, cellulare, password)</text>
       </private>
       
       <rectangle name="Fig15.4.0"
-        x="1050"
-        y="210"
+        x="10"
+        y="10"
         width="64"
         height="19"
         fill="0"
@@ -4850,20 +4873,20 @@ mail, cellulare, password)</text>
                         offset="10" />
     </private>
     <path name="Fig16.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="915"
-              y="117" />
-      <lineto x="1070"
-              y="203" />
+      <moveto x="1147"
+              y="349" />
+      <lineto x="1302"
+              y="435" />
     </path>
   </group>
   <group name="Fig17"
-       description="org.argouml.uml.diagram.static_structure.ui.FigComment[736, 192, 176, 72]pathVisible=false;stereotypeView=0;"
+       description="org.argouml.uml.diagram.static_structure.ui.FigComment[968, 424, 176, 72]pathVisible=false;stereotypeView=0;"
        href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C06"
        fill="1"
        fillcolor="white"
@@ -4874,8 +4897,8 @@ mail, cellulare, password)</text>
     </private>
     
     <rectangle name="Fig17.0"
-      x="736"
-      y="192"
+      x="968"
+      y="424"
       width="176"
       height="72"
       fill="0"
@@ -4890,49 +4913,50 @@ mail, cellulare, password)</text>
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="736"
-              y="192" />
-      <lineto x="901"
-              y="192" />
-      <lineto x="911"
-              y="202" />
-      <lineto x="911"
-              y="263" />
-      <lineto x="736"
-              y="263" />
-      <lineto x="736"
-              y="192" />
+      <moveto x="968"
+              y="424" />
+      <lineto x="1133"
+              y="424" />
+      <lineto x="1143"
+              y="434" />
+      <lineto x="1143"
+              y="495" />
+      <lineto x="968"
+              y="495" />
+      <lineto x="968"
+              y="424" />
     </path>
     <path name="Fig17.2"
       description="org.tigris.gef.presentation.FigPoly"
       fill="1"
-      fillcolor="178 178 178"
+      fillcolor="white"
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="901"
-              y="192" />
-      <lineto x="911"
-              y="202" />
-      <lineto x="901"
-              y="202" />
-      <lineto x="901"
-              y="192" />
+      <moveto x="1133"
+              y="424" />
+      <lineto x="1143"
+              y="434" />
+      <lineto x="1133"
+              y="434" />
+      <lineto x="1133"
+              y="424" />
     </path>
     <group name="Fig17.3"
-         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[738, 194, 162, 0]"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[970, 426, 162, 0]"
          href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C06"
          fill="0"
          fillcolor="white"
          stroke="0"
          strokecolor="black"
+         visibility="0"
     >
       <private>
       </private>
       
       <rectangle name="Fig17.3.0"
-        x="738"
-        y="194"
+        x="970"
+        y="426"
         width="162"
         height="0"
         fill="0"
@@ -4942,8 +4966,8 @@ mail, cellulare, password)</text>
       />
     </group>
     <text name="Fig17.4"
-      x="738"
-      y="194"
+      x="970"
+      y="426"
       width="162"
       height="68"
       fill="0"
@@ -4977,16 +5001,251 @@ mail, cellulare, password)</text>
                         offset="25" />
     </private>
     <path name="Fig18.0"
-      description="org.tigris.gef.presentation.FigPoly"
+      description="org.argouml.gefext.ArgoFigPoly"
       fill="0"
       fillcolor="white"
       stroke="1"
       strokecolor="black"
     >
-      <moveto x="835"
-              y="121" />
-      <lineto x="835"
-              y="192" />
+      <moveto x="1074"
+              y="354" />
+      <lineto x="1074"
+              y="424" />
+    </path>
+  </group>
+  <group name="Fig19"
+       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[472, 112, 118, 44]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
+       href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C08"
+       fill="1"
+       fillcolor="white"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+    </private>
+    
+    <ellipse name="Fig19.0"
+      x="531"
+      y="134"
+      rx="59"
+      ry="22"
+      fill="1"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    />
+    <text name="Fig19.1"
+      x="483"
+      y="122"
+      width="96"
+      height="23"
+      fill="0"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+      textcolor="black"
+      font="Dialog"
+      italic="false"
+      bold="false"
+      textsize="12"
+      justification="Center"
+    >selezione tavolo</text>
+    <group name="Fig19.2"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[483, 122, 96, 0]"
+         href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C08"
+         fill="0"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+         visibility="0"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig19.2.0"
+        x="483"
+        y="122"
+        width="96"
+        height="0"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+    </group>
+    <rectangle name="Fig19.3"
+      x="10"
+      y="10"
+      width="11"
+      height="1"
+      fill="1"
+      fillcolor="black"
+      stroke="1"
+      strokecolor="black"
+      visibility="0"
+    />
+    <group name="Fig19.4"
+         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[10, 10, 64, 19]"
+         href="-64--88-11--106--71b49fe0:18f294dce51:-8000:0000000000001C08"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+         visibility="0"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig19.4.0"
+        x="10"
+        y="10"
+        width="64"
+        height="19"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        visibility="0"
+      />
+    </group>
+  </group>
+  <path name="Fig20"
+    description="org.argouml.gefext.ArgoFigLine"
+    fill="1"
+    fillcolor="white"
+    stroke="1"
+    strokecolor="black"
+  >
+    <moveto x="584"
+            y="144" />
+    <lineto x="696"
+            y="312" />
+  </path>
+  <group name="Fig21"
+       description="org.argouml.uml.diagram.use_case.ui.FigUseCase[1240, 520, 136, 48]pathVisible=false;stereotypeView=0;extensionPointVisible=false"
+       href="-64--88-11--106-58369077:18f395439ab:-8000:0000000000001395"
+       fill="1"
+       fillcolor="white"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+    </private>
+    
+    <ellipse name="Fig21.0"
+      x="1308"
+      y="544"
+      rx="68"
+      ry="24"
+      fill="1"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    />
+    <text name="Fig21.1"
+      x="1253"
+      y="532"
+      width="109"
+      height="23"
+      fill="0"
+      fillcolor="white"
+      stroke="0"
+      strokecolor="black"
+      textcolor="black"
+      font="Dialog"
+      italic="false"
+      bold="false"
+      textsize="12"
+      justification="Center"
+    >Rigido Prenotazioni</text>
+    <group name="Fig21.2"
+         description="org.argouml.uml.diagram.ui.FigStereotypesGroup[1250, 532, 115, 0]"
+         href="-64--88-11--106-58369077:18f395439ab:-8000:0000000000001395"
+         fill="0"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+         visibility="0"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig21.2.0"
+        x="1250"
+        y="532"
+        width="115"
+        height="0"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+      />
+    </group>
+    <rectangle name="Fig21.3"
+      x="10"
+      y="10"
+      width="11"
+      height="1"
+      fill="1"
+      fillcolor="black"
+      stroke="1"
+      strokecolor="black"
+      visibility="0"
+    />
+    <group name="Fig21.4"
+         description="org.argouml.uml.diagram.ui.FigExtensionPointsCompartment[10, 10, 64, 19]"
+         href="-64--88-11--106-58369077:18f395439ab:-8000:0000000000001395"
+         fill="1"
+         fillcolor="white"
+         stroke="0"
+         strokecolor="black"
+         visibility="0"
+    >
+      <private>
+      </private>
+      
+      <rectangle name="Fig21.4.0"
+        x="10"
+        y="10"
+        width="64"
+        height="19"
+        fill="0"
+        fillcolor="white"
+        stroke="0"
+        strokecolor="black"
+        visibility="0"
+      />
+    </group>
+  </group>
+  <group name="Fig22"
+       description="org.argouml.uml.diagram.use_case.ui.FigInclude"
+       href="-64--88-11--106-58369077:18f395439ab:-8000:0000000000001396"
+       stroke="1"
+       strokecolor="black"
+  >
+    <private>
+      sourcePortFig="Fig13.0"
+      destPortFig="Fig21.0"
+      sourceFigNode="Fig13"
+      destFigNode="Fig21"
+      <argouml:pathitem figname="Fig22.1"
+                        classname="org.argouml.uml.diagram.ui.PathItemPlacement"
+                        figclassname="org.argouml.uml.diagram.ui.FigSingleLineText"
+                        ownerhref="-64--88-11--106-58369077:18f395439ab:-8000:0000000000001396"
+                        angle="270.0"
+                        offset="10" />
+    </private>
+    <path name="Fig22.0"
+      description="org.argouml.gefext.ArgoFigPoly"
+      fill="0"
+      fillcolor="white"
+      stroke="1"
+      strokecolor="black"
+    >
+      <moveto x="1117"
+              y="352" />
+      <lineto x="1285"
+              y="521" />
     </path>
   </group>
 </pgml>
