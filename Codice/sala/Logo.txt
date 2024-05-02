@@ -14,7 +14,7 @@
 #   - Alessio Canessa  
 #   - Mirco Castino            
 #   - Ivan Catalano
-#   - Ruben Ubemassi
+#   - Ruben Uremassi
 #   
 #   Per conoscere i comandi del client digita ./client.exe -help
 #
