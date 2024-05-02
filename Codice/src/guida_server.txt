@@ -1,0 +1,15 @@
+
+########################################################################
+########### BENVENUTO NELLA GUIDA ALL'UTILIZZO DEL SERVER ##############
+########################################################################
+#
+# Ecco una breve lista dei comandi:
+#   
+#   la sintassi dei comandi e' ./server.exe [PARAM] [OPTION]
+#   
+#    - Aiuto e visualizzazione della presente guida:
+#       PARAM:  -help,      no OPTION
+#    
+#    - Per attivare il server
+#       PARAM:  -start      no OPTION
+#

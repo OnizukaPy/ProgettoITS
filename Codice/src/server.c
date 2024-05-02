@@ -9,6 +9,7 @@
 
 // definizioni delle costanti che saranno necessarire
 #define ACCOUNT       "../account"                      // definiamo la cartella dove saranno salvati gli account
+#define TEMP          "../temp"                         // definiamo la cartella temporanea di comunicazione client server
 #define TEMP_LOGIN    "../temp/login.json"              // definiamo il file temporaneo di scambio informazioni
 #define TEMP_LOGOUT   "../temp/logout.json"             // definiamo il file temporaneo di scambio informazioni
 #define TEMP_STATUS   "../temp/status_server.json"      // definiamo il file temporaneo di scambio informazioni
@@ -31,23 +32,21 @@ int main(int argc, char *argv[]){
     } else {
         if(strcmp(argv[1], "-help") == 0){
             printf("questa e' la guida per l'uso del server\n");
-            //print_guida_server();
+            print_guida_server();
         }
         if (strcmp(argv[1], "-start") == 0){
             // controlliamo la cartella temp per vedere se ci sono dei file e se ci sono li eliminiamo
             printf("Controlo se ci sono file temporanei da eliminare\n");
-            DIR *dr = opendir("../temp");
-            struct dirent *de;
-            while ((de = readdir(dr)) != NULL){
-                // se il file è diverso da . e da .. lo cancelliamo
-                if(strcmp(de->d_name, ".") != 0 && strcmp(de->d_name, "..") != 0){
-                    char file[100];
-                    sprintf(file, "%s/%s", "../temp", de->d_name);
-                    remove(file);
-                }
+            DIR *dr = opendir(TEMP);
+            // controlliamo se la cartella esiste
+            if (dr == NULL){
+                printf("La cartella temp non esiste\n");
+                return 0;
+            } else {
+                printf("La cartella temp esiste\n");
+                svuota_cartella(TEMP);
+                printf("I file temporanei sono stati eliminati\n");
             }
-            closedir(dr);
-            printf("I file temporanei sono stati eliminati\n");
 
             // avviamo l'attività di monitoraggio attività
             printf("Il server e' stato avviato ed e' in attesa..\n");
@@ -76,14 +75,9 @@ int main(int argc, char *argv[]){
         }
         if (strcmp(argv[1], "-c_sala") == 0){
             // creiamo una sala
-            cJSON sala = crea_sala(SALA, 12);
+            crea_sala(SALA, 12);
         }
     }
-
-
-
-    //controlla_account(ACCOUNT);
-
 }
 
 // definizione delle funzioni che saranno utilizzate nel main
