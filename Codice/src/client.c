@@ -30,7 +30,7 @@ int main(int argc, char *argv[]){
         if(status_server(TEMP) == true){
             printf("Il server e' attivo\n\n");
         } else {
-            printf("Il server e' inattivo\n\n");
+            printf("Il server e' inattivo. Attendere che sia attivo.\n\n");
         }
     } else {
         // se l'argomento e' uguale a -help
@@ -97,7 +97,7 @@ int main(int argc, char *argv[]){
             } else if (argc == 3){
                 char sala[100];
                 sprintf(sala, "%s/%s.json", SALA, argv[2]);
-                printf("Il tavolo selezionato e': %s\n", sala);
+                printf("La sala selezionata e': %s\n", sala);
                 visualizza_sala(sala);
             } else {
                 printf("Errore nell'inserimento dei parametri\n");
