@@ -23,9 +23,39 @@
 
 int main(int argc, char *argv[]){
 
-    // approviamo gli account presenti nella cartella
-    // creiamo un ciclo che controlla tutti gli account presenti nella cartella e termina con exit da tastiera
+    // controlliamo che ci siano le cartelle necessarie al funzionamento del server
+    if(access(ACCOUNT, F_OK) == -1){
+        printf("La cartella account non esiste\n");
+        // creiamo la cartella account
+        if(mkdir(ACCOUNT) == -1){
+            printf("Errore nella creazione della cartella account\n");
+            return 0;
+        } else {
+            printf("La cartella account e' stata creata con successo\n");
+        }
+    }
+    if(access(TEMP, F_OK) == -1){
+        printf("La cartella temp non esiste\n");
+        // creiamo la cartella temp
+        if(mkdir(TEMP) == -1){
+            printf("Errore nella creazione della cartella temp\n");
+            return 0;
+        } else {
+            printf("La cartella temp e' stata creata con successo\n");
+        }
+    }
+    if(access(SALA, F_OK) == -1){
+        printf("La cartella sala non esiste\n");
+        // creiamo la cartella sala
+        if(mkdir(SALA) == -1){
+            printf("Errore nella creazione della cartella sala\n");
+            return 0;
+        } else {
+            printf("La cartella sala e' stata creata con successo\n");
+        }
+    }
 
+    printf("Tutte le cartelle necessarie sono presenti.\n");
     // se l'argomento è uguale a -start
     if (argc == 1){
         printf("Il server è stato compilato o avviato senza istruzioni\n");

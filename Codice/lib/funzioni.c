@@ -394,90 +394,66 @@ void visualizza_sala(char *data){
         int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
         printf("Il numero di tavoli e': %d\n", n_tavoli);
 
+        // calcoliamo quanti posti liberi totali ci sono nella sala
+        int posti_liberi_totali = 0;
+        for (int i = 0; i < n_tavoli; i++){
+            cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i);
+            if (cJSON_IsFalse(cJSON_GetObjectItem(tavolo, "occupato"))){
+                posti_liberi_totali += cJSON_GetObjectItem(tavolo, "posti_liberi")->valueint;
+            }
+        }
+        printf("Il numero di posti liberi totali e': %d\n", posti_liberi_totali);
+
         // visualizziamo il numero di posti liberi e occupati per ogni tavolo
         for (int i = 0; i < n_tavoli; i++){
             cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i);
-            printf("Tavolo %d: ", i + 1);
-            printf("Posti liberi: %d ", cJSON_GetObjectItem(tavolo, "posti_liberi")->valueint);
-            printf("Posti occupati: %d\n", cJSON_GetObjectItem(tavolo, "posti_occupati")->valueint);
+            printf("Tavolo %d: \n", i + 1);
+            int posti_liberi = cJSON_GetObjectItem(tavolo, "posti_liberi")->valueint;
+            int posti_occupati = cJSON_GetObjectItem(tavolo, "posti_occupati")->valueint;
+            //printf("Posti liberi: %d", posti_liberi);
+            //printf(" Posti occupati: %d\n", posti_occupati);
 
             // diegnamo un tavolo con i posti liberi e occupati
-            printf("###################################################\n");
-            printf("#            #            #           #           #\n");
-            printf("#            #            #           #           #\n");
-            printf("#            #            #           #           #\n");
-            printf("#            #            #           #           #\n");
-            printf("###################################################\n");
-        }
-    }
+            int max_posti = posti_liberi + posti_occupati;
+            int max_altezza = 3;
 
-    // visualizziamo il contenuto del file json
-  
-    /*
-    int x = 8, y = 33;
-    int matrice_sala[x][y];
-
-    // inizializziamo la matrice mettendo i contorni della sala al valore 3 che corrisponde al muro #
-    // ed il numero dei tavoli sopra ogni tavolo
-    for (int i = 0; i < x; i++){
-        for (int j = 0; j < y; j++){
-            if(i == 0 || i == x - 1 || j == 0 || j == y - 1){
-                matrice_sala[i][j] = 3;
-            } else {
-                matrice_sala[i][j] = 0;
+            // contorno superiore
+            for (int j = 0; j < (max_posti + 2); ++j) {
+                printf("\x1b[33m+ ");
             }
-        }
-    }
+            printf("\n");
 
-    // inseriamo i tavoli nella matrice
-    int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
-    for (int i = 2; i < x; i += 2){
-        for (int j = 0; j < n_tavoli/3; j++){
-            cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i * n_tavoli/3 + j);
-            if(cJSON_IsTrue(cJSON_GetObjectItem(tavolo, "occupato"))){
-                // se il tavolo è occupato mettiamo il valore 1
-                for (int k = 0; k < 4; k++){
-                    for (int l = 0; l < 4; l++){
-                        matrice_sala[i][j * 9 + l + 1] = 1;
-                    }
+            // lato sinistro
+            printf("\x1b[33m+ ");
+
+            // posti liberi e occupati
+            // se la chiave occupato del tavolo è true allora stampiamo tutti @ magenta
+            // altrimenti stampiamo i posti liberi in verde e i posti occupati in rosso
+            if (cJSON_IsTrue(cJSON_GetObjectItem(tavolo, "occupato"))){
+                for (int k = 0; k < max_posti; k++) {
+                    printf("\x1b[35m@ ");
                 }
             } else {
-                // se il tavolo è libero mettiamo il valore 2
-                for (int k = 0; k < 4; k++){
-                    for (int l = 0; l < 4; l++){
-                        matrice_sala[i][j * 9 + l + 1] = 2;
-                    }
+                for (int k = 0; k < posti_occupati; k++) {
+                    printf("\x1b[31m@ ");
+                }
+                for (int k = posti_occupati; k < max_posti; k++) {
+                    printf("\x1b[32m@ ");
                 }
             }
+            // lato destro
+            printf("\x1b[33m+ ");
+            printf("\n");
+
+            // contorno inferiore
+            for (int j = 0; j < (max_posti + 2); ++j) {
+                printf("\x1b[33m+ ");
+            }            
+            printf("\x1b[0m");
+            printf("\n\n");
         }
     }
-
-
-    // visualizziamo la matrice
-    for (int i = 0; i < x; i++){
-        for (int j = 0; j < y; j++){
-            if (matrice_sala[i][j] == 3){
-                // stampiamo il muro di colore rosso
-                printf("\033[0;31m#\033[0m");
-            } else if (matrice_sala[i][j] == 1){
-                // stampiamo il tavolo occupato di colore verde
-                printf("\033[0;32mO\033[0m");
-            } else if (matrice_sala[i][j] == 2){
-                // stampiamo il tavolo libero di colore blu
-                printf("\033[0;34mL\033[0m");
-            } else {
-                printf(" ");
-            }
-        }
-        printf("\n");
-    }*/
-
 }
-
-
-
-
-
 
 // FUNZIONI EFFETTIVE LATO SERVER
 // funzione per stampare la guida
