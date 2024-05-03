@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-04-23" view-index="0" gantt-divider-location="455" resource-divider-location="300" version="3.3.3307" locale="it_IT">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-04-23" view-index="0" gantt-divider-location="440" resource-divider-location="300" version="3.3.3307" locale="it_IT">
     <description/>
     <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="Nome" width="250" order="0"/>
-        <field id="tpd4" name="Data d'inizio" width="95" order="1"/>
-        <field id="tpd5" name="Data di fine" width="94" order="2"/>
+        <field id="tpd3" name="Nome" width="241" order="0"/>
+        <field id="tpd4" name="Data d'inizio" width="92" order="1"/>
+        <field id="tpd5" name="Data di fine" width="91" order="2"/>
         <field id="tpd15" name="Note" width="20" order="3"/>
-        <option id="taskLabelUp" value="name"/>
-        <option id="taskLabelDown" value=""/>
-        <option id="taskLabelLeft" value="advancement"/>
         <option id="filter.completedTasks" value="false"/>
         <option id="filter.dueTodayTasks" value="false"/>
         <option id="filter.overdueTasks" value="false"/>
@@ -53,10 +50,10 @@
                 <task id="19" uid="550d501c81344d8f92636ccfc7ec0be1" name="Creazione utenti" meeting="false" start="2024-04-25" duration="3" complete="0" expand="true"/>
                 <task id="22" uid="be9578b0d3c64ffd9addfa93748634e0" name="Funzione di login/logout" meeting="false" start="2024-04-29" duration="3" complete="0" expand="true"/>
             </task>
-            <task id="7" uid="79913df5c7304f2e9d03690a7399c105" name="Disposizioni Sala" meeting="false" start="2024-04-29" duration="4" complete="0" expand="true">
+            <task id="7" uid="79913df5c7304f2e9d03690a7399c105" name="Disposizioni Sala" meeting="false" start="2024-04-29" duration="5" complete="0" expand="true">
                 <depend id="14" type="2" difference="0" hardness="Strong"/>
                 <task id="23" uid="395caebf0a26446b846ab8a2e0efd69f" name="Creazione del tavolo (server)" meeting="false" start="2024-04-29" duration="1" complete="0" expand="true"/>
-                <task id="24" uid="202de69ae6d749bd880bc160828ae983" name="Visualizzazione dei tavoli (client/server)" meeting="false" start="2024-04-29" duration="1" complete="0" expand="true"/>
+                <task id="24" uid="202de69ae6d749bd880bc160828ae983" name="Visualizzazione dei tavoli (client/server)" meeting="false" start="2024-05-02" duration="2" complete="0" expand="true"/>
                 <task id="9" uid="c8f07fbeef2b42f6b26f364f63204c08" name="Prenotazione dei tavoli" meeting="false" start="2024-05-02" duration="1" complete="0" expand="true">
                     <depend id="10" type="2" difference="0" hardness="Strong"/>
                     <depend id="16" type="2" difference="0" hardness="Strong"/>
@@ -78,7 +75,7 @@
         <task id="12" uid="56e034c189ee434cb38296727e395ce1" name="Testing funzionalità" meeting="false" start="2024-05-01" duration="5" complete="0" expand="true">
             <depend id="3" type="2" difference="0" hardness="Strong"/>
             <task id="13" uid="a1cf86751e27445fa952e29f319c2048" name="Test gestione utenti" meeting="false" start="2024-05-02" duration="1" complete="0" expand="true"/>
-            <task id="14" uid="72e379a0978147108f79be50bdaec45c" name="Test Disposizione Sala" meeting="false" start="2024-05-03" duration="1" complete="0" expand="true"/>
+            <task id="14" uid="72e379a0978147108f79be50bdaec45c" name="Test Disposizione Sala" meeting="false" start="2024-05-06" duration="1" complete="0" expand="true"/>
             <task id="15" uid="2150463a2a814b98b15b0d899cb02f90" name="Test Gestione menu" meeting="false" start="2024-05-01" duration="1" complete="0" expand="true"/>
             <task id="16" uid="3bf4e932588242b28b8b89eafe261925" name="Test Prenotazione dei tavoli" meeting="false" start="2024-05-03" duration="1" complete="0" expand="true"/>
             <task id="17" uid="cb93efbecba646f6923b3bab12235880" name="Test Gestione Ordini" meeting="false" start="2024-05-06" duration="1" complete="0" expand="true"/>
