@@ -1,0 +1,70 @@
+{
+    "antipasti": {
+
+        "prezzo": 5,
+        "piatti": [{   
+                "nome": "Bruschetta",
+                "ingredienti": "Pane, pomodoro, basilico, olio",
+                "descrizione": "Pane tostato con pomodoro, basilico e olio"
+            }, {   
+                "nome": "Crostini",
+                "ingredienti": "Pane, pomodoro, basilico, olio",
+                "descrizione": "Pane tostato con pomodoro, basilico e olio"
+            }, {   
+                "nome": "Insalata caprese",
+                "ingredienti": "Pomodoro, mozzarella, basilico, olio",
+                "descrizione": "Insalata con pomodoro, mozzarella, basilico e olio"
+            }]
+    },
+    "primi": {
+
+        "prezzo": 7,
+        "piatti": [{   
+                "nome": "Pasta al pomodoro",
+                "ingredienti": "Pasta, pomodoro, basilico, olio",
+                "descrizione": "Pasta con pomodoro, basilico e olio"
+            }, {   
+                "nome": "Pasta al ragù",
+                "ingredienti": "Pasta, ragù, basilico, olio",
+                "descrizione": "Pasta con ragù, basilico e olio"
+            }, {   
+                "nome": "Pasta al pesto",
+                "ingredienti": "Pasta, pesto, basilico, olio",
+                "descrizione": "Pasta con pesto, basilico e olio"
+            }]
+    },
+    "secondi": {
+
+        "prezzo": 9,
+        "piatti": [{   
+                "nome": "Pollo al limone",
+                "ingredienti": "Pollo, limone, basilico, olio",
+                "descrizione": "Pollo con limone, basilico e olio"
+            }, {   
+                "nome": "Bistecca alla griglia",
+                "ingredienti": "Bistecca, sale, basilico, olio",
+                "descrizione": "Bistecca alla griglia con sale, basilico e olio"
+            }, {   
+                "nome": "Salmone al forno",
+                "ingredienti": "Salmone, limone, basilico, olio",
+                "descrizione": "Salmone al forno con limone, basilico e olio"
+            }]
+    },
+    "dolci": {
+
+        "prezzo": 4,
+        "piatti": [{   
+                "nome": "Tiramisù",
+                "ingredienti": "Savoiardi, caffe', mascarpone, cacao",
+                "descrizione": "Tiramisù con savoiardi, caffe', mascarpone e cacao"
+            }, {   
+                "nome": "Panna cotta",
+                "ingredienti": "Panna, zucchero, vaniglia, cacao",
+                "descrizione": "Panna cotta con panna, zucchero, vaniglia e cacao"
+            }, {   
+                "nome": "Crostata",
+                "ingredienti": "Pasta frolla, marmellata, zucchero, uova",
+                "descrizione": "Crostata con pasta frolla, marmellata, zucchero e uova"
+            }]
+    }
+}
