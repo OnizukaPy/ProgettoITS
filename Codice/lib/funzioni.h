@@ -12,7 +12,8 @@ cJSON *carica_file_json(char *nome_file);               // funzione per caricare
 // funzioni per la gestione dei file
 void svuota_cartella(char *path);                       // funzione per svuotare una cartella
 
-// cifratura e decifratura
+// Gestione password, cifratura e decifratura
+char *get_pass(char *pword, int size);                          // funzione per ottenere la password copeerta da asterischi
 char *cifra(char *stringa, int chiave);                         // funzione per cifrare una stringa
 char *decifra(char *stringa, int chiave);                       // funzione per decifrare una stringa
 

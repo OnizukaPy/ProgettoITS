@@ -45,7 +45,11 @@ int main(int argc, char *argv[]){
         if(strcmp(argv[1], "-c") == 0){
             // approviamo gli account presenti nella cartella
             if (argc == 2) {
-            cJSON account = crea_account(ACCOUNT);
+                if(status_server(TEMP) == false){
+                    printf("Il server e' inattivo\n");
+                } else {
+                    cJSON account = crea_account(ACCOUNT);
+                }
             } else {
                 printf("Errore nell'inserimento dei parametri\n");
             }
