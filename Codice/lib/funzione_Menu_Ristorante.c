@@ -18,7 +18,7 @@ void Menu_Ristorante()
     printf("Premere un qualsiasi tasto per visualizzare le varie sezioni del menu.\n");
     getch();
 
-    // "Cancello" la stampa "Premere un qualsiasi tasto per visualizzare le varie sezioni del menù."
+    // "Cancello" la stampa "Premere un qualsiasi tasto per visualizzare le varie sezioni del menu."
     printf("\033[4A");
     for (int i = 0; i < 4; i++)
     {
@@ -27,9 +27,9 @@ void Menu_Ristorante()
     }
     printf("\033[4A");
 
-    // Lista delle sezioni del menù
+    // Lista delle sezioni del menu
     printf("1 - ANTIPASTI\n2 - NAAN (PANE)\n3 - BIRYANI (RISO BASMATI)\n4 - VERDURE\n");
-    printf("5 - SPECIALITÀ TANDOOR\n6 - GAMBERI\n7 - POLLO\n8 - AGNELLO\n9 - DOLCI\n\n");
+    printf("5 - SPECIALITA' TANDOOR\n6 - GAMBERI\n7 - POLLO\n8 - AGNELLO\n9 - DOLCI\n\n");
 
     printf("Inserire un numero per visualizzare il menu\n");
     printf("\toppure premere 0 per chiudere il menu.\n\n");
@@ -40,7 +40,7 @@ void Menu_Ristorante()
     // Variabile per evitare che la stampa precedente non venga sovrascritta dalla stampa del primo ciclo
     int primoCicloEseguito = 0;
 
-    // Chiedo all'utente di inserire un numero per visualizzare il menù
+    // Chiedo all'utente di inserire un numero per visualizzare il menu
     for (; ;)
     {
         if (primoCicloEseguito == 0)
@@ -56,16 +56,16 @@ void Menu_Ristorante()
 
         if (userInput == '0') break;
 
-        // Sposto il cursore sopra di 5 righe per sovrascrivere la sezione precedente del menù con una nuova
+        // Sposto il cursore sopra di 5 righe per sovrascrivere la sezione precedente del menu con una nuova
         if (primoCicloEseguito == 1)
         {
-            printf("\033[7A");
-            for (int i = 0; i < 12; i++)
+            printf("\033[6A");
+            for (int i = 0; i < 5; i++)
             {
                 printf("                                                                           ");
                 printf("                                                                           \n");
             }
-            printf("\033[11A");
+            printf("\033[5A");
         }
 
         switch (userInput)
@@ -103,7 +103,7 @@ void Menu_Ristorante()
             break;
 
         case '5':
-            printf("SPECIALITÀ TANDOOR\t€ 10.00\n");
+            printf("SPECIALITA' TANDOOR\t€ 10.00\n");
             printf("17 - MIX TANDOOR\t\tGrigliata mista di carne e pesce marinata con yogurt e spezie\n");
             printf("18 - TANDOOR CHICKEN\t\tCoscette di pollo marinate con yogurt e arrostite al tandoor\n");
             printf("19 - CHICKEN TIKKA\t\tBocconcini di pollo marinati con yogurt e arrostiti al tandoor\n");
@@ -148,15 +148,15 @@ void Menu_Ristorante()
 
     // Cancello tutta la stampa
     printf("\033[19A");
-    for (int i = 0; i < 19; i++)
+    for (int i = 0; i < 18; i++)
     {
         printf("                                                                           ");
         printf("                                                                           \n");
     }
-    printf("\033[19A");
+    printf("\033[18A");
 
-    /* // Invito l'utente a terminare la funzione del menù
-    printf("Premere un qualsiasi tasto per chiudere il menù.");
+    /* // Invito l'utente a terminare la funzione del menu
+    printf("Premere un qualsiasi tasto per chiudere il menu.");
     getch(); */
 
     //printf("\n");
