@@ -59,13 +59,13 @@ void Menu_Ristorante()
         // Sposto il cursore sopra di 5 righe per sovrascrivere la sezione precedente del menù con una nuova
         if (primoCicloEseguito == 1)
         {
-            printf("\033[7A");
-            for (int i = 0; i < 12; i++)
+            printf("\033[6A");
+            for (int i = 0; i < 5; i++)
             {
                 printf("                                                                           ");
                 printf("                                                                           \n");
             }
-            printf("\033[11A");
+            printf("\033[5A");
         }
 
         switch (userInput)
