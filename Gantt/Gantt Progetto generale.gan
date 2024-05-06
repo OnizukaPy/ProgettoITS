@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-04-23" view-index="0" gantt-divider-location="440" resource-divider-location="300" version="3.3.3307" locale="it_IT">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-04-24" view-index="0" gantt-divider-location="425" resource-divider-location="300" version="3.3.3307" locale="it_IT">
     <description/>
     <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="Nome" width="241" order="0"/>
-        <field id="tpd4" name="Data d'inizio" width="92" order="1"/>
-        <field id="tpd5" name="Data di fine" width="91" order="2"/>
+        <field id="tpd3" name="Nome" width="232" order="0"/>
+        <field id="tpd4" name="Data d'inizio" width="89" order="1"/>
+        <field id="tpd5" name="Data di fine" width="88" order="2"/>
         <field id="tpd15" name="Note" width="20" order="3"/>
         <option id="filter.completedTasks" value="false"/>
         <option id="filter.dueTodayTasks" value="false"/>
@@ -72,20 +72,20 @@
                 <depend id="18" type="2" difference="0" hardness="Strong"/>
             </task>
         </task>
-        <task id="12" uid="56e034c189ee434cb38296727e395ce1" name="Testing funzionalità" meeting="false" start="2024-05-01" duration="5" complete="0" expand="true">
+        <task id="12" uid="56e034c189ee434cb38296727e395ce1" name="Testing funzionalità" meeting="false" start="2024-05-01" duration="10" complete="0" expand="true">
             <depend id="3" type="2" difference="0" hardness="Strong"/>
             <task id="13" uid="a1cf86751e27445fa952e29f319c2048" name="Test gestione utenti" meeting="false" start="2024-05-02" duration="1" complete="0" expand="true"/>
-            <task id="14" uid="72e379a0978147108f79be50bdaec45c" name="Test Disposizione Sala" meeting="false" start="2024-05-06" duration="1" complete="0" expand="true"/>
+            <task id="14" uid="72e379a0978147108f79be50bdaec45c" name="Test Disposizione Sala" meeting="false" start="2024-05-06" duration="7" complete="0" expand="true"/>
             <task id="15" uid="2150463a2a814b98b15b0d899cb02f90" name="Test Gestione menu" meeting="false" start="2024-05-01" duration="1" complete="0" expand="true"/>
             <task id="16" uid="3bf4e932588242b28b8b89eafe261925" name="Test Prenotazione dei tavoli" meeting="false" start="2024-05-03" duration="1" complete="0" expand="true"/>
             <task id="17" uid="cb93efbecba646f6923b3bab12235880" name="Test Gestione Ordini" meeting="false" start="2024-05-06" duration="1" complete="0" expand="true"/>
             <task id="18" uid="c9cd79c0844943c88aabc5858fe00ba3" name="Test Feedback clienti" meeting="false" start="2024-05-07" duration="1" complete="0" expand="true"/>
         </task>
-        <task id="3" uid="8bec6f46d31744488639915e99ae8ad7" name="Fase di test finale" meeting="false" start="2024-05-08" duration="1" complete="0" expand="true">
+        <task id="3" uid="8bec6f46d31744488639915e99ae8ad7" name="Fase di test finale" meeting="false" start="2024-05-15" duration="1" complete="0" expand="true">
             <depend id="1" type="2" difference="0" hardness="Strong"/>
         </task>
-        <task id="1" uid="a7eb79cd31ed4db4889c12f39670bdfc" name="Presentazione Progetto" meeting="false" start="2024-05-09" duration="8" complete="0" expand="true"/>
-        <task id="4" uid="3ed00114348e4af992c79c3d3552564f" name="Gestione del Progetto" meeting="false" start="2024-04-24" duration="19" complete="0" expand="true"/>
+        <task id="1" uid="a7eb79cd31ed4db4889c12f39670bdfc" name="Presentazione Progetto" meeting="false" start="2024-05-16" duration="1" complete="0" expand="true"/>
+        <task id="4" uid="3ed00114348e4af992c79c3d3552564f" name="Gestione del Progetto" meeting="false" start="2024-04-24" duration="27" complete="0" expand="true"/>
     </tasks>
     <resources>
         <resource id="0" name="Alessio Canessa" function="Default:1" contacts="" phone=""/>
