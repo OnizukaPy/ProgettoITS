@@ -73,7 +73,7 @@ int main(int argc, char *argv[]){
                 printf("La cartella temp non esiste\n");
                 return 0;
             } else {
-                printf("La cartella temp esiste\n");
+                //printf("La cartella temp esiste\n");
                 svuota_cartella(TEMP);
                 printf("I file temporanei sono stati eliminati\n");
             }

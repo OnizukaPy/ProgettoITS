@@ -7,10 +7,13 @@
 #include <string.h>
 #include <time.h>
 #include <windows.h>
+#include <conio.h> 
+#include <ctype.h> 
 
 // definizioni delle costanti che saranno necessarire
 #define BUFFER_SIZE_JSON 1024                   // creiamo un buffer di 1024 caratteri per la gestione dei file json
 #define CHIAVE 3                                // definiamo la chiave per la cifratura
+#define MAX 50                                  // definiamo la lunghezza massima di una stringa   
 // funzioni propedeutiche
 
 // funzioni per la gestione dei file json
@@ -57,7 +60,37 @@ void svuota_cartella(char *path){
 }
 
 
-// cifratura e decifratura
+// Gestione password, cifratura e decifratura
+// definiamo la funzione get_pass che restituisce la password coperta da asterischi
+// https://m.pierotofy.it/p/forum/2/1046480-risoltonascondere_input_da_tastiera_console_con_degli_asterischi/
+char *get_pass(char *pword, int size) {
+
+    int ch;
+    int i = 0;
+
+    while ((ch = getch()) != EOF 
+
+              && ch != '\n' 
+              && ch != '\r' 
+              && i < size - 1) {
+
+                    if (ch == '\b' && i > 0) {
+
+                        printf("\b \b");
+                        fflush(stdout);
+                        i--;
+                        pword[i] = (char)ch;
+                    } else if (isalnum(ch)){
+
+                        putchar('*');
+                        pword[i++] = (char)ch;
+                    }
+    }
+
+    pword[i] = '\0';
+    return pword;
+}
+
 // funzione per cifrare una stringa
 char *cifra(char *stringa, int chiave){
     // cifriamo la stringa con il cifrario di cesare
@@ -70,7 +103,6 @@ char *cifra(char *stringa, int chiave){
     }
     return stringa;
 }
-
 
 // funzione per decifrare una stringa
 char *decifra(char *stringa, int chiave){
@@ -137,7 +169,7 @@ cJSON crea_account(char *path_account){
     cJSON *account = cJSON_CreateObject();
 
     // nell'account inseriremo: username, password, email, nome, cognome ed assegneremo un codice univoco
-    char username[50], password[50], email[50], nome[50], cognome[50];
+    char username[MAX], password[MAX], email[MAX], nome[MAX], cognome[MAX];
 
     // chiediamo all'utente di inserire i dati
     printf("Inserisci il tuo nome: ");
@@ -162,7 +194,8 @@ cJSON crea_account(char *path_account){
     }
 
     printf("Inserisci la tua password: ");
-    scanf("%s", password);
+    get_pass(password, MAX);
+    printf("\n");
     printf("Inserisci la tua email: ");
     scanf("%s", email);
 
@@ -235,7 +268,11 @@ void login(char *username, char *path_account, char *login_path){
             fclose(file);
             char password[50];
             printf("Inserisci la password: ");
-            scanf("%s", password);
+            // proteggiamo la password mostrando degli asterischi al posto dei caratteri
+            get_pass(password, MAX);
+            printf("\n");
+            
+            //scanf("%s", password);
             // cifriamo la password
             char *password_cifrata = cifra(password, CHIAVE);
             // creiamo un file json che contenga username e password cifrata e una chiave di status per indicare se l'utente è loggato o meno
@@ -302,9 +339,10 @@ void logout(char *username, char *path_account, char *login_path){
             return;
         } else {
             fclose(file);
-            char password[50];
+            char password[MAX];
             printf("Inserisci la password: ");
-            scanf("%s", password);
+            get_pass(password, MAX);
+            printf("\n");
             // cifriamo la password
             char *password_cifrata = cifra(password, CHIAVE);
             // creiamo un file json che contenga username e password cifrata e una chiave di status per indicare se l'utente è loggato o meno
@@ -512,7 +550,7 @@ void controlla_account(char *path_account){
     // opendir returns NULL if couldn't open directory
     DIR *dr = opendir(path_account);
     if (dr == NULL){
-        printf("Could not open current directory" );
+        printf("Cartella Account non trovata" );
     } else {
         // scriviamo un codice per avere una lista di file dentro una cartella
         // https://www.geeksforgeeks.org/c-program-list-files-sub-directories-directory/
@@ -577,7 +615,7 @@ void login_check(char *temp_path, char *path){
     } else {
         // modifichiamo il valore del campo status in rifiutato
         cJSON_ReplaceItemInObject(login, "status", cJSON_CreateString("rifiutato"));
-        printf("%d-%02d-%02d %02d:%02d:%02d: Account %s rifiutato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, username->valuestring);
+        printf("%d-%02d-%02d %02d:%02d:%02d: Login account %s rifiutato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, username->valuestring);
         // salviamo il file json
         salva_file_json(login, temp_path);
     }
@@ -616,7 +654,7 @@ void logout_check(char *temp_path, char *path){
     } else {
         // modifichiamo il valore del campo status in rifiutato
         cJSON_ReplaceItemInObject(logout, "status", cJSON_CreateString("rifiutato"));
-        printf("%d-%02d-%02d %02d:%02d:%02d: Account %s rifiutato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, username->valuestring);
+        printf("%d-%02d-%02d %02d:%02d:%02d: Logout account %s rifiutato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, username->valuestring);
         // salviamo il file json
         salva_file_json(logout, temp_path);
     }
