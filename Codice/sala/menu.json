@@ -3,22 +3,26 @@
 
         "prezzo": 5,
         "piatti": [{   
-                "nome": "Bruschetta",
-                "ingredienti": "Pane, pomodoro, basilico, olio",
-                "descrizione": "Pane tostato con pomodoro, basilico e olio"
+                "nome": "VEGETABLE SAMOSA",
+                "ingredienti": "   ",
+                "descrizione": "Paste triangolari ripiene di verdure"
             }, {   
-                "nome": "Crostini",
-                "ingredienti": "Pane, pomodoro, basilico, olio",
-                "descrizione": "Pane tostato con pomodoro, basilico e olio"
+                "nome": "ONION BAJI",
+                "ingredienti": "   ",
+                "descrizione": "Frittelle di cipolla con farina di ceci"
             }, {   
-                "nome": "Insalata caprese",
+                "nome": "VEGETABLE PAKORA",
                 "ingredienti": "Pomodoro, mozzarella, basilico, olio",
-                "descrizione": "Insalata con pomodoro, mozzarella, basilico e olio"
+                "descrizione": "Frittelle miste di verdure con farina di ceci"
+            }, {   
+                "nome": "VEGETABLE CUTLET",
+                "ingredienti": "Pomodoro, mozzarella, basilico, olio",
+                "descrizione": "Polpettine di verdure miste"
             }]
     },
-    "primi": {
+    "pane": {
 
-        "prezzo": 7,
+        "prezzo": 1.50,
         "piatti": [{   
                 "nome": "Pasta al pomodoro",
                 "ingredienti": "Pasta, pomodoro, basilico, olio",
