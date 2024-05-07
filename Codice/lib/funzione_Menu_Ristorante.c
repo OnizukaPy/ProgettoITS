@@ -120,7 +120,7 @@ void Menu_Ristorante()
 
         case '7':
             printf("POLLO\t\t\t€ 10.00\n");
-            printf("31 - KORMA\t\tBocconcini di pollo con salsa alla frutta secca\n");
+            printf("25 - KORMA\t\tBocconcini di pollo con salsa alla frutta secca\n");
             printf("26 - BUTTER\t\tBocconcini di pollo con salsa al burro\n");
             printf("27 - TIKKA MASALA\tBocconcini di pollo al tandoor saltati con verdure e spezie\n");
             printf("28 - VINDALOO\t\tPollo con patate speziate piccanti\n\n");
