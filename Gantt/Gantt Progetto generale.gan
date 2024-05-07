@@ -1,13 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-04-23" view-index="0" gantt-divider-location="425" resource-divider-location="300" version="3.3.3307" locale="it_IT">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-04-23" view-index="0" gantt-divider-location="381" resource-divider-location="300" version="3.3.3307" locale="it_IT">
     <description/>
     <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="Nome" width="232" order="0"/>
-        <field id="tpd4" name="Data d'inizio" width="89" order="1"/>
-        <field id="tpd5" name="Data di fine" width="88" order="2"/>
+        <field id="tpd3" name="Nome" width="206" order="0"/>
+        <field id="tpd4" name="Data d'inizio" width="80" order="1"/>
+        <field id="tpd5" name="Data di fine" width="79" order="2"/>
         <field id="tpd15" name="Note" width="20" order="3"/>
-        <option id="taskLabelUp" value="name"/>
-        <option id="taskLabelDown" value=""/>
-        <option id="taskLabelLeft" value="advancement"/>
         <option id="filter.completedTasks" value="false"/>
         <option id="filter.dueTodayTasks" value="false"/>
         <option id="filter.overdueTasks" value="false"/>
@@ -84,8 +81,8 @@
             <task id="18" uid="c9cd79c0844943c88aabc5858fe00ba3" name="Test Feedback clienti" meeting="false" start="2024-05-09" duration="1" complete="0" expand="true"/>
         </task>
         <task id="3" uid="8bec6f46d31744488639915e99ae8ad7" name="Fase di test finale" meeting="false" start="2024-05-10" duration="1" complete="0" expand="true"/>
-        <task id="1" uid="a7eb79cd31ed4db4889c12f39670bdfc" name="Presentazione Progetto" meeting="false" start="2024-05-13" duration="6" complete="0" expand="true"/>
-        <task id="4" uid="3ed00114348e4af992c79c3d3552564f" name="Gestione del Progetto" meeting="false" start="2024-04-24" duration="19" complete="0" expand="true"/>
+        <task id="1" uid="a7eb79cd31ed4db4889c12f39670bdfc" name="Presentazione Progetto" meeting="false" start="2024-05-13" duration="14" complete="0" expand="true"/>
+        <task id="4" uid="3ed00114348e4af992c79c3d3552564f" name="Gestione del Progetto" meeting="false" start="2024-04-24" duration="27" complete="0" expand="true"/>
     </tasks>
     <resources>
         <resource id="0" name="Alessio Canessa" function="Default:1" contacts="" phone=""/>
