@@ -107,6 +107,28 @@ int main(int argc, char *argv[]){
                 printf("Errore nell'inserimento dei parametri\n");
             }
         }
+        if (strcmp(argv[1], "-menu") == 0){
+            // visualizziamo il menu
+            if(argc == 2){
+                char menu[100];
+                sprintf(menu, "%s/%s.csv", SALA, "menu");
+                printf("Il menu selezionato e': %s\n", menu);
+                visualizza_menu(menu);
+            } /*else if (argc == 3 && strcmp(argv[2], "-crea") == 0){
+                // creiamo il menu
+                crea_menu(SALA);
+            }*/ else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
+        }
+        // crea sala
+        /*if (strcmp(argv[1], "-crea_sala") == 0){
+            if(argc == 2){
+                crea_sala(SALA, 4);
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
+        }*/
     } 
     return 0;
 }
