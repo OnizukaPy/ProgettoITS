@@ -1,122 +1,77 @@
-#include "../lib/cJSON.h"
-#include "../lib/cJSON.c"
-#include "../lib/funzioni.h"
-#include "../lib/funzioni.c"
 #include <conio.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
+
+#define SALA "../sala"
+
+// definiamo la struttura portata
+typedef struct portata{
+    int codice;
+    char categoria[50];
+    char nome[50];
+    char descrizione[100];
+    float prezzo;
+} Portata;
 
 void Menu_Ristorante();
 void visualizza_menu(char* path);
 
 int main()
 {
-    Menu_Ristorante();
+    //Menu_Ristorante();
+    visualizza_menu("../sala/menu.csv");
 
     return 0;
 }
 
-// Funzione per visualizzare il menu del ristorante mediante il file json salvato nelpath: ..sala/menu.json
-void visualizza_menu(char *path){
-
-    // carichiamo il file json
-    cJSON *menu = carica_file_json(path);
-
-    // controlliamo se il file json e' stato caricato correttamente
-    if(menu == NULL){
-        printf("Errore nel caricamento del file json\n");
+// definizione della visualizzazione del menu con lettura da file csv
+void visualizza_menu(char* path){
+    // apriamo il file csv in lettura
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
         return;
     }
+    // salviamo le righe del file
+    char riga[100];
+    char *righe[100];
+    Portata portate[100];
+    int i = 0;
+    // leggiamo il file e salviamo le righe in un array di stringhe
+    while(fgets(riga, 100, file) != NULL){
+        righe[i] = strdup(riga);
+        i++;
+    }
 
-    // creiamo un ciclo che ci visualizza il menu del ristorante in base alla scelta dell'utente
-    while (true){
-        // visualizziamo il menu
-        printf("Menu del ristorante\n");
-        printf("1 - Antipasti\n");
-        printf("2 - Primi\n");
-        printf("3 - Secondi\n");
-        printf("4 - Contorni\n");
-        printf("5 - Dolci\n");
-        printf("0 - Esci\n");
-        printf("Inserisci il numero per visualizzare la sezione del menu\n");
+    // chiudiamo il file
+    fclose(file);
+    // stampiamo le righe del file
+    /*for(int j = 0; j < i; j++){
+        printf("%s\n", righe[j]);
+    } */
 
-        // variabile per la scelta dell'utente
-        char scelta;
-        do scelta = getch();
-        while(scelta < '0' || scelta > '5');
-
-        // se l'utente sceglie 0 usciamo dal ciclo
-        if(scelta == '0') break;
-
-        // visualizziamo la sezione del menu scelta dall'utente
-        switch(scelta){
-            case '1':
-                printf("Antipasti\n");
-                cJSON *antipasti = cJSON_GetObjectItem(menu, "Antipasti");
-                cJSON *piatti = cJSON_GetObjectItem(antipasti, "piatti");
-                cJSON *antipasto = NULL;
-                // stampiamo il prezzo della categoria antipasto espresso come intero
-                printf("Prezzo: %d\n", cJSON_GetObjectItem(antipasti, "prezzo")->valueint);
-                cJSON_ArrayForEach(antipasto, piatti){
-                    char *nome = cJSON_GetObjectItem(antipasto, "nome")->valuestring;
-                    char *descrizione = cJSON_GetObjectItem(antipasto, "descrizione")->valuestring;
-                    printf("%s - %s\n", nome, descrizione);
-                }
-                break;
-            case '2':
-                printf("Primi\n");
-                cJSON *primi = cJSON_GetObjectItem(menu, "Primi");
-                cJSON *piatti_primi = cJSON_GetObjectItem(primi, "piatti");
-                cJSON *primo = NULL;
-                // stampiamo il prezzo della categoria primo espresso come intero
-                printf("Prezzo: %d\n", cJSON_GetObjectItem(primi, "prezzo")->valueint);
-                cJSON_ArrayForEach(primo, piatti_primi){
-                    char *nome = cJSON_GetObjectItem(primo, "nome")->valuestring;
-                    char *descrizione = cJSON_GetObjectItem(primo, "descrizione")->valuestring;
-                    printf("%s - %s\n", nome, descrizione);
-                }
-                break;
-            case '3':
-                printf("Secondi\n");
-                cJSON *secondi = cJSON_GetObjectItem(menu, "Secondi");
-                cJSON *piatti_secondi = cJSON_GetObjectItem(secondi, "piatti");
-                cJSON *secondo = NULL;
-                // stampiamo il prezzo della categoria secondo espresso come intero
-                printf("Prezzo: %d\n", cJSON_GetObjectItem(secondi, "prezzo")->valueint);
-                cJSON_ArrayForEach(secondo, piatti_secondi){
-                    char *nome = cJSON_GetObjectItem(secondo, "nome")->valuestring;
-                    char *descrizione = cJSON_GetObjectItem(secondo, "descrizione")->valuestring;
-                    printf("%s - %s\n", nome, descrizione);
-                }
-                break;
-            case '4':
-                printf("Contorni\n");
-                cJSON *contorni = cJSON_GetObjectItem(menu, "Contorni");
-                cJSON *piatti_contorni = cJSON_GetObjectItem(contorni, "piatti");
-                cJSON *contorno = NULL;
-                // stampiamo il prezzo della categoria contorno espresso come intero
-                printf("Prezzo: %d\n", cJSON_GetObjectItem(contorni, "prezzo")->valueint);
-                cJSON_ArrayForEach(contorno, piatti_contorni){
-                    char *nome = cJSON_GetObjectItem(contorno, "nome")->valuestring;
-                    char *descrizione = cJSON_GetObjectItem(contorno, "descrizione")->valuestring;
-                    printf("%s - %s\n", nome, descrizione);
-                }
-                break;
-            case '5':
-                printf("Dolci\n");
-                cJSON *dolci = cJSON_GetObjectItem(menu, "Dolci");
-                cJSON *piatti_dolci = cJSON_GetObjectItem(dolci, "piatti");
-                cJSON *dolce = NULL;
-                // stampiamo il prezzo della categoria dolce espresso come intero
-                printf("Prezzo: %d\n", cJSON_GetObjectItem(dolci, "prezzo")->valueint);
-                cJSON_ArrayForEach(dolce, piatti_dolci){
-                    char *nome = cJSON_GetObjectItem(dolce, "nome")->valuestring;
-                    char *descrizione = cJSON_GetObjectItem(dolce, "descrizione")->valuestring;
-                    printf("%s - %s\n", nome, descrizione);
-                }
-                break;
+    // printiamo a video tutte le parole separate dalla virgola in ogni riga
+    for (int j = 0; j < i; j++){
+        char *parole[5];
+        char *token = strtok(righe[j], ",");
+        int k = 0;
+        while(token != NULL){
+            parole[k] = token;
+            //printf("%s\n", parole[k]);
+            token = strtok(NULL, ",");
+            k++;
         }
+        // salviamo le parole in una struttura
+        portate[j].codice = atoi(parole[0]);
+        strcpy(portate[j].categoria, parole[1]);
+        strcpy(portate[j].nome, parole[2]);
+        strcpy(portate[j].descrizione, parole[3]);
+        portate[j].prezzo = atof(parole[4]);
+
+        // stampiamo le parole
+        printf("%d) [%s] %s (%s) - %.2f\n", portate[j].codice, portate[j].categoria, portate[j].nome, portate[j].descrizione, portate[j].prezzo);       
     }
 }
 
@@ -129,10 +84,7 @@ void visualizza_menu(char *path){
 
 
 
-
-
-
-void Menu_Ristorante()
+/*void Menu_Ristorante()
 {
     printf("TAJ MAHAL - INDIAN CUISINE\n");
     printf("ORARI:\t12:00 - 15:00 / 18:30 - 22:30\n\n");
@@ -277,9 +229,9 @@ void Menu_Ristorante()
     }
     printf("\033[18A");
 
-    /* // Invito l'utente a terminare la funzione del menu
+    // Invito l'utente a terminare la funzione del menu
     printf("Premere un qualsiasi tasto per chiudere il menu.");
-    getch(); */
+    getch(); 
 
     //printf("\n");
-}
+}*/
