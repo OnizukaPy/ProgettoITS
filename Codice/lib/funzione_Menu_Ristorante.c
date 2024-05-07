@@ -115,7 +115,7 @@ void visualizza_menu(char* path){
     int primoCicloEseguito = 0;
 
     // Chiedo all'utente di inserire un numero per visualizzare il menu
-    for (; ;)
+    while (userInput != '0')
     {
         if (primoCicloEseguito == 0)
         {
@@ -128,10 +128,8 @@ void visualizza_menu(char* path){
             while (userInput < '0' || userInput > '9');
         }
 
-        if (userInput == '0') break;
-
         // Sposto il cursore sopra di 5 righe per sovrascrivere la sezione precedente del menu con una nuova
-        if (primoCicloEseguito == 1)
+        if (primoCicloEseguito == 1 && userInput != '0')
         {
             printf("\033[6A");
             for (int i = 0; i < 5; i++)
@@ -214,6 +212,10 @@ void visualizza_menu(char* path){
             printf("34 - JALEBI\t\tAnelli di pastella di farina fritti e poi immersi in sciroppo di zucchero con zafferano\n");
             printf("35 - RASGULLA\t\tMorbide palline di formaggio fresco cotte in uno sciroppo di zucchero profumato con acqua di rose\n");
             printf("36 - KULFI\t\tGelato indiano a base di latte condensato, panna, zucchero e cardamomo, con aggiunta di mandorle e pistacchi\n\n");
+            break;
+
+        case '0':
+            continue;
             break;
         }
 
