@@ -18,13 +18,16 @@ char *cifra(char *stringa, int chiave);                         // funzione per 
 char *decifra(char *stringa, int chiave);                       // funzione per decifrare una stringa
 
 // FUNZIONI EFFETTIVE LATO CLIENT
-void print_guida(char *path);                                     // funzione per stampare la guida
-bool status_server(char *temp_path);                                  // funzione per controllare lo stato del server
-cJSON crea_account(char *path_account);                           // funzione per creare un account
-void login(char *username, char *path_account, char *login_path);                   // funzione per effettuare il login
-void logout(char *username, char *path_account, char *login_path);                                    // funzione per effettuare il logout
-void visualizza_sala(char *data);                                      // funzione per la disposizione della sala
-void crea_sala(char *path_sala, int n_tavoli);                                      // funzione per creare una sala
+void print_guida(char *path);                                       // funzione per stampare la guida
+bool status_server(char *temp_path);                                // funzione per controllare lo stato del server
+cJSON crea_account(char *path_account);                             // funzione per creare un account
+void login(char *username, char *path_account, char *login_path);   // funzione per effettuare il login
+void logout(char *username, char *path_account, char *login_path);  // funzione per effettuare il logout
+void crea_sala(char *path_sala, int n_tavoli);                      // funzione per creare una sala
+void visualizza_sala(char *data);                                   // funzione per la disposizione della sala
+void crea_menu(char *path_menu);                                    // funzione per creare il menu  del ristorante
+void visualizza_menu(char *path_menu);                              // funzione per visualizzare il menu
+
 
 // FUNZIONI EFFETTIVE LATO SERVER
 void print_guida_server();                                        // funzione per stampare la guida

@@ -10,6 +10,7 @@
 #include <conio.h> 
 #include <ctype.h> 
 
+
 // definizioni delle costanti che saranno necessarire
 #define BUFFER_SIZE_JSON 1024                   // creiamo un buffer di 1024 caratteri per la gestione dei file json
 #define CHIAVE 3                                // definiamo la chiave per la cifratura
@@ -491,6 +492,156 @@ void visualizza_sala(char *data){
             printf("\n\n");
         }
     }
+}
+
+// funzione per creare il menu del ristorante
+void crea_menu(char *path_sala){
+
+    // creiamo un oggetto cJSON per contenere il menu
+    cJSON *menu = cJSON_CreateObject();
+
+    // creiamo un oggetto cJSON per contenere le categorie del menu come un array
+    cJSON *categorie = cJSON_CreateArray();
+
+    // inseriamo le categorie del menu
+    cJSON *antipasti = cJSON_CreateObject();
+    cJSON *primi = cJSON_CreateObject();
+    cJSON *secondi = cJSON_CreateObject();
+    cJSON *contorni = cJSON_CreateObject();
+    cJSON *dolci = cJSON_CreateObject();
+
+    // inseriamo i piatti per ogni categoria
+    cJSON *piatti_antipasti = cJSON_CreateArray();
+    cJSON *piatti_primi = cJSON_CreateArray();
+    cJSON *piatti_secondi = cJSON_CreateArray();
+    cJSON *piatti_contorni = cJSON_CreateArray();
+    cJSON *piatti_dolci = cJSON_CreateArray();
+
+    // inseriamo una serie di piatti con un ciclo for per ogni categoria
+    // ciclo per gli antipasti
+    for (int i = 0; i < 5; i++){
+        cJSON *piatto = cJSON_CreateObject();
+        // aggiungiamo una stringa per il nome e una stringa per la descrizione
+        cJSON_AddStringToObject(piatto, "nome", "Piatto");
+        // aggiungiamo una stringa per la descrizione del piatto
+        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
+        // aggiungiamo un codice int per il piatto
+        cJSON_AddNumberToObject(piatto, "codice", i);
+        // aggiungiamo il prezzo come double
+        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
+        // aggiungiamo il piatto all'array
+        cJSON_AddItemToArray(piatti_antipasti, piatto);
+    }
+    // aggiungiamo gli antipasti al menu
+    cJSON_AddItemToObject(antipasti, "piatti", piatti_antipasti);
+    cJSON_AddItemToArray(categorie, antipasti);
+
+    // ciclo per i primi
+    for (int i = 0; i < 5; i++){
+        cJSON *piatto = cJSON_CreateObject();
+        cJSON_AddStringToObject(piatto, "nome", "Piatto");
+        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
+        cJSON_AddNumberToObject(piatto, "codice", i);
+        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
+        cJSON_AddItemToArray(piatti_primi, piatto);
+    }
+    // aggiungiamo l'oggetto al menu
+    cJSON_AddItemToObject(primi, "piatti", piatti_primi);
+    cJSON_AddItemToArray(categorie, primi);
+
+    // ciclo per i secondi
+    for (int i = 0; i < 5; i++){
+        cJSON *piatto = cJSON_CreateObject();
+        cJSON_AddStringToObject(piatto, "nome", "Piatto");
+        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
+        cJSON_AddNumberToObject(piatto, "codice", i);
+        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
+        cJSON_AddItemToArray(piatti_secondi, piatto);
+    }
+    // aggiungiamo l'oggetto al menu
+    cJSON_AddItemToObject(secondi, "piatti", piatti_secondi);
+    cJSON_AddItemToArray(categorie, secondi);
+
+
+    // ciclo per i contorni
+    for (int i = 0; i < 5; i++){
+        cJSON *piatto = cJSON_CreateObject();
+        cJSON_AddStringToObject(piatto, "nome", "Piatto");
+        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
+        cJSON_AddNumberToObject(piatto, "codice", i);
+        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
+        cJSON_AddItemToArray(piatti_contorni, piatto);
+    }
+    // aggiungiamo l'oggetto al menu
+    cJSON_AddItemToObject(contorni, "piatti", piatti_contorni);
+    cJSON_AddItemToArray(categorie, contorni);
+
+    // ciclo per i dolci
+    for (int i = 0; i < 5; i++){
+        cJSON *piatto = cJSON_CreateObject();
+        cJSON_AddStringToObject(piatto, "nome", "Piatto");
+        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
+        cJSON_AddNumberToObject(piatto, "codice", i);
+        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
+        cJSON_AddItemToArray(piatti_dolci, piatto);
+    }
+    // aggiungiamo l'oggetto al menu
+    cJSON_AddItemToObject(dolci, "piatti", piatti_dolci);
+    cJSON_AddItemToArray(categorie, dolci);
+    cJSON_AddItemToObject(menu, "Categorie", categorie);
+
+    // salviamo il file json con il menu
+    char save_path[50];
+    sprintf(save_path, "%s/menu_template.json", path_sala);        // la funzione sprintf permette di concatenare stringhe
+    salva_file_json(menu, save_path);
+}
+
+// visualizza il menu
+// https://stdin.top/posts/csv-in-c/
+void visualizza_menu(char *path){
+
+    // creiamo una struttura piatto
+    typedef struct piatto{
+        int codice;
+        char categoria[50];
+        char nome[50];
+        char descrizione[100];
+        double prezzo;
+    }piatto;
+
+    // leggiamo il file txt
+    FILE *fp;
+    fp = fopen(path,"r");
+
+    // salviamo ogni riga del file in un array di stringhe
+    char row[100][1000];
+    int i = 0;
+    while(fgets(row[i], 1000, fp)){
+        row[i][strlen(row[i])] = '\0';
+        i++;
+    }
+
+    // printiamo il contenuto della matrice
+    for(int j = 0; j < i; j++){
+        printf("%s\n", row[j]);
+    }
+
+    
+
+/*
+
+        token = strtok(row, ",");
+
+        
+
+        while(token != NULL)
+        {
+            printf("Token: %s\n", token);
+            token = strtok(NULL, ",");
+        }
+
+    }*/
+    
 }
 
 // FUNZIONI EFFETTIVE LATO SERVER
