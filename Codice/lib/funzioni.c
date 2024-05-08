@@ -10,11 +10,12 @@
 #include <conio.h> 
 #include <ctype.h> 
 
-
 // definizioni delle costanti che saranno necessarire
 #define BUFFER_SIZE_JSON 1024                   // creiamo un buffer di 1024 caratteri per la gestione dei file json
 #define CHIAVE 3                                // definiamo la chiave per la cifratura
 #define MAX 50                                  // definiamo la lunghezza massima di una stringa   
+#define MAX_PORTATE 100                         // definiamo il numero massimo di portate
+#define MAX_LUNG_PORTATA 1000                   // definiamo la lunghezza massima di una portata
 // funzioni propedeutiche
 
 // funzioni per la gestione dei file json
@@ -58,6 +59,24 @@ void svuota_cartella(char *path){
     }
     // chiudiamo la cartella
     closedir(dir);
+}
+
+// funzione per contare le righe di un file
+int conta_righe(char *path){
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return 0;
+    }
+    // salviamo le righe del file
+    char riga[100];
+    int i = 0;
+    // leggiamo il file e salviamo le righe in un array di stringhe
+    while(fgets(riga, 100, file) != NULL){
+        i++;
+    }
+
+    return i;
 }
 
 
@@ -596,52 +615,62 @@ void crea_menu(char *path_sala){
     salva_file_json(menu, save_path);
 }
 
-// visualizza il menu
-// https://stdin.top/posts/csv-in-c/
-void visualizza_menu(char *path){
+// funzione per caricare il menu del ristorante
+Portata *carica_menu(char *path){
 
-    // creiamo una struttura piatto
-    typedef struct piatto{
-        int codice;
-        char categoria[50];
-        char nome[50];
-        char descrizione[100];
-        double prezzo;
-    }piatto;
-
-    // leggiamo il file txt
-    FILE *fp;
-    fp = fopen(path,"r");
-
-    // salviamo ogni riga del file in un array di stringhe
-    char row[100][1000];
+    // apriamo il file csv in lettura
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return 0;
+    }
+    // salviamo le righe del file
+    char riga[MAX_LUNG_PORTATA];
+    char *righe[MAX_PORTATE];
     int i = 0;
-    while(fgets(row[i], 1000, fp)){
-        row[i][strlen(row[i])] = '\0';
+    // leggiamo il file e salviamo le righe in un array di stringhe
+    while(fgets(riga, 100, file) != NULL){
+        righe[i] = strdup(riga);
         i++;
     }
+    // creiamo un array di strutture Portata di grandezza pari a i volte la grandezza di Portata
+    Portata *portate = malloc(i * sizeof(Portata));
 
-    // printiamo il contenuto della matrice
-    for(int j = 0; j < i; j++){
-        printf("%s\n", row[j]);
-    }
-
-    
-
-/*
-
-        token = strtok(row, ",");
-
-        
-
-        while(token != NULL)
-        {
-            printf("Token: %s\n", token);
+    // per ogni riga, dividiamo le parole separate dalla virgola
+    for (int j = 0; j < i; j++){
+        char *parole[5];
+        char *token = strtok(righe[j], ",");
+        int k = 0;
+        while(token != NULL){
+            parole[k] = token;
+            //printf("%s\n", parole[k]);
             token = strtok(NULL, ",");
+            k++;
         }
+        // salviamo le parole in una struttura
+        portate[j].codice = atoi(parole[0]);
+        strcpy(portate[j].categoria, parole[1]);
+        strcpy(portate[j].nome, parole[2]);
+        strcpy(portate[j].descrizione, parole[3]);
+        portate[j].prezzo = atof(parole[4]);
+    }
+    // ritorniamo l'array di strutture Portata
+    return portate;
+}
 
-    }*/
+// definizione della visualizzazione del menu con lettura da file csv
+// https://stdin.top/posts/csv-in-c/
+void visualizza_menu(char* path){
+    // apriamo il file csv in lettura
     
+    int n_portate = conta_righe(path);
+    Portata *portate = carica_menu(path);
+
+    // printiamo a video tutte le parole separate dalla virgola in ogni riga
+    for (int i = 0; i < n_portate; i++){
+        // stampiamo le parole
+        printf("%d) [%s] %s (%s) - %.2f\n", portate[i].codice, portate[i].categoria, portate[i].nome, portate[i].descrizione, portate[i].prezzo);       
+    }
 }
 
 // FUNZIONI EFFETTIVE LATO SERVER

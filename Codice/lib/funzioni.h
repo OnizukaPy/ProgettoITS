@@ -3,6 +3,20 @@
 #include <dirent.h>  
 #include <stdbool.h>
 
+// STRUTTURE
+// definiamo la struttura portata
+#ifndef FUNZIONI_H
+#define FUNZIONI_H
+
+typedef struct Portata{
+    int codice;
+    char categoria[50];
+    char nome[50];
+    char descrizione[100];
+    float prezzo;
+} Portata;
+
+#endif
 // FUNZIONI PROPEDEUTICHE
 
 // funzioni per la gestione dei file json
@@ -11,6 +25,7 @@ cJSON *carica_file_json(char *nome_file);               // funzione per caricare
 
 // funzioni per la gestione dei file
 void svuota_cartella(char *path);                       // funzione per svuotare una cartella
+int conta_righe(char *path);                            // funzione per contare le righe di un file
 
 // Gestione password, cifratura e decifratura
 char *get_pass(char *pword, int size);                          // funzione per ottenere la password copeerta da asterischi
@@ -26,6 +41,7 @@ void logout(char *username, char *path_account, char *login_path);  // funzione 
 void crea_sala(char *path_sala, int n_tavoli);                      // funzione per creare una sala
 void visualizza_sala(char *data);                                   // funzione per la disposizione della sala
 void crea_menu(char *path_menu);                                    // funzione per creare il menu  del ristorante
+Portata *carica_menu(char *path);                                   // funzione per caricare il menu del ristorante
 void visualizza_menu(char *path_menu);                              // funzione per visualizzare il menu
 
 

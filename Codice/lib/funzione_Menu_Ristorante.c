@@ -3,11 +3,10 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-
 #define SALA "../sala"
 
 // definiamo la struttura portata
-typedef struct portata{
+typedef struct Portata{
     int codice;
     char categoria[50];
     char nome[50];
@@ -17,6 +16,8 @@ typedef struct portata{
 
 void Menu_Ristorante();
 void visualizza_menu(char* path);
+Portata *carica_menu(char *path);
+int conta_righe(char *path);
 
 int main()
 {
@@ -29,30 +30,38 @@ int main()
 // definizione della visualizzazione del menu con lettura da file csv
 void visualizza_menu(char* path){
     // apriamo il file csv in lettura
+    
+    int n_portate = conta_righe(path);
+    Portata *portate = carica_menu(path);
+
+    // printiamo a video tutte le parole separate dalla virgola in ogni riga
+    for (int i = 0; i < n_portate; i++){
+        // stampiamo le parole
+        printf("%d) [%s] %s (%s) - %.2f\n", portate[i].codice, portate[i].categoria, portate[i].nome, portate[i].descrizione, portate[i].prezzo);       
+    }
+}
+
+Portata *carica_menu(char *path){
+// apriamo il file csv in lettura
     FILE *file = fopen(path, "r");
     if(file == NULL){
         printf("Errore nell'apertura del file\n");
-        return;
+        return 0;
     }
     // salviamo le righe del file
     char riga[100];
     char *righe[100];
-    Portata portate[100];
+    
     int i = 0;
     // leggiamo il file e salviamo le righe in un array di stringhe
     while(fgets(riga, 100, file) != NULL){
         righe[i] = strdup(riga);
         i++;
     }
+    // creiamo un array di strutture Portata di grandezza pari a i volte la grandezza di Portata
+    Portata *portate = malloc(i * sizeof(Portata));
 
-    // chiudiamo il file
-    fclose(file);
-    // stampiamo le righe del file
-    /*for(int j = 0; j < i; j++){
-        printf("%s\n", righe[j]);
-    } */
-
-    // printiamo a video tutte le parole separate dalla virgola in ogni riga
+    // per ogni riga, dividiamo le parole separate dalla virgola
     for (int j = 0; j < i; j++){
         char *parole[5];
         char *token = strtok(righe[j], ",");
@@ -69,12 +78,26 @@ void visualizza_menu(char* path){
         strcpy(portate[j].nome, parole[2]);
         strcpy(portate[j].descrizione, parole[3]);
         portate[j].prezzo = atof(parole[4]);
-
-        // stampiamo le parole
-        printf("%d) [%s] %s (%s) - %.2f\n", portate[j].codice, portate[j].categoria, portate[j].nome, portate[j].descrizione, portate[j].prezzo);       
     }
+
+    return portate;
 }
 
+int conta_righe(char *path){
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return 0;
+    }
+    // salviamo le righe del file
+    char riga[100];
+    int i = 0;
+    // leggiamo il file e salviamo le righe in un array di stringhe
+    while(fgets(riga, 100, file) != NULL){
+        i++;
+    }
+    return i;
+}
 
 
 
