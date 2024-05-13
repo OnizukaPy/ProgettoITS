@@ -20,4 +20,6 @@
 #    - Visualizzazione della sala ad una data:
 #       PARAM:  -sala,      OPTION: "dd/mm/aaaa"
 #
+#    - Prenotazione di un tavolo: (la data va espressa in dd/mm/aaaa)
+#       PARAM:  -p_tavolo,      OPTIONS: "username" "data"
 #
