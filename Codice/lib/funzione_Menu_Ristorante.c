@@ -1,16 +1,113 @@
-#include <stdio.h>
 #include <conio.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
+#define SALA "../sala"
+
+// definiamo la struttura portata
+typedef struct Portata{
+    int codice;
+    char categoria[50];
+    char nome[50];
+    char descrizione[100];
+    float prezzo;
+} Portata;
 
 void Menu_Ristorante();
+void visualizza_menu(char* path);
+Portata *carica_menu(char *path);
+int conta_righe(char *path);
 
 int main()
 {
-    Menu_Ristorante();
+    //Menu_Ristorante();
+    visualizza_menu("../sala/menu.csv");
 
     return 0;
 }
 
-void Menu_Ristorante()
+// definizione della visualizzazione del menu con lettura da file csv
+void visualizza_menu(char* path){
+    // apriamo il file csv in lettura
+    
+    int n_portate = conta_righe(path);
+    Portata *portate = carica_menu(path);
+
+    // printiamo a video tutte le parole separate dalla virgola in ogni riga
+    for (int i = 0; i < n_portate; i++){
+        // stampiamo le parole
+        printf("%d) [%s] %s (%s) - %.2f\n", portate[i].codice, portate[i].categoria, portate[i].nome, portate[i].descrizione, portate[i].prezzo);       
+    }
+}
+
+Portata *carica_menu(char *path){
+// apriamo il file csv in lettura
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return 0;
+    }
+    // salviamo le righe del file
+    char riga[100];
+    char *righe[100];
+    
+    int i = 0;
+    // leggiamo il file e salviamo le righe in un array di stringhe
+    while(fgets(riga, 100, file) != NULL){
+        righe[i] = strdup(riga);
+        i++;
+    }
+    // creiamo un array di strutture Portata di grandezza pari a i volte la grandezza di Portata
+    Portata *portate = malloc(i * sizeof(Portata));
+
+    // per ogni riga, dividiamo le parole separate dalla virgola
+    for (int j = 0; j < i; j++){
+        char *parole[5];
+        char *token = strtok(righe[j], ",");
+        int k = 0;
+        while(token != NULL){
+            parole[k] = token;
+            //printf("%s\n", parole[k]);
+            token = strtok(NULL, ",");
+            k++;
+        }
+        // salviamo le parole in una struttura
+        portate[j].codice = atoi(parole[0]);
+        strcpy(portate[j].categoria, parole[1]);
+        strcpy(portate[j].nome, parole[2]);
+        strcpy(portate[j].descrizione, parole[3]);
+        portate[j].prezzo = atof(parole[4]);
+    }
+
+    return portate;
+}
+
+int conta_righe(char *path){
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return 0;
+    }
+    // salviamo le righe del file
+    char riga[100];
+    int i = 0;
+    // leggiamo il file e salviamo le righe in un array di stringhe
+    while(fgets(riga, 100, file) != NULL){
+        i++;
+    }
+    return i;
+}
+
+
+
+
+
+
+
+
+
+/*void Menu_Ristorante()
 {
     printf("TAJ MAHAL - INDIAN CUISINE\n");
     printf("ORARI:\t12:00 - 15:00 / 18:30 - 22:30\n\n");
@@ -41,7 +138,7 @@ void Menu_Ristorante()
     int primoCicloEseguito = 0;
 
     // Chiedo all'utente di inserire un numero per visualizzare il menu
-    for (; ;)
+    while (userInput != '0')
     {
         if (primoCicloEseguito == 0)
         {
@@ -54,10 +151,8 @@ void Menu_Ristorante()
             while (userInput < '0' || userInput > '9');
         }
 
-        if (userInput == '0') break;
-
         // Sposto il cursore sopra di 5 righe per sovrascrivere la sezione precedente del menu con una nuova
-        if (primoCicloEseguito == 1)
+        if (primoCicloEseguito == 1 && userInput != '0')
         {
             printf("\033[6A");
             for (int i = 0; i < 5; i++)
@@ -120,7 +215,7 @@ void Menu_Ristorante()
 
         case '7':
             printf("POLLO\t\t\t€ 10.00\n");
-            printf("31 - KORMA\t\tBocconcini di pollo con salsa alla frutta secca\n");
+            printf("25 - KORMA\t\tBocconcini di pollo con salsa alla frutta secca\n");
             printf("26 - BUTTER\t\tBocconcini di pollo con salsa al burro\n");
             printf("27 - TIKKA MASALA\tBocconcini di pollo al tandoor saltati con verdure e spezie\n");
             printf("28 - VINDALOO\t\tPollo con patate speziate piccanti\n\n");
@@ -141,6 +236,10 @@ void Menu_Ristorante()
             printf("35 - RASGULLA\t\tMorbide palline di formaggio fresco cotte in uno sciroppo di zucchero profumato con acqua di rose\n");
             printf("36 - KULFI\t\tGelato indiano a base di latte condensato, panna, zucchero e cardamomo, con aggiunta di mandorle e pistacchi\n\n");
             break;
+
+        case '0':
+            continue;
+            break;
         }
 
         if (primoCicloEseguito == 0) primoCicloEseguito = 1;
@@ -155,9 +254,9 @@ void Menu_Ristorante()
     }
     printf("\033[18A");
 
-    /* // Invito l'utente a terminare la funzione del menu
+    // Invito l'utente a terminare la funzione del menu
     printf("Premere un qualsiasi tasto per chiudere il menu.");
-    getch(); */
+    getch(); 
 
     //printf("\n");
-}
+}*/

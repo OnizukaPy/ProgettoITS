@@ -1,0 +1,31 @@
+1,Antipasto,VEGETABLE SAMOSA,Paste triangolari ripiene di verdure,5.00
+2,Antipasto,ONION BAJI,Frittelle di cipolla con farina di ceci,5.00
+3,Antipasto,VEGETABLE PAKORA,Frittelle miste di verdure con farina di ceci,5.00
+4,Antipasto,VEGETABLE CUTLET,Polpettine di verdure miste,5.00
+5,Antipasto,CHICKEN PAKORA,Frittelle di pollo con farina di ceci,5.00
+6,Antipasto,CHICKEN CUTLET,Polpettine di pollo,5.00
+7,Antipasto,CHICKEN SAMOSA,Paste triangolari ripiene di pollo,5.00
+8,Antipasto,CHICKEN TIKKA,Pollo marinato con spezie e cotto al forno,5.00
+9,Antipasto,LAMB SAMOSA,Paste triangolari ripiene di agnello,5.00
+10,Antipasto,SHRIMP PAKORA,Frittelle di gamberi con farina di ceci,5.00
+11,Primo,DRY FRUIT RICE,Riso basmati con frutta secca,7.00
+12,Primo,CHICKEN BIRYANI,Riso basmati con bocconcini di pollo e spezie,7.00
+13,Primo,LAMB BIRYANI,Riso basmati con bocconcini di agnello e spezie,7.00
+14,Primo,VEGETABLE BIRYANI,Riso basmati con verdure miste e spezie,7.00
+15,Primo,SHRIMP BIRYANI,Riso basmati con gamberi e spezie,7.00
+16,Secondo,CHICKEN CURRY,Pollo in salsa di pomodoro e spezie,7.00
+17,Secondo,LAMB CURRY,Agnello in salsa di pomodoro e spezie,7.00
+18,Secondo,VEGETABLE CURRY,Verdure miste in salsa di pomodoro e spezie,7.00
+19,Secondo,SHRIMP CURRY,Gamberi in salsa di pomodoro e spezie,7.00
+20,Secondo,CHICKEN KORMA,Pollo in salsa di mandorle e spezie,7.00
+21,Contorno,RAITA,Yogurt con cetrioli e spezie,3.00
+22,Contorno,CHUTNEY,Condimento di frutta e spezie,3.00
+23,Contorno,PLAN NAAN,Pane indiano con burro,3.00
+24,Dolce,GULAB JAMUN,Palline di latte fritte in sciroppo di zucchero,5.00
+25,Dolce,KHEER,Riso dolce con latte e frutta secca,5.00
+26,Dolce,RASMALAI,Palline di latte in salsa di zucchero e cardamomo,5.00
+27,Bevande,COCA COLA,0.33,2.00
+28,Bevande,SPRITE,0.33,2.00
+29,Bevande,FANTA,0.33,2.00
+30,Bevande,ACQUA MINERALE,0.50,2.00
+31,Bevande,ACQUA GASSATA,0.50,2.00
