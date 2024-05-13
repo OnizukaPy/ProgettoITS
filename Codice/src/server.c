@@ -13,6 +13,7 @@
 #define TEMP_LOGIN    "../temp/login.json"              // definiamo il file temporaneo di scambio informazioni
 #define TEMP_LOGOUT   "../temp/logout.json"             // definiamo il file temporaneo di scambio informazioni
 #define TEMP_STATUS   "../temp/status_server.json"      // definiamo il file temporaneo di scambio informazioni
+#define TEMP_PRENOTAZIONE "../temp/prenotazione.json"   // definiamo il file temporaneo di scambio informazioni
 #define SALA          "../sala"                         // definiamo la cartella dove saranno salvati i file della sala
 
 // protitipi delle funzioni che saranno utilizzate nel main
@@ -30,10 +31,13 @@ int main(int argc, char *argv[]){
         if(mkdir(ACCOUNT) == -1){
             printf("Errore nella creazione della cartella account\n");
             return 0;
-        } else {
-            printf("La cartella account e' stata creata con successo\n");
-        }
+        } 
+    } else {
+            printf("La cartella account esiste\n");
+            //Fare un controllo per sloggare tutti gli utenti presenti nella cartella e sono loggati
+            controlla_account(ACCOUNT, "logout_all");
     }
+
     if(access(TEMP, F_OK) == -1){
         printf("La cartella temp non esiste\n");
         // creiamo la cartella temp
@@ -87,7 +91,7 @@ int main(int argc, char *argv[]){
                 }
 
                 // controlla i nuovi account
-                controlla_account(ACCOUNT);
+                controlla_account(ACCOUNT, "approva");
 
                 // controlla i login se c'è un file di login in attesa
                 if(access(TEMP_LOGIN, F_OK) != -1){
@@ -97,6 +101,11 @@ int main(int argc, char *argv[]){
                 // controlla i logout se c'è un file di logout in attesa
                 if(access(TEMP_LOGOUT, F_OK) != -1){
                     logout_check(TEMP_LOGOUT, ACCOUNT);
+                }
+
+                // controlla le prenotazioni se c'è un file di prenotazione in attesa
+                if(access(TEMP_PRENOTAZIONE, F_OK) != -1){
+                    conferma_prenotazione(TEMP, SALA);
                 }
 
                 // tempo di attesa
