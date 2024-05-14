@@ -107,6 +107,29 @@ bool se_esiste(char *path, char *nome_file, char* tipo_file){
     }
 }
 
+// funzione per caricare le prenotazioni
+Prenotazione carica_prenotazioni(char *riga){
+        
+    Prenotazione static pren;
+    char *parole[5];
+    char *token = strtok(riga, ",");
+    int k = 0;
+    while(token != NULL){
+        parole[k] = token;
+        token = strtok(NULL, ",");
+        k++;
+    }
+    // salviamo le parole in una struttura convertendo i numeri in interi
+    pren.codice = atoi(parole[0]);
+    strcpy(pren.username, parole[1]);
+    strcpy(pren.data, parole[2]);
+    pren.tavolo = atoi(parole[3]);
+    pren.posti = atoi(parole[4]);
+    // se il codice della prenotazione è uguale a quello passato come argomento allora eliminiamo la prenotazione
+
+    return pren;
+}
+
 
 
 // Gestione password, cifratura e decifratura
@@ -288,6 +311,54 @@ cJSON crea_account(char *path_account){
 
     // ritorniamo lo username
     return *account;
+}
+
+// funzione per visualizzare gli account
+void visualizza_account(char *path_account, char* path_sala){
+    
+        // apriamo il file json dell'accout in lettura
+        cJSON *account = carica_file_json(path_account);
+
+        // visualizziamo i dati dell'account
+        printf("-----------------------------\n");
+        printf("Dati dell'account: \n");
+        printf("Nome: %s\n", cJSON_GetObjectItem(account, "nome")->valuestring);
+        printf("Cognome: %s\n", cJSON_GetObjectItem(account, "cognome")->valuestring);
+        printf("Username: %s\n", cJSON_GetObjectItem(account, "username")->valuestring);
+        printf("Email: %s\n", cJSON_GetObjectItem(account, "email")->valuestring);
+        // al posto della password visualizziamo una stringa di asterischi
+        printf("Password: ");
+        for (int i = 0; i < strlen(cJSON_GetObjectItem(account, "password")->valuestring); i++){
+            printf("*");
+        }
+        printf("\n");
+        // visualizziamo lo status dell'account
+        if(cJSON_IsTrue(cJSON_GetObjectItem(account, "status"))){
+            printf("Account approvato\n");
+        } else {
+            printf("Account non approvato\n");
+        }
+        printf("-----------------------------\n");
+        // visualizziamo le prenotazioni effettuate
+        printf("Prenotazioni effettuate: \n\n");
+
+        // leggiamo il file delle prenotazioni.csv nella cartella path_sala
+        char save_path[50];
+        sprintf(save_path, "%s/prenotazioni.csv", path_sala);
+        FILE *file = fopen(save_path, "r");
+        if(file == NULL){
+            printf("Errore nell'apertura del file\n");
+            return;
+        } else {
+            // leggiamo il file e lo visualizziamo
+            char riga[MAX_LUNG_PORTATA];
+            while(fgets(riga, MAX_PORTATE, file) != NULL){
+                if (strstr(riga, cJSON_GetObjectItem(account, "username")->valuestring) != NULL){
+                    printf("%s", riga);
+                }
+            }
+        }
+        printf("-----------------------------\n");
 }
 
 // funzione per effettuare il login
@@ -488,10 +559,10 @@ void visualizza_sala(char *data){
             if (cJSON_IsTrue(cJSON_GetObjectItem(tavolo, "occupato"))){
                 printf("Il tavolo %d e' occupato\n", i + 1);
             } else {
-                printf("Il tavolo %d e' libero\n", i + 1);
+                printf("Il tavolo %d e' libero, e i posti disponibili sono: %d\n", i + 1, cJSON_GetObjectItem(tavolo, "posti_liberi")->valueint);
                 // printiamo i posti liberi e occupati
-                printf("Posti liberi: %d", cJSON_GetObjectItem(tavolo, "posti_liberi")->valueint);
-                printf(" Posti occupati: %d\n", cJSON_GetObjectItem(tavolo, "posti_occupati")->valueint);
+                //printf(" Posti liberi: %d", cJSON_GetObjectItem(tavolo, "posti_liberi")->valueint);
+                //printf(" Posti occupati: %d\n", cJSON_GetObjectItem(tavolo, "posti_occupati")->valueint);
             }
         }
 
@@ -556,106 +627,21 @@ void visualizza_sala(char *data){
     }
 }
 
-// funzione per creare il menu del ristorante
-void crea_menu(char *path_sala){
+// funzione per controllare lo status della sala
+int status_sala(cJSON *sala){
 
-    // creiamo un oggetto cJSON per contenere il menu
-    cJSON *menu = cJSON_CreateObject();
+    // facciamo un ciclo per chiedere che tavoli vuole prenotare e per quanti posti
+    int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
 
-    // creiamo un oggetto cJSON per contenere le categorie del menu come un array
-    cJSON *categorie = cJSON_CreateArray();
-
-    // inseriamo le categorie del menu
-    cJSON *antipasti = cJSON_CreateObject();
-    cJSON *primi = cJSON_CreateObject();
-    cJSON *secondi = cJSON_CreateObject();
-    cJSON *contorni = cJSON_CreateObject();
-    cJSON *dolci = cJSON_CreateObject();
-
-    // inseriamo i piatti per ogni categoria
-    cJSON *piatti_antipasti = cJSON_CreateArray();
-    cJSON *piatti_primi = cJSON_CreateArray();
-    cJSON *piatti_secondi = cJSON_CreateArray();
-    cJSON *piatti_contorni = cJSON_CreateArray();
-    cJSON *piatti_dolci = cJSON_CreateArray();
-
-    // inseriamo una serie di piatti con un ciclo for per ogni categoria
-    // ciclo per gli antipasti
-    for (int i = 0; i < 5; i++){
-        cJSON *piatto = cJSON_CreateObject();
-        // aggiungiamo una stringa per il nome e una stringa per la descrizione
-        cJSON_AddStringToObject(piatto, "nome", "Piatto");
-        // aggiungiamo una stringa per la descrizione del piatto
-        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
-        // aggiungiamo un codice int per il piatto
-        cJSON_AddNumberToObject(piatto, "codice", i);
-        // aggiungiamo il prezzo come double
-        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
-        // aggiungiamo il piatto all'array
-        cJSON_AddItemToArray(piatti_antipasti, piatto);
+    // contiamo quanti tavoli sono liberi
+    int tavoli_liberi = 0;
+    for (int i = 0; i < n_tavoli; i++){
+        cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i);
+        if(cJSON_IsFalse(cJSON_GetObjectItem(tavolo, "occupato"))){
+            tavoli_liberi++;
+        }
     }
-    // aggiungiamo gli antipasti al menu
-    cJSON_AddItemToObject(antipasti, "piatti", piatti_antipasti);
-    cJSON_AddItemToArray(categorie, antipasti);
-
-    // ciclo per i primi
-    for (int i = 0; i < 5; i++){
-        cJSON *piatto = cJSON_CreateObject();
-        cJSON_AddStringToObject(piatto, "nome", "Piatto");
-        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
-        cJSON_AddNumberToObject(piatto, "codice", i);
-        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
-        cJSON_AddItemToArray(piatti_primi, piatto);
-    }
-    // aggiungiamo l'oggetto al menu
-    cJSON_AddItemToObject(primi, "piatti", piatti_primi);
-    cJSON_AddItemToArray(categorie, primi);
-
-    // ciclo per i secondi
-    for (int i = 0; i < 5; i++){
-        cJSON *piatto = cJSON_CreateObject();
-        cJSON_AddStringToObject(piatto, "nome", "Piatto");
-        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
-        cJSON_AddNumberToObject(piatto, "codice", i);
-        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
-        cJSON_AddItemToArray(piatti_secondi, piatto);
-    }
-    // aggiungiamo l'oggetto al menu
-    cJSON_AddItemToObject(secondi, "piatti", piatti_secondi);
-    cJSON_AddItemToArray(categorie, secondi);
-
-
-    // ciclo per i contorni
-    for (int i = 0; i < 5; i++){
-        cJSON *piatto = cJSON_CreateObject();
-        cJSON_AddStringToObject(piatto, "nome", "Piatto");
-        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
-        cJSON_AddNumberToObject(piatto, "codice", i);
-        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
-        cJSON_AddItemToArray(piatti_contorni, piatto);
-    }
-    // aggiungiamo l'oggetto al menu
-    cJSON_AddItemToObject(contorni, "piatti", piatti_contorni);
-    cJSON_AddItemToArray(categorie, contorni);
-
-    // ciclo per i dolci
-    for (int i = 0; i < 5; i++){
-        cJSON *piatto = cJSON_CreateObject();
-        cJSON_AddStringToObject(piatto, "nome", "Piatto");
-        cJSON_AddStringToObject(piatto, "descrizione", "Descrizione del piatto");
-        cJSON_AddNumberToObject(piatto, "codice", i);
-        cJSON_AddNumberToObject(piatto, "prezzo", 10.0);
-        cJSON_AddItemToArray(piatti_dolci, piatto);
-    }
-    // aggiungiamo l'oggetto al menu
-    cJSON_AddItemToObject(dolci, "piatti", piatti_dolci);
-    cJSON_AddItemToArray(categorie, dolci);
-    cJSON_AddItemToObject(menu, "Categorie", categorie);
-
-    // salviamo il file json con il menu
-    char save_path[50];
-    sprintf(save_path, "%s/menu_template.json", path_sala);        // la funzione sprintf permette di concatenare stringhe
-    salva_file_json(menu, save_path);
+    return tavoli_liberi;
 }
 
 // funzione per caricare il menu del ristorante
@@ -719,115 +705,161 @@ void visualizza_menu(char* path){
 // funzione per prenotare un tavolo
 void prenota_tavolo(char *username, char *data, cJSON* sala, char *path_temp){
     
-    // facciamo un ciclo per chiedere che tavoli vuole prenotare e per quanti posti
-    int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
-
     // contiamo quanti tavoli sono liberi
-    int tavoli_liberi = 0;
-    for (int i = 0; i < n_tavoli; i++){
-        cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i);
-        if(cJSON_IsFalse(cJSON_GetObjectItem(tavolo, "occupato"))){
-            tavoli_liberi++;
-        }
-    }
-
+    int tavoli_liberi = status_sala(sala);
+    
+    // controlliamo se non ci sono tavoli liberi e usciamo dalla funzione
     printf("Ci sono %d tavoli liberi\n", tavoli_liberi);
-    /* int *tavoli_prenotati = malloc(n_tavoli * sizeof(int));
-    int *posti_prenotati = malloc(n_tavoli * sizeof(int)); */
+    if(tavoli_liberi == 0){
+        printf("Non ci sono tavoli liberi per questa data.\n");
+    } else {
 
-    /* // creiamo un array json per salvare i tavoli prenotati e i posti prenotati
-    cJSON *tavoli_prenotati = cJSON_CreateArray();
-    cJSON *posti_prenotati = cJSON_CreateArray(); */
-
-    do{
-        int n_posti;
-        int tavolo;
-        printf("Che tavolo vuoi prenotare: ");
-        scanf("%d", &tavolo);
-        // controlliamo che il tavolo sia libero
-        cJSON *tav = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), tavolo - 1);
-        if(cJSON_IsTrue(cJSON_GetObjectItem(tav, "occupato"))){
-            printf("Il tavolo e' occupato\n");
-        } else {
-        // totale di posti del tavolo
-            printf("Il tavolo e' libero\n");
-            int posti_liberi = cJSON_GetObjectItem(tav, "posti_liberi")->valueint;
-            int posti_occupati = cJSON_GetObjectItem(tav, "posti_occupati")->valueint;
-            printf("Il tavolo ha %d posti liberi\n", posti_liberi);
-            printf("Quanti posti vuoi prenotare (0-%d): ", posti_liberi);
-            scanf("%d", &n_posti);
-            // controlliamo che ci siano abbastanza posti liberi
-            if(n_posti == posti_liberi){
-                // modifichiamo il tavolo
-                cJSON_ReplaceItemInObject(tav, "occupato", cJSON_CreateBool(1));
-            } else if (n_posti < posti_liberi){
-                cJSON_ReplaceItemInObject(tav, "posti_liberi", cJSON_CreateNumber(cJSON_GetObjectItem(tav, "posti_liberi")->valueint - n_posti));
-                cJSON_ReplaceItemInObject(tav, "posti_occupati", cJSON_CreateNumber(cJSON_GetObjectItem(tav, "posti_occupati")->valueint + n_posti));
+        do {
+        
+            int n_posti;
+            int tavolo;
+            printf("Che tavolo vuoi prenotare: ");
+            scanf("%d", &tavolo);
+            // controlliamo che il tavolo sia libero
+            cJSON *tav = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), tavolo - 1);
+            if(cJSON_IsTrue(cJSON_GetObjectItem(tav, "occupato"))){
+                printf("Il tavolo e' occupato\n");
             } else {
-                printf("Non ci sono abbastanza posti liberi\n");
+            // totale di posti del tavolo
+                printf("Il tavolo e' libero\n");
+                int posti_liberi = cJSON_GetObjectItem(tav, "posti_liberi")->valueint;
+                int posti_occupati = cJSON_GetObjectItem(tav, "posti_occupati")->valueint;
+                // ciclo per chiedere quanti posti vuole prenotare maggioi di 0 e minore di posti liberi
+                do {
+                    printf("Il tavolo ha %d posti liberi\n", posti_liberi);
+                    printf("Quanti posti vuoi prenotare (0-%d): ", posti_liberi);
+                    scanf("%d", &n_posti);
+                } while(n_posti <= 0 || n_posti > posti_liberi);
+                // controlliamo che ci siano abbastanza posti liberi
+                if(n_posti == posti_liberi){
+                    // modifichiamo il tavolo
+                    cJSON_ReplaceItemInObject(tav, "occupato", cJSON_CreateBool(1));
+                    cJSON_ReplaceItemInObject(tav, "posti_liberi", cJSON_CreateNumber(cJSON_GetObjectItem(tav, "posti_liberi")->valueint - n_posti));
+                    cJSON_ReplaceItemInObject(tav, "posti_occupati", cJSON_CreateNumber(cJSON_GetObjectItem(tav, "posti_occupati")->valueint + n_posti));
+                } else if (n_posti < posti_liberi){
+                    cJSON_ReplaceItemInObject(tav, "posti_liberi", cJSON_CreateNumber(cJSON_GetObjectItem(tav, "posti_liberi")->valueint - n_posti));
+                    cJSON_ReplaceItemInObject(tav, "posti_occupati", cJSON_CreateNumber(cJSON_GetObjectItem(tav, "posti_occupati")->valueint + n_posti));
+                } else {
+                    printf("Non ci sono abbastanza posti liberi\n");
+                }
+
+                // aggiungiamo il tavolo e i posti prenotati a json per la prenotazione
+                cJSON *tavolo_prenotato = cJSON_CreateNumber(tavolo);
+                cJSON *posti_prenotati = cJSON_CreateNumber(n_posti);
+
+                // salviamo la sala con i tavoli prenotati nella cartella temporanea
+                char save_path[50];
+                sprintf(save_path, "%s/%s", path_temp, data);
+                salva_file_json(sala, save_path);
+
+                // stampiamo un messaggio di conferma
+                printf("Tavoli prenotati\n");
+
+                // creiamo un file json per la prenotazione
+                cJSON *prenotazione = cJSON_CreateObject();
+                cJSON_AddStringToObject(prenotazione, "username", username);
+                cJSON_AddStringToObject(prenotazione, "data", data);
+                cJSON_AddItemToObject(prenotazione, "sala", sala);
+                // inseriamo i tavoli e i posti prenotati nell'oggetto
+                cJSON_AddItemToObject(prenotazione, "tavolo", tavolo_prenotato);
+                cJSON_AddItemToObject(prenotazione, "posti", posti_prenotati);
+                cJSON_AddBoolToObject(prenotazione, "confermata", 0);
+
+                // scriviamo il file temporaneo per il server
+                char save_path_server[50];
+                sprintf(save_path_server, "%s/%s", path_temp, "prenotazione.json");
+                salva_file_json(prenotazione, save_path_server);
+
+                // attendiamo la risposta del server con un ciclo che controlla se "confermata" è uguale a 0
+                cJSON *risposta = carica_file_json(save_path_server);
+                while(cJSON_IsFalse(cJSON_GetObjectItem(risposta, "confermata"))){
+                    printf("In attesa di risposta\n");
+                    risposta = carica_file_json(save_path_server);
+                    Sleep(1000);
+                }
+                // eliminiamo il file prenotazione.json e la sala temporanea
+                remove(save_path_server);
+                remove(save_path);
+
+                // stampiamo la risposta del server
+                time_t t = time(NULL);
+                struct tm tm = *localtime(&t);
+                if (cJSON_IsTrue(cJSON_GetObjectItem(risposta, "confermata"))){
+                    printf("%d-%02d-%02d %02d:%02d:%02d: Prenotazione confermata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+                } else {
+                    printf("%d-%02d-%02d %02d:%02d:%02d: Prenotazione non confermata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+                }
+                break;
+            }
+        } while(1);
+    }
+}
+
+// funzione per eliminare la prenotazione di un tavolo
+void elimina_tavolo(int prenotazione, char *path_sala, char *path_temp){
+
+    // carichiamo il file csv delle prenotazioni nel path sala 
+    char save_path[50];
+    sprintf(save_path, "%s/prenotazioni.csv", path_sala);
+    FILE *file = fopen(save_path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file o file inesistente\n");
+    } else {
+        // leggiamo il file e carichiamo ogni riga in una struttura Prenotazione. 
+        int num_pren = conta_righe(save_path);
+        printf("Numero di prenotazioni: %d\n", num_pren);
+        char riga[MAX_LUNG_PORTATA];
+        // carichiamo le righe del file
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            // dividiamo le parole separate dalla virgola
+            Prenotazione pren = carica_prenotazioni(riga);
+
+            // se il codice della prenotazione è uguale a quello passato come argomento allora eliminiamo la prenotazione
+            if (pren.codice == prenotazione){
+                // procediamo ad eliminare la prenotazione
+                printf("Prenotazione %d in eliminazione\n", pren.codice);
+                // creiamo un json per la prenotazione da eliminare
+                cJSON *prenotazione = cJSON_CreateObject();
+                cJSON_AddNumberToObject(prenotazione, "codice", pren.codice);
+                cJSON_AddStringToObject(prenotazione, "data", pren.data);
+                cJSON_AddNumberToObject(prenotazione, "tavolo", pren.tavolo);
+                cJSON_AddNumberToObject(prenotazione, "posti", pren.posti);
+                cJSON_AddBoolToObject(prenotazione, "confermata", 0);
+
+                // creiamo un file temporaneo per salvare le prenotazioni da eliminare 
+                char save_path_temp[50];
+                sprintf(save_path_temp, "%s/prenotazione_canc.json", path_temp);
+                salva_file_json(prenotazione, save_path_temp);
+
+                // attendiamo la risposta del server con un ciclo che controlla se "confermata" è uguale a 0
+                cJSON *risposta = carica_file_json(save_path_temp);
+                while(cJSON_IsFalse(cJSON_GetObjectItem(risposta, "confermata"))){
+                    printf("In attesa di risposta\n");
+                    risposta = carica_file_json(save_path_temp);
+                    Sleep(1000);
+                }
+                // eliminiamo il file prenotazione.json e la sala temporanea
+                remove(save_path_temp);
+                printf("Prenotazione eliminata\n");
+                break;
             }
 
-            /* // salviamo i tavoli e i posti prenotati
-            cJSON_AddItemToArray(tavoli_prenotati, cJSON_CreateNumber(tavolo));
-            cJSON_AddItemToArray(posti_prenotati, cJSON_CreateNumber(n_posti)); */
         }
-
-        // chiediamo se vuole prenotare un altro tavolo
-        char risposta[5];
-        printf("Vuoi prenotare un altro tavolo (S/N)?: ");
-        scanf("%s", risposta);
-        if(strcmp(risposta, "N") == 0 || strcmp(risposta, "n") == 0){
-            break;
-        }
-
-    } while(1);
-
-
-
-    // salviamo la sala con i tavoli prenotati nella cartella temporanea
-    char save_path[50];
-    sprintf(save_path, "%s/%s", path_temp, data);
-    salva_file_json(sala, save_path);
-
-    // stampiamo un messaggio di conferma
-    printf("Tavoli prenotati\n");
-
-    // creiamo un file json per la prenotazione
-    cJSON *prenotazione = cJSON_CreateObject();
-    cJSON_AddStringToObject(prenotazione, "username", username);
-    cJSON_AddStringToObject(prenotazione, "data", data);
-    cJSON_AddItemToObject(prenotazione, "sala", sala);
-    /* // inseriamo i tavoli e i posti prenotati nell'oggetto
-    cJSON_AddItemToObject(prenotazione, "tavoli", tavoli_prenotati);
-    cJSON_AddItemToObject(prenotazione, "posti", posti_prenotati); */
-    cJSON_AddBoolToObject(prenotazione, "confermata", 0);
-
-    // scriviamo il file temporaneo per il server
-    char save_path_server[50];
-    sprintf(save_path_server, "%s/%s", path_temp, "prenotazione.json");
-    salva_file_json(prenotazione, save_path_server);
-
-    // attendiamo la risposta del server con un ciclo che controlla se "confermata" è uguale a 0
-    cJSON *risposta = carica_file_json(save_path_server);
-    while(cJSON_IsFalse(cJSON_GetObjectItem(risposta, "confermata"))){
-        printf("In attesa di risposta\n");
-        risposta = carica_file_json(save_path_server);
-        Sleep(1000);
+        /* for (int i = 0; i < num_pren; i++){
+            fscanf(file, "%d,%s,%s,%d,%d\n", &pren.codice, &pren.username, &pren.data, &pren.tavolo, &pren.posti);
+            if (pren.codice == prenotazione){
+                // printiamo la prenotazione
+                printf("Prenotazione %d: %s %s %d %d\n", pren.codice, pren.username, pren.data, pren.tavolo, pren.posti);
+                break;
+            }
+        } */
+        fclose(file);
     }
-    // eliminiamo il file prenotazione.json e la sala temporanea
-    remove(save_path_server);
-    remove(save_path);
-
-    // stampiamo la risposta del server
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
-    if (cJSON_IsTrue(cJSON_GetObjectItem(risposta, "confermata"))){
-        printf("%d-%02d-%02d %02d:%02d:%02d: Prenotazione confermata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-    } else {
-        printf("%d-%02d-%02d %02d:%02d:%02d: Prenotazione non confermata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-    }
-
-
 }
 
 
@@ -1030,6 +1062,36 @@ void logout_check(char *temp_path, char *path){
     }
 }
 
+// funzione per controllare la sala
+/* void controlla_sala(char *path_sala){
+
+    // carichiamo il file json e la voce piena
+    cJSON *sala = carica_file_json(path_sala);
+    cJSON *piena = cJSON_GetObjectItem(sala, "piena");
+
+    // controlliamo se la sala è piena non facciamo niente, mentre se la sala non è piena allora controlliamo i tavoli
+    // se tutti i tavoli sono occupati allora la sala è piena
+    if(cJSON_IsFalse(piena)){
+        int n_tavoli = cJSON_GetArraySize(cJSON_GetObjectItem(sala, "tavoli"));
+        int tavoli_occupati = 0;
+        for (int i = 0; i < n_tavoli; i++){
+            cJSON *tavolo = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), i);
+            if(cJSON_IsTrue(cJSON_GetObjectItem(tavolo, "occupato"))){
+                tavoli_occupati++;
+            }
+        }
+        if(tavoli_occupati == n_tavoli){
+            cJSON_ReplaceItemInObject(sala, "piena", cJSON_CreateBool(1));
+            // salviamo il file json
+            salva_file_json(sala, path_sala);
+            // stampiamo un messaggio di sala piena
+            time_t t = time(NULL);
+            struct tm tm = *localtime(&t);
+            printf("%d-%02d-%02d %02d:%02d:%02d: %s Sala piena\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, path_sala);
+        }
+    }
+} */
+
 // funzione per prenotare un tavolo
 void conferma_prenotazione(char *temp_path, char *path_sala){
 
@@ -1047,13 +1109,17 @@ void conferma_prenotazione(char *temp_path, char *path_sala){
     // estraiamo il cJSON sala dal file prenotazione
     cJSON *sala = cJSON_GetObjectItem(prenotazione, "sala");
 
+    // estraiamo i tavoli e i posti prenotati dall'oggetto prenotazione
+    cJSON *tavolo = cJSON_GetObjectItem(prenotazione, "tavolo");
+    cJSON *posti = cJSON_GetObjectItem(prenotazione, "posti");
+
     // salviamo la sala con i tavoli prenotati nella cartella sala
     char save_path_sala[50];
     sprintf(save_path_sala, "%s/%s.json", path_sala, data->valuestring);
     salva_file_json(sala, save_path_sala);
 
     // creiamo un controllo per vedere se il file esiste
-    int codice = 0;
+    int codice = 1;
     char path_prenotazione[50];
     sprintf(path_prenotazione, "%s/prenotazioni.csv", path_sala);
     if(!se_esiste(path_sala, "prenotazioni", "csv")){
@@ -1061,21 +1127,18 @@ void conferma_prenotazione(char *temp_path, char *path_sala){
         //printf("File non esistente\n");
         FILE* file = fopen(path_prenotazione, "w");
         //printf("File creato\n");
-        //fprintf(file, "codide,username,data\n");
-        fprintf(file, "%d,%s,%s\n", codice, username->valuestring, data->valuestring);
+        fprintf(file, "codide,username,data,tavolo,posti\n");
+        fprintf(file, "%d,%s,%s,%d,%d\n", codice, username->valuestring, data->valuestring, tavolo->valueint, posti->valueint);
         //printf("Prenotazione scritta\n");
         fclose(file);
 
     } else {
         // se il file esiste allora controlliamo l'ultimo codice
         //printf("File esistente\n");
+        codice = conta_righe(path_prenotazione);
         FILE* file = fopen(path_prenotazione, "a");
-        char riga[MAX_LUNG_PORTATA];
-        while(fgets(riga, MAX_PORTATE, file) != NULL){
-            codice++;
-        }
         //printf("Ultimo codice: %d\n", codice);
-        fprintf(file, "%d,%s,%s\n", codice, username->valuestring, data->valuestring);
+        fprintf(file, "%d,%s,%s,%d,%d\n", codice, username->valuestring, data->valuestring, tavolo->valueint, posti->valueint);
         //printf("Prenotazione scritta\n");
         fclose(file);
     }
@@ -1083,7 +1146,7 @@ void conferma_prenotazione(char *temp_path, char *path_sala){
     // modifichiamo il valore del campo confermata in 1
     cJSON_ReplaceItemInObject(prenotazione, "confermata", cJSON_CreateBool(1));
     //printf("Valore di prenotazione in confermata\n");
-    cJSON *confermata = cJSON_GetObjectItem(prenotazione, "confermata");
+    //cJSON *confermata = cJSON_GetObjectItem(prenotazione, "confermata");
     //printf("Confermata: %d\n", cJSON_IsTrue(confermata));
 
     // salviamo il file json della prenotazione
@@ -1093,6 +1156,85 @@ void conferma_prenotazione(char *temp_path, char *path_sala){
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     printf("%d-%02d-%02d %02d:%02d:%02d: Prenotazione confermata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);    
+
+}
+
+// funzione per eliminare la prenotazione di un tavolo
+void elimina_prenotazione(char *temp_path, char *path_sala){
+
+    // carichiamo il file prenotazione_canc.json
+    char save_path[50];
+    sprintf(save_path, "%s/prenotazione_canc.json", temp_path);
+    cJSON *prenotazione = carica_file_json(save_path);
+
+    // carichiamo il file prenotazioni.csv
+    char path_prenotazioni[50];
+    sprintf(path_prenotazioni, "%s/prenotazioni.csv", path_sala);
+
+    // estraiamo la data dal file json
+    cJSON *data = cJSON_GetObjectItemCaseSensitive(prenotazione, "data");
+
+    // estraiamo il tavolo e i posti prenotati dal file json
+    int tavolo = cJSON_GetObjectItem(prenotazione, "tavolo")->valueint;
+    int posti = cJSON_GetObjectItem(prenotazione, "posti")->valueint;
+
+    // estraiamo il codice della prenotazione
+    int codice = cJSON_GetObjectItem(prenotazione, "codice")->valueint;
+
+    // carichiamo il file csv delle prenotazioni nel path sala
+    char sala_path[50];
+    sprintf(sala_path, "%s/%s.json", path_sala, data->valuestring);
+    cJSON *sala = carica_file_json(sala_path);
+
+    // aggiorniamo il tavolo e i posti prenotati nella sala
+    cJSON *tav = cJSON_GetArrayItem(cJSON_GetObjectItem(sala, "tavoli"), tavolo - 1);
+    // recupero il valore iniziale dei posti liberi e occupati
+    int posti_liberi = cJSON_GetNumberValue(cJSON_GetObjectItem(tav, "posti_liberi"));
+    int posti_occupati = cJSON_GetNumberValue(cJSON_GetObjectItem(tav, "posti_occupati"));
+    // modifichiamo il tavolo
+    cJSON_ReplaceItemInObject(tav, "posti_liberi", cJSON_CreateNumber(posti_liberi + posti));
+    cJSON_ReplaceItemInObject(tav, "posti_occupati", cJSON_CreateNumber(posti_occupati - posti));
+
+    // se il tavolo era occupato allora lo modifichiamo in libero
+    if(cJSON_IsTrue(cJSON_GetObjectItem(tav, "occupato"))){
+        cJSON_ReplaceItemInObject(tav, "occupato", cJSON_CreateBool(0));
+    }
+
+    // riscriviamo il file prenotazione.csv in path_sala senza la riga della prenotazione con il codice uguale a quello da eliminare
+    // apriamo in lettura il file e salviamo tutte le righe in un array di stringhe
+    FILE *file_o = fopen(path_prenotazioni, "r");
+    char *righe[100];
+    int i = 0;
+    char riga[MAX_LUNG_PORTATA];
+    while(fgets(riga, MAX_PORTATE, file_o) != NULL){
+        righe[i] = strdup(riga);
+        i++;
+    }
+    fclose(file_o);
+
+    // apriamo il file in scrittura e riscriviamo tutte le righe tranne quella con il codice uguale a quello da eliminare
+    FILE *file_w = fopen(path_prenotazioni, "w");
+    for (int j = 0; j < i; j++){
+        Prenotazione pren = carica_prenotazioni(righe[j]);
+        if(pren.codice != codice){
+            fprintf(file_w, "%d,%s,%s,%d,%d\n", pren.codice, pren.username, pren.data, pren.tavolo, pren.posti);
+        }
+    }
+    fclose(file_w);
+
+    // salviamo la sala con i tavoli prenotati nella cartella sala
+    char save_path_sala[50];
+    sprintf(save_path_sala, "%s/%s.json", path_sala, data->valuestring);
+    salva_file_json(sala, save_path_sala);
+
+    // aggiorniamo il file prenotazione_canc.json
+    cJSON_ReplaceItemInObject(prenotazione, "confermata", cJSON_CreateBool(1));
+    salva_file_json(prenotazione, save_path);
+
+    // stampiamo un messaggio di conferma
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    printf("%d-%02d-%02d %02d:%02d:%02d: Prenotazione %d eliminata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, codice);
 
 }
             

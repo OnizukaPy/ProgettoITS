@@ -55,7 +55,60 @@ int main(int argc, char *argv[]){
             } else {
                 printf("Errore nell'inserimento dei parametri\n");
             }
+        
         }
+        // se l'argomento e' uguale a -v (visualizza account)
+        if(strcmp(argv[1], "-v") == 0){
+            // visualizziamo gli account
+            if(argc == 3){
+                char path_account[50];
+                sprintf(path_account, "%s/%s.json", ACCOUNT, argv[2]);
+                //printf("L'account selezionato e': %s\n", path_account);
+                // controlliamo se l'account esiste ed è loggato
+                if(se_esiste(ACCOUNT, argv[2], "json") == false){
+                    printf("L'account non esiste\n");
+                    return 0;
+                } else {
+                    cJSON *account = carica_file_json(path_account);
+                    cJSON *loggato = cJSON_GetObjectItem(account, "login");
+                    if(loggato->valueint == 1){
+                        printf("L'account e' loggato\n");
+                        printf("=====================================\n");
+                        visualizza_account(path_account, SALA);
+                        printf("=====================================\n");
+                    } else {
+                        printf("L'account non e' loggato\n");
+                    }
+                }
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
+        }
+
+        // se l'argomento e' uguale a -e (eliminazione account)
+        if(strcmp(argv[1], "-e") == 0){
+            // visualizziamo gli account
+            if(argc == 3){
+                char path_account[50];
+                sprintf(path_account, "%s/%s.json", ACCOUNT, argv[2]);
+                //printf("L'account selezionato e': %s\n", path_account);
+                // controlliamo se l'account esiste ed è loggato
+                if(se_esiste(ACCOUNT, argv[2], "json") == false){
+                    printf("L'account non esiste\n");
+                    return 0;
+                } else {
+                    printf("L'account esiste\n");
+                    printf("Verifica se l'account e' loggato\n");
+                    login(argv[2], ACCOUNT, TEMP);
+                    //eliminazione_account(path_account, argv[2], TEMP);
+                    printf("Eliminazione account in corso\n");
+                    remove(path_account);
+                }
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
+        }
+
         // se l'argomento e' uguale a -login (effettua il login)
         if(strcmp(argv[1], "-login") == 0){
             // controlliamo se dopo -login c'e' un argomento 
@@ -99,10 +152,12 @@ int main(int argc, char *argv[]){
             // visualizziamo la sala
             // se data è uguale a NULL allora visualizziamo la sala template
             if(argc == 2){
-                char sala[100];
+                /* char sala[100];
                 sprintf(sala, "%s/%s.json", SALA, "template");
                 printf("Il tavolo selezionato e': %s\n", sala);
-                visualizza_sala(sala);
+                visualizza_sala(sala); */
+                printf("Questo comando non ti e' permesso\n");
+                return 0;
             // se data è uguale a un nome di un file json allora visualizziamo la sala selezionata
             } else if (argc == 3){
                 char sala[100];
@@ -110,9 +165,15 @@ int main(int argc, char *argv[]){
                  * parte di codice dove trasformiamo il valore della variabile argv[2] espresso in formato data gg/mm/aaaa 
                  * in un formato di stringa che possa essere utilizzato per la ricerca del file json del tipo gg_mm_aaaa                
                  */
-                sprintf(sala, "%s/%s.json", SALA, argv[2]);
-                printf("La sala selezionata e': %s\n", sala);
-                visualizza_sala(sala);
+                char *data = conversione_data(argv[2]);
+                // se la sala esiste visualizziamo la sala
+                if(se_esiste(SALA, data, "json") == false){
+                    printf("In data %s non ci sono prenotazioni.\n", argv[2]);
+                } else {
+                    sprintf(sala, "%s/%s.json", SALA, data);
+                    printf("La sala selezionata e': %s\n", sala);
+                    visualizza_sala(sala);
+                }
             } else {
                 printf("Errore nell'inserimento dei parametri\n");
             }
@@ -125,11 +186,7 @@ int main(int argc, char *argv[]){
                 sprintf(menu, "%s/%s.csv", SALA, "menu");
                 printf("Il menu selezionato e': %s\n", menu);
                 visualizza_menu(menu);
-            // se aggiungiamo -crea allora creiamo il menu ma questa funzione è nascosta
-            } /*else if (argc == 3 && strcmp(argv[2], "-crea") == 0){
-                // creiamo il menu
-                crea_menu(SALA);
-            }*/ else {
+            } else {
                 printf("Errore nell'inserimento dei parametri\n");
             }
         }
@@ -149,7 +206,7 @@ int main(int argc, char *argv[]){
                         return 0;
                     } else {
                         printf("L'account esiste. Procediamo con la verifica del Login\n");
-                        char save_path[100];
+                        /* char save_path[100];
                         sprintf(save_path, "%s/%s.json", ACCOUNT, argv[2]);
                         cJSON *account = carica_file_json(save_path);
                         //printf("Account caricato: %s\n", save_path);
@@ -161,7 +218,8 @@ int main(int argc, char *argv[]){
                             printf("L'utente non e' loggato. Effettua il Login.\n");
                             // terminiamo il programma
                             return 0;
-                        }
+                        } */
+                        login(argv[2], ACCOUNT, TEMP);
                     }
 
                     // fare qui il controllo della sala
@@ -175,10 +233,21 @@ int main(int argc, char *argv[]){
                         printf("Esistono gia' delle prenotazioni.\n");
                         // carichiamo la sala
                         sprintf(save_sala, "%s/%s.json", SALA, data_json);
-                        
+                        // se la sala è piena non possiamo prenotare
                     }
                     // carichiamo la sala
                     cJSON *sala = carica_file_json(save_sala);
+                    /* fare ciclo per controllare se tutti i tavoli sono occupati e assegnare il valore di sala in pieno*/
+                    if(status_sala(sala) == 0){
+                        printf("Non ci sono piu' tavoli liberi\n");
+                        return 0;
+                    }
+                    // se la sala è piena non possiamo prenotare
+                    /* cJSON *piena = cJSON_GetObjectItem(sala, "piena");
+                    if(cJSON_IsTrue(piena)){
+                        printf("La sala e' piena. Non e' possibile prenotare un tavolo.\n");
+                        return 0;
+                    }  */
                     // visualizziamo la sala
                     printf("La disposizione della sala e' la seguente:\n");
                     visualizza_sala(save_sala);
@@ -195,15 +264,43 @@ int main(int argc, char *argv[]){
                             printf("Risposta non valida. Riprova\n");
                         }
                     } while(1);
-
                     // avviamo la funzione di prenotazione
-                    prenota_tavolo(argv[2], data_json, sala, TEMP);
+                    //prenota_tavolo(argv[2], data_json, sala, TEMP);
+
+                    // avviamo un ciclo per chiedere la prenotazione del tavolo
+                    do {
+
+                        // avviamo la funzione di prenotazione
+                        prenota_tavolo(argv[2], data_json, sala, TEMP);
+                        // chiediamo se vuole prenotare un altro tavolo se ci sono ancora tavoli liberi
+                        if(status_sala(sala) == 0){
+                            printf("Non ci sono piu' tavoli liberi\n");
+                            break;
+                        }
+                        char risposta[5];
+                        printf("Vuoi prenotare un altro tavolo (S/N)?: ");
+                        scanf("%s", risposta);
+                        if(strcmp(risposta, "N") == 0 || strcmp(risposta, "n") == 0){
+                            break;
+                        }
+                        visualizza_sala(save_sala);
+
+                    } while(1);
                     
                 }
                 // svuotiamo la cartella temp per evitare problemi
                 svuota_cartella(TEMP);
             } else {
                 printf("Errore nell'inserimento dei parametri\n");
+            }
+        }
+        // se l'argomento è -e_tavolo (elimina la prenotazione del tavolo) seguita dal codice della prenotazione
+        if (strcmp(argv[1], "-e_tavolo") == 0){
+            if (argc == 3){
+                // controlliamo che l'argomento sia un numero
+                int prenotazione = atoi(argv[2]);
+                // eliminiamo la prenotazione
+                elimina_tavolo(prenotazione, SALA, TEMP);
             }
         }
 

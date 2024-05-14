@@ -14,6 +14,7 @@
 #define TEMP_LOGOUT   "../temp/logout.json"             // definiamo il file temporaneo di scambio informazioni
 #define TEMP_STATUS   "../temp/status_server.json"      // definiamo il file temporaneo di scambio informazioni
 #define TEMP_PRENOTAZIONE "../temp/prenotazione.json"   // definiamo il file temporaneo di scambio informazioni
+#define TEMP_PRENOTAZIONE_CANC "../temp/prenotazione_canc.json"   // definiamo il file temporaneo di scambio informazioni
 #define SALA          "../sala"                         // definiamo la cartella dove saranno salvati i file della sala
 
 // protitipi delle funzioni che saranno utilizzate nel main
@@ -103,19 +104,38 @@ int main(int argc, char *argv[]){
                     logout_check(TEMP_LOGOUT, ACCOUNT);
                 }
 
+                /* // controlliamo nella cartella sala se ci sono sale da controllare
+                // leggiamo il conentuto della cartella sala e se ci sono file .json che hanno il nome diverso da template 
+                // li controlliamo
+                DIR *dr = opendir(SALA);
+                struct dirent *de;
+                while ((de = readdir(dr)) != NULL){
+                    if(strcmp(de->d_name, ".") != 0 && strcmp(de->d_name, "..") != 0 && strcmp(de->d_name, "template.json") != 0 && strstr(de->d_name, ".json") != NULL){
+                        char path[100];
+                        sprintf(path, "%s/%s", path, de->d_name);
+                        controlla_sala(path);
+                    }
+                }
+                closedir(dr); */
+
                 // controlla le prenotazioni se c'è un file di prenotazione in attesa
                 if(access(TEMP_PRENOTAZIONE, F_OK) != -1){
                     conferma_prenotazione(TEMP, SALA);
+                }
+
+                // controlliamo se ci sono prenotazioni da eliminare
+                if(access(TEMP_PRENOTAZIONE_CANC, F_OK) != -1){
+                    elimina_prenotazione(TEMP, SALA);
                 }
 
                 // tempo di attesa
                 Sleep(2000);
             }
         }
-        if (strcmp(argv[1], "-c_sala") == 0){
+        /* if (strcmp(argv[1], "-c_sala") == 0){
             // creiamo una sala
             crea_sala(SALA, 12);
-        }
+        } */
     }
 }
 
