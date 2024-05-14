@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-04-24" view-index="0" gantt-divider-location="353" resource-divider-location="300" version="3.3.3307" locale="it_IT">
+<?xml version="1.0" encoding="UTF-8"?><project name="Untitled Gantt Project" company="" webLink="http://" view-date="2024-04-23" view-index="0" gantt-divider-location="339" resource-divider-location="300" version="3.3.3307" locale="it_IT">
     <description/>
     <view zooming-state="default:2" id="gantt-chart">
-        <field id="tpd3" name="Nome" width="190" order="0"/>
-        <field id="tpd4" name="Data d'inizio" width="74" order="1"/>
-        <field id="tpd5" name="Data di fine" width="73" order="2"/>
+        <field id="tpd3" name="Nome" width="182" order="0"/>
+        <field id="tpd4" name="Data d'inizio" width="71" order="1"/>
+        <field id="tpd5" name="Data di fine" width="70" order="2"/>
         <field id="tpd15" name="Note" width="20" order="3"/>
         <option id="filter.completedTasks" value="false"/>
         <option id="filter.dueTodayTasks" value="false"/>
@@ -38,8 +38,11 @@
             <taskproperty id="tpd8" name="coordinator" type="default" valuetype="text"/>
             <taskproperty id="tpd9" name="predecessorsr" type="default" valuetype="text"/>
         </taskproperties>
-        <task id="0" uid="4a7b62b617904043856ee989f41aeb23" name="Analisi dei requisiti" meeting="false" start="2024-04-25" duration="3" complete="0" expand="true">
-            <task id="21" uid="23cbc1f0b7ed4332af3541e1d1d554d0" name="Definizioni delle funzionalità" meeting="false" start="2024-04-25" duration="3" complete="0" expand="true"/>
+        <task id="0" uid="4a7b62b617904043856ee989f41aeb23" name="Analisi dei requisiti" meeting="false" start="2024-04-25" duration="4" complete="0" expand="true">
+            <task id="21" uid="23cbc1f0b7ed4332af3541e1d1d554d0" name="Definizioni delle funzionalità" meeting="false" start="2024-04-25" duration="3" complete="0" expand="true">
+                <depend id="26" type="2" difference="0" hardness="Strong"/>
+            </task>
+            <task id="26" uid="d84449bcaf944b4894cc2b520246ef46" name="Aggiornamento diagrammi UML" meeting="false" start="2024-04-30" duration="1" complete="0" expand="true"/>
         </task>
         <task id="2" uid="7e838684fd9043ae93e75a47114c3661" name="Sviluppo Software" meeting="false" start="2024-04-25" duration="15" complete="0" expand="true">
             <depend id="3" type="2" difference="0" hardness="Strong"/>
@@ -121,6 +124,7 @@
         <allocation task-id="22" resource-id="2" function="SoftwareDevelopment:2" responsible="true" load="25.0"/>
         <allocation task-id="23" resource-id="2" function="SoftwareDevelopment:2" responsible="true" load="50.0"/>
         <allocation task-id="24" resource-id="2" function="SoftwareDevelopment:2" responsible="true" load="50.0"/>
+        <allocation task-id="26" resource-id="2" function="SoftwareDevelopment:2" responsible="false" load="30.0"/>
         <allocation task-id="0" resource-id="3" function="SoftwareDevelopment:8" responsible="true" load="100.0"/>
         <allocation task-id="7" resource-id="3" function="SoftwareDevelopment:8" responsible="false" load="50.0"/>
         <allocation task-id="10" resource-id="3" function="SoftwareDevelopment:8" responsible="false" load="25.0"/>
@@ -129,6 +133,7 @@
         <allocation task-id="21" resource-id="3" function="SoftwareDevelopment:8" responsible="true" load="100.0"/>
         <allocation task-id="23" resource-id="3" function="SoftwareDevelopment:8" responsible="false" load="50.0"/>
         <allocation task-id="24" resource-id="3" function="SoftwareDevelopment:8" responsible="false" load="50.0"/>
+        <allocation task-id="26" resource-id="3" function="SoftwareDevelopment:8" responsible="true" load="70.0"/>
         <allocation task-id="0" resource-id="4" function="SoftwareDevelopment:4" responsible="false" load="5.0"/>
         <allocation task-id="3" resource-id="4" function="SoftwareDevelopment:4" responsible="true" load="100.0"/>
         <allocation task-id="9" resource-id="4" function="SoftwareDevelopment:4" responsible="false" load="50.0"/>
