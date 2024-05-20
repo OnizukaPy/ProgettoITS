@@ -5,19 +5,33 @@
 #
 # Ecco una breve lista dei comandi:
 #   
-#   la sintassi dei comandi e' ./client.exe [PARAM] [OPTION]
+#   la sintassi dei comandi e' ./client.exe [PARAM] [OPTION/S]
 #   
 #    - Aiuto e visualizzazione della presente guida:
-#       PARAM:  -help,      no OPTION
+#       PARAM:  -help,      no OPTIONS
 #    
 #    - Creazione account:
-#       PARAM:  -c,         no OPTION
+#       PARAM:  -c,         no OPTIONS
+#    
+#    - Elimina account:
+#       PARAM:  -e,         one OPTION: "username"
+#      
+#    - Visualizza profilo:
+#       PARAM:  -v,         one OPTION: "username"
 #    
 #    - Login/logout:
-#       PARAM:  -login,     OPTION: "username"
-#       PARAM:  -logout,    OPTION: "username"
+#       PARAM:  -login,     one OPTION: "username"
+#       PARAM:  -logout,    one OPTION: "username"
 #    
 #    - Visualizzazione della sala ad una data:
-#       PARAM:  -sala,      OPTION: "dd/mm/aaaa"
+#       PARAM:  -sala,      one OPTION: "dd/mm/aaaa"
+#    
+#    - Visualizzazione del menu:
+#       PARAM:  -menu,      no OPTIONS
 #
+#    - Prenotazione di un tavolo: (la data va espressa in dd/mm/aaaa)
+#       PARAM:  -p_tavolo,      two OPTIONS: "username" "data"
+#
+#    - Eliminazione di una prenotazione:
+#       PARAM:  -e_tavolo,      two OPTIONS: "username" "numero_prenotazione"
 #
