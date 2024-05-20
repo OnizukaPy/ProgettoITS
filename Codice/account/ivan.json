@@ -1,9 +1,9 @@
 {
 	"nome":	"ivan",
-	"cognome":	"ivan",
+	"cognome":	"catalano",
 	"username":	"ivan",
 	"password":	"lydq",
 	"email":	"ivan",
-	"login":	false,
+	"login":	true,
 	"status":	true
 }

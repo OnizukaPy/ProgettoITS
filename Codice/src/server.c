@@ -15,6 +15,7 @@
 #define TEMP_STATUS   "../temp/status_server.json"      // definiamo il file temporaneo di scambio informazioni
 #define TEMP_PRENOTAZIONE "../temp/prenotazione.json"   // definiamo il file temporaneo di scambio informazioni
 #define TEMP_PRENOTAZIONE_CANC "../temp/prenotazione_canc.json"   // definiamo il file temporaneo di scambio informazioni
+#define TEMP_ORDINE   "../temp/ordine.json"             // definiamo il file temporaneo di scambio informazioni
 #define SALA          "../sala"                         // definiamo la cartella dove saranno salvati i file della sala
 
 // protitipi delle funzioni che saranno utilizzate nel main
@@ -126,6 +127,11 @@ int main(int argc, char *argv[]){
                 // controlliamo se ci sono prenotazioni da eliminare
                 if(access(TEMP_PRENOTAZIONE_CANC, F_OK) != -1){
                     elimina_prenotazione(TEMP, SALA);
+                }
+
+                // controlliamo se ci sono ordini da confermare
+                if (access(TEMP_ORDINE, F_OK) != -1){
+                    conferma_ordine(TEMP, SALA);
                 }
 
                 // tempo di attesa

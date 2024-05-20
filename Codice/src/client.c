@@ -69,23 +69,22 @@ int main(int argc, char *argv[]){
                     printf("L'account non esiste\n");
                     return 0;
                 } else {
-                    cJSON *account = carica_file_json(path_account);
-                    cJSON *loggato = cJSON_GetObjectItem(account, "login");
-                    if(loggato->valueint == 1){
-                        printf("L'account e' loggato\n");
-                        printf("=====================================\n");
-                        visualizza_account(path_account, SALA);
-                        printf("=====================================\n");
-                    } else {
-                        printf("L'account non e' loggato\n");
-                    }
+                    printf("Verifica se l'account e' loggato\n");
+                    login(argv[2], ACCOUNT, TEMP);
+                    printf("=====================================\n");
+                    char path_prenotazioni[50], path_ordini[50];
+                    sprintf(path_prenotazioni, "%s/prenotazioni.csv", SALA);
+                    sprintf(path_ordini, "%s/ordini.csv", SALA);
+
+                    visualizza_account(path_account, path_prenotazioni, path_ordini);
+                    printf("=====================================\n");
                 }
             } else {
                 printf("Errore nell'inserimento dei parametri\n");
             }
         }
 
-        // se l'argomento e' uguale a -e (eliminazione account)
+        // se l'argomento e' uguale a -e (eliminazione account) seguito dall'username
         if(strcmp(argv[1], "-e") == 0){
             // visualizziamo gli account
             if(argc == 3){
@@ -102,6 +101,11 @@ int main(int argc, char *argv[]){
                     login(argv[2], ACCOUNT, TEMP);
                     //eliminazione_account(path_account, argv[2], TEMP);
                     printf("Eliminazione account in corso\n");
+                    // eliminiamo tutte le prenotazioni
+                    printf("Eliminazione prenotazioni in corso\n");
+                    elimina_prenotazioni(argv[2], SALA, TEMP);
+                    // eliminiamo l'account
+                    printf("Cancellazione account in corso\n");                    
                     remove(path_account);
                 }
             } else {
@@ -165,6 +169,12 @@ int main(int argc, char *argv[]){
                  * parte di codice dove trasformiamo il valore della variabile argv[2] espresso in formato data gg/mm/aaaa 
                  * in un formato di stringa che possa essere utilizzato per la ricerca del file json del tipo gg_mm_aaaa                
                  */
+                
+                if(check_formato_data(argv[2]) == false){
+                    printf("Formato data non valido. Inserire la data nel formato gg/mm/aaaa\n");
+                    return 0;
+                }
+
                 char *data = conversione_data(argv[2]);
                 // se la sala esiste visualizziamo la sala
                 if(se_esiste(SALA, data, "json") == false){
@@ -185,7 +195,8 @@ int main(int argc, char *argv[]){
                 char menu[100];
                 sprintf(menu, "%s/%s.csv", SALA, "menu");
                 printf("Il menu selezionato e': %s\n", menu);
-                visualizza_menu(menu);
+                Portata *portate = carica_menu(menu);
+                visualizza_menu(portate, menu);
             } else {
                 printf("Errore nell'inserimento dei parametri\n");
             }
@@ -194,6 +205,13 @@ int main(int argc, char *argv[]){
         if (strcmp(argv[1], "-p_tavolo") == 0){
             // prenotiamo il tavolo
             if(argc == 4){
+
+                // controlliamo che la data sia nel formato gg/mm/aaaa
+                if(check_formato_data(argv[3]) == false){
+                    printf("Formato data non valido. Inserire la data nel formato gg/mm/aaaa\n");
+                    return 0;
+                }
+                
                 // controlliamo che il server sia attivo, se non è attivo non possiamo procedere
                 if(status_server(TEMP) == false){
                     printf("Il server e' inattivo\n");
@@ -283,6 +301,8 @@ int main(int argc, char *argv[]){
                         if(strcmp(risposta, "N") == 0 || strcmp(risposta, "n") == 0){
                             break;
                         }
+                        // riscriviamo la varibaile save_sala con la sala aggiornata
+                        sprintf(save_sala, "%s/%s.json", SALA, data_json);
                         visualizza_sala(save_sala);
 
                     } while(1);
@@ -302,6 +322,146 @@ int main(int argc, char *argv[]){
                 // eliminiamo la prenotazione
                 elimina_tavolo(prenotazione, SALA, TEMP);
             }
+        }
+
+        // se l'argomento è -ordina (effettua l'ordine) seguito da username
+        if (strcmp(argv[1], "-ordina") == 0){
+
+            // effettuiamo l'ordine
+            if(argc == 3){
+
+                // controlliamo che il server sia attivo, se non è attivo non possiamo procedere
+                if(status_server(TEMP) == false){
+                    printf("Il server e' inattivo\n");
+                    return 0;
+                } else {
+                    // verifichiamo se l'account è loggato, controllando l'esistenza del file dell'account e il valore del campo loggato
+                    printf("Controllo se l'utente e' loggato\n");
+                    if(se_esiste(ACCOUNT, argv[2], "json") == false){
+                        printf("L'account non esiste. Controlla di aver scritto giusto lo username.\n");
+                        return 0;
+                    } else {
+                        printf("L'account esiste. Procediamo con la verifica del Login\n");
+                        // effettuiamo il login
+                        login(argv[2], ACCOUNT, TEMP);
+                    }
+
+                    // Visualizziamo le prenotazioni dell'utente
+                    char path_prenotazioni[50];
+                    sprintf(path_prenotazioni, "%s/prenotazioni.csv", SALA);
+                    printf("--------------------------------\n");
+                    if(check_prenotazione_u(argv[2], path_prenotazioni) == false){
+                        printf("Non ci sono prenotazioni per l'utente %s\n", argv[2]);
+                        printf("--------------------------------\n");
+                        return 0;
+                    }
+                    visualizza_prenotazioni(argv[2], path_prenotazioni);
+                    printf("--------------------------------\n");
+
+                    // dichiariamo la struttura della prenotazione
+                    Prenotazione prenotazione;
+
+                    // chiediamo per quale prenotazione si vuole effettuare l'ordine
+                    do {
+                        printf("Inserisci il numero della prenotazione per la quale vuoi effettuare l'ordine: ");
+                        int num_prenotazione;
+                        scanf("%d", &num_prenotazione);
+                        // controlliamo se la prenotazione esiste
+                        if (check_prenotazione_c(num_prenotazione, path_prenotazioni)){
+                            // cicliamo il file delle prenotazioni e carichiamo la prenotazione corrispondente
+                            FILE *file = fopen(path_prenotazioni, "r");
+                            if(file == NULL){
+                                printf("Errore nell'apertura del file\n");
+                                return 0;
+                            }
+                            char riga[100];
+                            while(fgets(riga, 100, file) != NULL){
+                                Prenotazione temp = carica_prenotazioni(riga);
+                                if(temp.codice == num_prenotazione){
+                                    printf("Prenotazione trovata\n");
+                                    prenotazione = temp;
+                                    break;
+                                }
+                            }
+                            break;
+                        }else {
+                            printf("La prenotazione non esiste. Riprova\n");
+                        }
+
+                    } while(1);
+
+                    // printiamo la prenotazione
+                    printf("--------------------------------\n");
+                    printf("Prenotazione selezionata:\n");
+                    printf("Codice: %d\n", prenotazione.codice);
+                    printf("Data: %s\n", prenotazione.data);
+                    printf("Tavolo: %d\n", prenotazione.tavolo);
+                    printf("Username: %s\n", prenotazione.username);
+                    printf("--------------------------------\n");
+
+
+                    // estraiamo la data, il tavolo e lo username della prenotazione
+                    char *data = prenotazione.data;
+                    int tavolo = prenotazione.tavolo;
+                    char *username = prenotazione.username;
+
+                    
+                    // carichiamo le portate del menu
+                    char path_menu[50];
+                    sprintf(path_menu, "%s/menu.csv", SALA);
+                    Portata *menu = carica_menu(path_menu);
+                    int num_portate = conta_righe(path_menu);
+
+                    // creiamo l'ordine completo
+                    OrdineCompleto ordine;
+                    ordine.n_prenotazione = prenotazione.codice;
+                    strcpy(ordine.username, username);
+                    strcpy(ordine.data, data);
+                    ordine.tavolo = tavolo;
+                    ordine.OrdineSingolo = (OrdineSingolo *)malloc(num_portate * sizeof(OrdineSingolo));    // allochiamo la memoria per l'ordine pari alle portate del menu
+                    // inizializziamo il conteggio degli ordini che si incrementerà ad ogni ordine singolo effettuato
+                    int n_ordini = 0;
+                    // inizializziamo il conto totale
+                    ordine.conto_totale = 0.0;
+
+                    do {
+                        // effettuiamo l'ordine
+                        OrdineSingolo ordine_singolo = crea_ordine(menu, num_portate, ordine);
+
+                        // salviamo l'ordine nell'ordine completo
+                        ordine.OrdineSingolo[n_ordini] = ordine_singolo;
+                        // incrementiamo il numero di ordini
+                        n_ordini++;
+                        // incrementiamo il conto totale
+                        ordine.conto_totale += ordine_singolo.portata.prezzo * ordine_singolo.quantita;
+
+                        // chiediamo se vuole ordinare altro
+                        char risposta[5];
+                        printf("Vuoi ordinare altro (S/N)?: ");
+                        scanf("%s", risposta);
+                        if(strcmp(risposta, "N") == 0 || strcmp(risposta, "n") == 0){
+                            break;
+                        }
+                    } while(1);
+                
+                    // salviamo l'ordine completo in un file json
+                    cJSON *ordine_json = crea_ordine_completo_json(ordine, n_ordini);
+
+                    // salviamo un file temp json con la richiesta di ordine
+                    char path_ordine[50];
+                    sprintf(path_ordine, "%s/ordine.json", TEMP);
+
+                    // creiamo il file json temporaneo
+                    printf("Salviamo l'ordine in corso\n");
+                    salva_ordine(ordine_json, path_ordine);
+                }
+                // svuotiamo la cartella temp per evitare problemi
+                svuota_cartella(TEMP);
+
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
+            
         }
 
         // se l'argomento e' uguale a -crea_sala (crea la sala) ma questa funzione è nascosta

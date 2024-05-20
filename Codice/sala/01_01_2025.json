@@ -1,14 +1,14 @@
 {
 	"tavoli":	[{
-			"occupato":	true,
-			"posti_liberi":	1,
-			"posti_occupati":	3
-		}, {
-			"occupato":	true,
+			"occupato":	false,
 			"posti_liberi":	4,
 			"posti_occupati":	0
 		}, {
-			"occupato":	true,
+			"occupato":	false,
+			"posti_liberi":	4,
+			"posti_occupati":	0
+		}, {
+			"occupato":	false,
 			"posti_liberi":	4,
 			"posti_occupati":	0
 		}, {
