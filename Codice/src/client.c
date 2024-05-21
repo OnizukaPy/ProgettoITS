@@ -100,17 +100,13 @@ int main(int argc, char *argv[]){
                     login(argv[2], ACCOUNT, TEMP);
                     //eliminazione_account(path_account, argv[2], TEMP);
                     printf("Eliminazione account in corso\n");
-
-                    // se risultano ordini non pagati non possiamo eliminare l'account
-                    /* da implementare*/
-                    
-                    printf("L'account e' stato eliminato\n");
                     // eliminiamo tutte le prenotazioni
                     printf("Eliminazione prenotazioni in corso\n");
                     elimina_prenotazioni(argv[2], SALA, TEMP);
                     // eliminiamo l'account
                     printf("Cancellazione account in corso\n");
                     remove(path_account);
+                    printf("L'account e' stato eliminato\n");
                 
 
                 }
@@ -479,7 +475,7 @@ int main(int argc, char *argv[]){
 
                     // creiamo il file json temporaneo
                     printf("Salviamo l'ordine in corso\n");
-                    salva_ordine(ordine_json, path_ordine);
+                    salva_ordine(ordine_json, path_ordine, SALA);
                 }
                 // svuotiamo la cartella temp per evitare problemi
                 svuota_cartella(TEMP);

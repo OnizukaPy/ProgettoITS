@@ -1062,35 +1062,105 @@ cJSON *crea_ordine_completo_json(OrdineCompleto ordine, int n_ordini){
 }           
 
 // funzione per salvare l'ordine                  
-void salva_ordine(cJSON *ordine, char *path_ordine){
+void salva_ordine(cJSON *ordine, char *path_ordine, char *path_sala){
     
     // creiamo un json per la conferma dell'ordine
     cJSON *conferma = cJSON_CreateObject();
     cJSON_AddItemToObject(conferma, "ordine", ordine);
     cJSON_AddStringToObject(conferma, "status", "pending");
 
+    // chiediamo le informazioni per il pagamento
+    char carta_di_credito[50];
+    char scadenza[50];
+    int cvv;
+    // inseriamo la carta di credito composta da 16 numeri
+    printf("\n");
+    printf("\nInseirsci i dati di pagamento\n");
+    do {
+        printf("Inserisci il numero della carta di credito (16 cifre): ");
+        scanf("%s", carta_di_credito);
+    } while(strlen(carta_di_credito) != 16);
+
+    // inseriamo la scadenza della carta di credito espressa come MM/YY
+    do {
+        printf("Inserisci la scadenza della carta di credito (MM/YY): ");
+        scanf("%s", scadenza);
+        // controlliamo che il mese e l'anno siano separati da uno slash
+        if(strchr(scadenza, '/') == NULL){
+            printf("Formato non valido. Riprova\n");
+        } else {
+            // verifichiamo che il mese sia compreso tra 1 e 12 e l'anno tra 24 e 99
+            char *mese = strtok(scadenza, "/");
+            char *anno = strtok(NULL, "/");
+            if(atoi(mese) < 1 || atoi(mese) > 12){
+                printf("Mese non valido deve essere compreso tra 1 e 12. Riprova\n");
+            } else if (atoi(anno) < 24 || atoi(anno) > 99){
+                printf("Anno non valido deve essere >= di 24 e minore di 99. Riprova\n");
+            } else {
+                break;
+            }
+        }
+    } while(1);
+
+    // inseriamo il cvv della carta di credito composto da 3 cifre
+    do {
+        printf("Inserisci il cvv della carta di credito (3 cifre) tra 100 e 999: ");
+        scanf("%d", &cvv);
+    } while(cvv < 100 || cvv > 999);
+    printf("\n");
+
+    // salviamo le informazioni della carta di credito nel file json
+    cJSON_AddStringToObject(conferma, "carta_di_credito", carta_di_credito);
+    /* cJSON_AddStringToObject(conferma, "scadenza", scadenza);
+    cJSON_AddNumberToObject(conferma, "cvv", cvv); */
+    // aggiungiamo un ok per il pagamento e la data e ora del pagamento
+    cJSON_AddStringToObject(conferma, "pagamento", "ok");
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    char data[50];
+    sprintf(data, "%d-%02d-%02d %02d:%02d:%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    cJSON_AddStringToObject(conferma, "data", data);
+
     // salviamo il file json nella cartella temp
     salva_file_json(conferma, path_ordine);
 
     // attendiamo la risposta del server con un ciclo che controlla se lo status è uguale a "pending"
+    printf("\n");
     cJSON *risposta = carica_file_json(path_ordine);
     while(strcmp(cJSON_GetObjectItem(risposta, "status")->valuestring, "pending") == 0){
         printf("In attesa di risposta\n");
         risposta = carica_file_json(path_ordine);
         Sleep(1000);
     }
-
+    
+    // printiamo a video il path della ricevuta caricandola dalla risposta del server
+    printf("\n");
+    char path_ricevuta[50];
+    strcpy(path_ricevuta, cJSON_GetObjectItem(risposta, "ricevuta")->valuestring);
+    printf("Percorso ricevuta: %s\n", path_ricevuta);
     // stampiamo la risposta del server
-    time_t t = time(NULL);
-    struct tm tm = *localtime(&t);
+    printf("\n");
+    time_t t2 = time(NULL);
+    struct tm tm2 = *localtime(&t);
     if (strcmp(cJSON_GetObjectItem(risposta, "status")->valuestring, "confermato") == 0){
-        printf("%d-%02d-%02d %02d:%02d:%02d: Ordine confermato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
-    } else {
-        printf("%d-%02d-%02d %02d:%02d:%02d: Ordine non confermato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+        printf("%d-%02d-%02d %02d:%02d:%02d: Ordine confermato\n", tm2.tm_year + 1900, tm2.tm_mon + 1, tm2.tm_mday, tm2.tm_hour, tm2.tm_min, tm2.tm_sec);
+        } else {
+        printf("%d-%02d-%02d %02d:%02d:%02d: Ordine non confermato\n", tm2.tm_year + 1900, tm2.tm_mon + 1, tm2.tm_mday, tm2.tm_hour, tm2.tm_min, tm2.tm_sec);
     }
 
     // eliminiamo il file ordine.json
     remove(path_ordine);
+
+    /* // creiamo la ricevuta della risposta del server
+    printf("Creazione ricevuta\n");
+    char path_ricevuta[50];
+    cJSON *ordine_risp = cJSON_GetObjectItem(risposta, "ordine");
+    char *username = cJSON_GetObjectItem(ordine_risp, "username")->valuestring;
+    char data_ordine[50];
+    sprintf(data_ordine, "%d-%02d-%02d_%02d_%02d_%02d", tm2.tm_year + 1900, tm2.tm_mon + 1, tm2.tm_mday, tm2.tm_hour, tm2.tm_min, tm2.tm_sec);
+    sprintf(path_ricevuta, "%s/%s_%s.txt", path_sala, username, data_ordine);
+    printf("Percorso ricevuta: %s\n", path_ricevuta);
+    crea_ricevuta(risposta, path_ricevuta); */
 }      
 
 // funzione per caricare l'ordine                   
@@ -1678,22 +1748,61 @@ void conferma_ordine(char *temp_path, char *path_sala){
     cJSON *data = cJSON_GetObjectItem(ordine, "data");
     cJSON *conto = cJSON_GetObjectItem(ordine, "conto");
 
+
+
     // scriviamo l'ordine nel file csv
     FILE *file = fopen(path_ordini, "a");
-    fprintf(file, "%d,%d,%s,%s,%.2f,%s\n", codice, n_prenotazione->valueint, data->valuestring, username->valuestring, conto->valuedouble, "no");
+    fprintf(file, "%d,%d,%s,%s,%.2f,%s\n", codice, n_prenotazione->valueint, data->valuestring, username->valuestring, conto->valuedouble, "si");
     fclose(file);
 
     // modifichiamo il valore del campo status in confermato
     cJSON_ReplaceItemInObject(temp, "status", cJSON_CreateString("confermato"));
 
-    // salviamo il file json
-    salva_file_json(temp, save_path);
+    // aggiungiamo il numero d'ordine
+    cJSON_AddNumberToObject(temp, "n_ordine", codice);
 
     // stampiamo un messaggio di conferma
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     printf("%d-%02d-%02d %02d:%02d:%02d: Ordine %d confermato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, codice);
 
+    // creiamo la ricevuta della risposta del server
+    printf("Creazione ricevuta\n");
+    char path_ricevuta[50];
+    char data_ordine[50];
+    sprintf(data_ordine, "%d-%02d-%02d_%02d_%02d_%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    sprintf(path_ricevuta, "%s/%s_%s.txt", path_sala, username->valuestring, data_ordine);
+    printf("Percorso ricevuta: %s\n", path_ricevuta);
+    crea_ricevuta(temp, path_ricevuta);
+
+    // aggiungiamo nel file json il percorso della ricevuta
+    cJSON_AddItemToObject(temp, "ricevuta", cJSON_CreateString(path_ricevuta));
+
+    // salviamo il file json
+    salva_file_json(temp, save_path);
+
+}
+
+// funzione per creare la ricevuta dell'ordine
+void crea_ricevuta(cJSON *risposta, char *path_ricevuta){
+    // creiamo un file json per la ricevuta dell'ordine
+
+    // creiamo un file txt per la ricevuta dell'ordine con i dati della risposta e salviamolo nel percorso path_ricevuta
+    FILE *file = fopen(path_ricevuta, "w");
+
+    // stampiamo la ricevuta a video
+    fprintf(file, "Ricevuta ordine\n");
+    fprintf(file, "Numero ordine: %d\n", cJSON_GetObjectItem(risposta, "n_ordine")->valueint);
+    fprintf(file, "Descrizione ordine: %s\n", cJSON_Print(cJSON_GetObjectItem(risposta, "ordine")));
+    fprintf(file, "Status: %s\n", cJSON_GetObjectItem(risposta, "status")->valuestring);
+    fprintf(file, "Carta di credito: %s\n", cJSON_GetObjectItem(risposta, "carta_di_credito")->valuestring);
+    // mettiamo il conto
+    fprintf(file, "Conto: %.2f\n", cJSON_GetObjectItem(cJSON_GetObjectItem(risposta, "ordine"), "conto")->valuedouble);
+    fprintf(file, "Pagamento: %s\n", cJSON_GetObjectItem(risposta, "pagamento")->valuestring);
+    fprintf(file, "Data: %s\n", cJSON_GetObjectItem(risposta, "data")->valuestring);
+
+    // chiudiamo il file
+    fclose(file);
 }
 
 // funzione per eliminare l'ordine 
