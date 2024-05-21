@@ -75,7 +75,6 @@ int main(int argc, char *argv[]){
                     char path_prenotazioni[50], path_ordini[50];
                     sprintf(path_prenotazioni, "%s/prenotazioni.csv", SALA);
                     sprintf(path_ordini, "%s/ordini.csv", SALA);
-
                     visualizza_account(path_account, path_prenotazioni, path_ordini);
                     printf("=====================================\n");
                 }
@@ -101,12 +100,19 @@ int main(int argc, char *argv[]){
                     login(argv[2], ACCOUNT, TEMP);
                     //eliminazione_account(path_account, argv[2], TEMP);
                     printf("Eliminazione account in corso\n");
+
+                    // se risultano ordini non pagati non possiamo eliminare l'account
+                    /* da implementare*/
+                    
+                    printf("L'account e' stato eliminato\n");
                     // eliminiamo tutte le prenotazioni
                     printf("Eliminazione prenotazioni in corso\n");
                     elimina_prenotazioni(argv[2], SALA, TEMP);
                     // eliminiamo l'account
-                    printf("Cancellazione account in corso\n");                    
+                    printf("Cancellazione account in corso\n");
                     remove(path_account);
+                
+
                 }
             } else {
                 printf("Errore nell'inserimento dei parametri\n");
@@ -314,14 +320,34 @@ int main(int argc, char *argv[]){
                 printf("Errore nell'inserimento dei parametri\n");
             }
         }
-        // se l'argomento è -e_tavolo (elimina la prenotazione del tavolo) seguita dal codice della prenotazione
+        // se l'argomento è -e_tavolo (elimina la prenotazione del tavolo) seguita dallo username e dal codice della prenotazione
         if (strcmp(argv[1], "-e_tavolo") == 0){
             if (argc == 3){
+                printf("Errore nell'inserimento dei parametri\n");
+            } else if (argc == 4){
+                // controlliamo che il server sia attivo, se non è attivo non possiamo procedere
+                if(status_server(TEMP) == false){
+                    printf("Il server e' inattivo\n");
+                    return 0;
+                } else {
+                    // verifichiamo se l'account è loggato, controllando l'esistenza del file dell'account e il valore del campo loggato
+                    printf("Controllo se l'utente e' loggato\n");
+                    if(se_esiste(ACCOUNT, argv[2], "json") == false){
+                        printf("L'account non esiste. Controlla di aver scritto giusto lo username.\n");
+                        return 0;
+                    } else {
+                        printf("L'account esiste. Procediamo con la verifica del Login\n");
+                        login(argv[2], ACCOUNT, TEMP);
+                    }
+                }
                 // controlliamo che l'argomento sia un numero
-                int prenotazione = atoi(argv[2]);
+                int prenotazione = atoi(argv[3]);
                 // eliminiamo la prenotazione
                 elimina_tavolo(prenotazione, SALA, TEMP);
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
             }
+        
         }
 
         // se l'argomento è -ordina (effettua l'ordine) seguito da username
@@ -462,6 +488,33 @@ int main(int argc, char *argv[]){
                 printf("Errore nell'inserimento dei parametri\n");
             }
             
+        }
+
+        // se l'argomento è -e_ordine (elimina l'ordine) seguito dall'username e dal codice dell'ordine
+        if (strcmp(argv[1], "-e_ordine") == 0){
+
+            // controlliamo lo status del server
+            if(status_server(TEMP) == false){
+                printf("Il server e' inattivo\n");
+                return 0;
+            } else {
+                // verifichiamo se l'account è loggato, controllando l'esistenza del file dell'account e il valore del campo loggato
+                printf("Controllo se l'utente e' loggato\n");
+                if(se_esiste(ACCOUNT, argv[2], "json") == false){
+                    printf("L'account non esiste. Controlla di aver scritto giusto lo username.\n");
+                    return 0;
+                } else {
+                    printf("L'account esiste. Procediamo con la verifica del Login\n");
+                    login(argv[2], ACCOUNT, TEMP);
+                }
+            }
+
+            if (argc == 4){
+                // controlliamo che l'argomento sia un numero
+                int ordine = atoi(argv[3]);
+                // eliminiamo l'ordine
+                elimina_ordine(ordine, SALA, TEMP);
+            }
         }
 
         // se l'argomento e' uguale a -crea_sala (crea la sala) ma questa funzione è nascosta

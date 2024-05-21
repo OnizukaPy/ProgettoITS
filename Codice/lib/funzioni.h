@@ -85,6 +85,9 @@ OrdineSingolo crea_ordine(Portata *menu, int num_portate, OrdineCompleto ordine)
 cJSON *crea_ordine_completo_json(OrdineCompleto ordine, int n_ordini);                      // funzione per creare un ordine in formato json
 void salva_ordine(cJSON *ordine, char *path_ordine);                      // funzione per salvare l'ordine
 void visualizza_ordini(char* username, char *path);                     // funzione per visualizzare l'ordine
+void elimina_ordine(int n_ordine, char *path_sala, char *path_temp);                     // funzione per eliminare un ordine
+void elimina_ordinazioni_utente(char* username, char *path_sala, char *path_temp);                     // funzione per eliminare tutti gli ordini di un utente
+bool check_ordini_utente(char* username, char *path_sala);                     // funzione per controllare se un utente ha ordini
 
 
 
@@ -102,4 +105,4 @@ void elimina_prenotazione(char *temp_path, char *path_sala);       // funzione p
 
 // funzioni su cui lavorare
 void conferma_ordine(char *temp_path, char *path_sala);             // funzione per confermare l'ordine
-void elimina_ordine(char *temp_path, char *path_sala);             // funzione per eliminare l'ordine
+void elimina_ordinazione(char *temp_path, char *path_sala);              // funzione per eliminare un ordine

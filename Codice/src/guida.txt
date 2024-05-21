@@ -38,4 +38,7 @@
 #    - Effettuare un ordine dal menu:
 #       PARAM:  -ordine,      OPTION: "username" 
 #
+#    - Eliminare un ordine effettuato:
+#       PARAM:  -e_ordine,      two OPTIONS: "username" "numero_ordine"
+#
 
