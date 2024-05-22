@@ -67,6 +67,7 @@ bool status_server(char *temp_path);                                // funzione 
 cJSON crea_account(char *path_account);                             // funzione per creare un account
 void visualizza_account(char *path_account, char *path_sala, char *path_ordini);       // funzione per visualizzare gli account
 void login(char *username, char *path_account, char *login_path);   // funzione per effettuare il login
+bool seLoggato(char *username, char *path_account);                 // funzione per controllare se un utente è loggato
 void logout(char *username, char *path_account, char *login_path);  // funzione per effettuare il logout
 void crea_sala(char *path_sala, int n_tavoli);                      // funzione per creare una sala
 void visualizza_sala(char *data);                                   // funzione per la disposizione della sala

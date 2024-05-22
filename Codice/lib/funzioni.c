@@ -370,9 +370,9 @@ void visualizza_account(char *path_account, char* path_sala, char *path_ordini){
             printf("Ordini effettuati: \n\n");
             visualizza_ordini(username, path_ordini);
             printf("-----------------------------\n");
-        } else {
+        } /* else {
             printf("Account non loggato\n");
-        }
+        } */
 
 }
 
@@ -445,6 +445,36 @@ void login(char *username, char *path_account, char *login_path){
             }
             // eliminiamo il file temp.json
             remove(save_login);
+        }
+    }
+}
+
+// funzione per controllare se un utente è loggato
+bool seLoggato(char *username, char *path_account){
+
+    // carichiamo l'account
+    char save_path[50];
+    sprintf(save_path, "%s/%s.json", path_account, username);
+    
+    // controlliamo che il file esista
+    FILE *file = fopen(save_path, "r");
+    if(file == NULL){
+
+        printf("Account non esistente\n");
+        return false;
+
+    } else {
+        // chiediamo di inserire la password
+        // carichiamo il file json
+        cJSON *account = carica_file_json(save_path);
+        // verifichiamo se l'account è già loggato
+        if(cJSON_IsTrue(cJSON_GetObjectItem(account, "login"))){
+            //printf("Account gia' loggato\n");
+            fclose(file);
+            return true;
+        } else {
+            fclose(file);
+            return false;
         }
     }
 }

@@ -1,0 +1,36 @@
+Ricevuta ordine
+Numero ordine: 1
+Descrizione ordine: {
+	"n_prenotazione":	1,
+	"username":	"icatalano",
+	"data":	"21_05_2024",
+	"tavolo":	1,
+	"ordini":	[{
+			"codice":	1,
+			"categoria":	"Antipasto",
+			"nome":	"VEGETABLE SAMOSA",
+			"descrizione":	"Paste triangolari ripiene di verdure",
+			"prezzo":	5,
+			"quantita":	1
+		}, {
+			"codice":	30,
+			"categoria":	"Bevande",
+			"nome":	"ACQUA MINERALE",
+			"descrizione":	"0.50",
+			"prezzo":	2,
+			"quantita":	1
+		}, {
+			"codice":	24,
+			"categoria":	"Dolce",
+			"nome":	"GULAB JAMUN",
+			"descrizione":	"Palline di latte fritte in sciroppo di zucchero",
+			"prezzo":	5,
+			"quantita":	1
+		}],
+	"conto":	12
+}
+Status: confermato
+Carta di credito: 1234567891234567
+Conto: 12.00
+Pagamento: ok
+Data: 2024-05-21 21:20:34

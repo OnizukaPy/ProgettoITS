@@ -1,0 +1,20 @@
+{
+	"tavoli":	[{
+			"occupato":	false,
+			"posti_liberi":	4,
+			"posti_occupati":	0
+		}, {
+			"occupato":	false,
+			"posti_liberi":	4,
+			"posti_occupati":	0
+		}, {
+			"occupato":	false,
+			"posti_liberi":	4,
+			"posti_occupati":	0
+		}, {
+			"occupato":	true,
+			"posti_liberi":	0,
+			"posti_occupati":	4
+		}],
+	"piena":	false
+}
