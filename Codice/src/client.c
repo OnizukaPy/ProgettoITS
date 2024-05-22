@@ -113,6 +113,9 @@ int main(int argc, char *argv[]){
                     // eliminiamo tutte le prenotazioni
                     printf("Eliminazione prenotazioni in corso\n");
                     elimina_prenotazioni(argv[2], SALA, TEMP);
+                    // eliminiamo tutti gli ordini
+                    printf("Eliminazione ordini in corso\n");
+                    elimina_ordinazioni_utente(argv[2], SALA, TEMP);
                     // eliminiamo l'account
                     printf("Cancellazione account in corso\n");
                     remove(path_account);
@@ -538,6 +541,49 @@ int main(int argc, char *argv[]){
                 int ordine = atoi(argv[3]);
                 // eliminiamo l'ordine
                 elimina_ordine(ordine, SALA, TEMP);
+            }
+        }
+
+        // se l'argomento è -recensione (inserisce la recensione) seguito dall'username
+        if (strcmp(argv[1], "-recensione") == 0){
+            // inseriamo la recensione
+            if(argc == 3){
+                // controlliamo che il server sia attivo, se non è attivo non possiamo procedere
+                if(status_server(TEMP) == false){
+                    printf("Il server e' inattivo\n");
+                    return 0;
+                } else {
+                    // verifichiamo se l'account è loggato, controllando l'esistenza del file dell'account e il valore del campo loggato
+                    printf("Controllo se l'utente e' loggato\n");
+                    if(se_esiste(ACCOUNT, argv[2], "json") == false){
+                        printf("L'account non esiste. Controlla di aver scritto giusto lo username.\n");
+                        return 0;
+                    } else {
+                        printf("L'account esiste. Procediamo con la verifica del Login\n");
+                        login(argv[2], ACCOUNT, TEMP);
+                        // verifichiamo che l'account sia loggato
+                        if(seLoggato(argv[2], ACCOUNT) == false){
+                            printf("L'account non e' loggato. Effettua il login\n");
+                            return 0;
+                        }
+                    } 
+                }
+                // inseriamo la recensione
+                inserisci_recensione(argv[2], SALA, TEMP);
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
+        }
+
+        // se l'argomento è -recensioni_all (visualizza la recensione)
+        if (strcmp(argv[1], "-recensioni_all") == 0){
+            // visualizziamo le recensioni
+            if(argc == 2){
+                char path_recensioni[50];
+                sprintf(path_recensioni, "%s/recensioni.csv", SALA);
+                visualizza_recensioni(path_recensioni);
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
             }
         }
 
