@@ -1,0 +1,29 @@
+Ricevuta ordine
+Numero ordine: 1
+Descrizione ordine: {
+	"n_prenotazione":	1,
+	"username":	"icatalano",
+	"data":	"23_05_2024",
+	"tavolo":	1,
+	"ordini":	[{
+			"codice":	2,
+			"categoria":	"Antipasto",
+			"nome":	"ONION BAJI",
+			"descrizione":	"Frittelle di cipolla con farina di ceci",
+			"prezzo":	5,
+			"quantita":	2
+		}, {
+			"codice":	12,
+			"categoria":	"Primo",
+			"nome":	"CHICKEN BIRYANI",
+			"descrizione":	"Riso basmati con bocconcini di pollo e spezie",
+			"prezzo":	7,
+			"quantita":	2
+		}],
+	"conto":	24
+}
+Status: confermato
+Carta di credito: 1234567891234567
+Conto: 24.00
+Pagamento: ok
+Data: 2024-05-23 12:52:59
