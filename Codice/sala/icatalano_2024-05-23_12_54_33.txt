@@ -1,0 +1,22 @@
+Ricevuta ordine
+Numero ordine: 2
+Descrizione ordine: {
+	"n_prenotazione":	1,
+	"username":	"icatalano",
+	"data":	"23_05_2024",
+	"tavolo":	1,
+	"ordini":	[{
+			"codice":	24,
+			"categoria":	"Dolce",
+			"nome":	"GULAB JAMUN",
+			"descrizione":	"Palline di latte fritte in sciroppo di zucchero",
+			"prezzo":	5,
+			"quantita":	2
+		}],
+	"conto":	10
+}
+Status: confermato
+Carta di credito: 1234567891234567
+Conto: 10.00
+Pagamento: ok
+Data: 2024-05-23 12:54:32

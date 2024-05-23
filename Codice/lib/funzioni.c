@@ -91,6 +91,25 @@ char* conversione_data(char *data){
     return data_conv;
 }
 
+// funzione per controllare il formato della data
+bool check_formato_data(char *data){
+    // controlliamo che la data sia nel formato gg/mm/aaaa
+    if(strlen(data) != 10){
+        return false;
+    }
+    if(data[2] != '/' || data[5] != '/'){
+        return false;
+    }
+    for (int i = 0; i < strlen(data); i++){
+        if(i != 2 && i != 5){
+            if(!isdigit(data[i])){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
 bool se_esiste(char *path, char *nome_file, char* tipo_file){
     char save_path[50];
     sprintf(save_path, "%s/%s.%s", path, nome_file, tipo_file);
@@ -314,51 +333,47 @@ cJSON crea_account(char *path_account){
 }
 
 // funzione per visualizzare gli account
-void visualizza_account(char *path_account, char* path_sala){
+void visualizza_account(char *path_account, char* path_sala, char *path_ordini){
     
         // apriamo il file json dell'accout in lettura
         cJSON *account = carica_file_json(path_account);
 
-        // visualizziamo i dati dell'account
-        printf("-----------------------------\n");
-        printf("Dati dell'account: \n");
-        printf("Nome: %s\n", cJSON_GetObjectItem(account, "nome")->valuestring);
-        printf("Cognome: %s\n", cJSON_GetObjectItem(account, "cognome")->valuestring);
-        printf("Username: %s\n", cJSON_GetObjectItem(account, "username")->valuestring);
-        printf("Email: %s\n", cJSON_GetObjectItem(account, "email")->valuestring);
-        // al posto della password visualizziamo una stringa di asterischi
-        printf("Password: ");
-        for (int i = 0; i < strlen(cJSON_GetObjectItem(account, "password")->valuestring); i++){
-            printf("*");
-        }
-        printf("\n");
-        // visualizziamo lo status dell'account
-        if(cJSON_IsTrue(cJSON_GetObjectItem(account, "status"))){
-            printf("Account approvato\n");
-        } else {
-            printf("Account non approvato\n");
-        }
-        printf("-----------------------------\n");
-        // visualizziamo le prenotazioni effettuate
-        printf("Prenotazioni effettuate: \n\n");
-
-        // leggiamo il file delle prenotazioni.csv nella cartella path_sala
-        char save_path[50];
-        sprintf(save_path, "%s/prenotazioni.csv", path_sala);
-        FILE *file = fopen(save_path, "r");
-        if(file == NULL){
-            printf("Errore nell'apertura del file\n");
-            return;
-        } else {
-            // leggiamo il file e lo visualizziamo
-            char riga[MAX_LUNG_PORTATA];
-            while(fgets(riga, MAX_PORTATE, file) != NULL){
-                if (strstr(riga, cJSON_GetObjectItem(account, "username")->valuestring) != NULL){
-                    printf("%s", riga);
-                }
+        // controlliamo se l'account è loggato
+        if(cJSON_IsTrue(cJSON_GetObjectItem(account, "login"))){
+            printf("Account loggato\n");
+            // visualizziamo i dati dell'account
+            printf("-----------------------------\n");
+            printf("Dati dell'account: \n");
+            printf("Nome: %s\n", cJSON_GetObjectItem(account, "nome")->valuestring);
+            printf("Cognome: %s\n", cJSON_GetObjectItem(account, "cognome")->valuestring);
+            printf("Username: %s\n", cJSON_GetObjectItem(account, "username")->valuestring);
+            printf("Email: %s\n", cJSON_GetObjectItem(account, "email")->valuestring);
+            // al posto della password visualizziamo una stringa di asterischi
+            printf("Password: ");
+            for (int i = 0; i < strlen(cJSON_GetObjectItem(account, "password")->valuestring); i++){
+                printf("*");
             }
-        }
-        printf("-----------------------------\n");
+            printf("\n");
+            // visualizziamo lo status dell'account
+            if(cJSON_IsTrue(cJSON_GetObjectItem(account, "status"))){
+                printf("Account approvato\n");
+            } else {
+                printf("Account non approvato\n");
+            }
+            printf("-----------------------------\n");
+            char *username = cJSON_GetObjectItem(account, "username")->valuestring;
+            // visualizziamo le prenotazioni effettuate
+            printf("Prenotazioni effettuate: \n\n");
+            visualizza_prenotazioni(username, path_sala);
+            printf("-----------------------------\n");
+            // visualizziamo gli ordini effettuati
+            printf("Ordini effettuati: \n\n");
+            visualizza_ordini(username, path_ordini);
+            printf("-----------------------------\n");
+        } /* else {
+            printf("Account non loggato\n");
+        } */
+
 }
 
 // funzione per effettuare il login
@@ -430,6 +445,36 @@ void login(char *username, char *path_account, char *login_path){
             }
             // eliminiamo il file temp.json
             remove(save_login);
+        }
+    }
+}
+
+// funzione per controllare se un utente è loggato
+bool seLoggato(char *username, char *path_account){
+
+    // carichiamo l'account
+    char save_path[50];
+    sprintf(save_path, "%s/%s.json", path_account, username);
+    
+    // controlliamo che il file esista
+    FILE *file = fopen(save_path, "r");
+    if(file == NULL){
+
+        printf("Account non esistente\n");
+        return false;
+
+    } else {
+        // chiediamo di inserire la password
+        // carichiamo il file json
+        cJSON *account = carica_file_json(save_path);
+        // verifichiamo se l'account è già loggato
+        if(cJSON_IsTrue(cJSON_GetObjectItem(account, "login"))){
+            //printf("Account gia' loggato\n");
+            fclose(file);
+            return true;
+        } else {
+            fclose(file);
+            return false;
         }
     }
 }
@@ -689,11 +734,11 @@ Portata *carica_menu(char *path){
 
 // definizione della visualizzazione del menu con lettura da file csv
 // https://stdin.top/posts/csv-in-c/
-void visualizza_menu(char* path){
+void visualizza_menu(Portata *portate, char *path){
     // apriamo il file csv in lettura
     
     int n_portate = conta_righe(path);
-    Portata *portate = carica_menu(path);
+    //Portata *portate = carica_menu(path);
 
     // printiamo a video tutte le parole separate dalla virgola in ogni riga
     for (int i = 0; i < n_portate; i++){
@@ -862,6 +907,619 @@ void elimina_tavolo(int prenotazione, char *path_sala, char *path_temp){
     }
 }
 
+// funzione per eliminare tutte le prenotazioni di un utente
+void elimina_prenotazioni(char *username, char *path_sala, char *path_temp){
+
+    // carichiamo il file csv delle prenotazioni nel path sala
+    char save_path[50];
+    sprintf(save_path, "%s/prenotazioni.csv", path_sala);
+    
+    // facciamo un ciclo per leggere le righe del file
+    FILE *file = fopen(save_path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return;
+    } else {
+        // leggiamo il file e carichiamo ogni riga in una struttura Prenotazione.
+        char riga[MAX_LUNG_PORTATA];
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            // carichiamo la riga come tipo Prenotazione
+            Prenotazione pren = carica_prenotazioni(riga);
+            // se l'username è uguale a quello passato eliminiamo la prenotazione
+            if (strcmp(pren.username, username) == 0){
+                elimina_tavolo(pren.codice, path_sala, path_temp);
+            }
+        }
+    }
+    fclose(file);
+}
+
+// funzione per visualizzare le prenotazioni di un utente
+void visualizza_prenotazioni(char* username, char *path){
+
+    // leggiamo il file delle prenotazioni.csv nella cartella path_sala
+    // facciamo un ciclo per leggere le righe del file
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return;
+    } else {
+        bool trovato = false;
+        // leggiamo il file e carichiamo ogni riga in una struttura Prenotazione.
+        char riga[MAX_LUNG_PORTATA];
+        // stampiamo le colonne della prenotazione
+        printf("            \tNum\tUser\tData\t\tTavolo\tPosti\n");
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            // carichiamo la riga come tipo Prenotazione
+            Prenotazione pren = carica_prenotazioni(riga);
+            // se l'username è uguale a quello passato eliminiamo la prenotazione
+            if (strcmp(pren.username, username) == 0){
+                printf("Prenotazione \t%d\t%s\t%s\t%d\t%d\n", pren.codice, pren.username, pren.data, pren.tavolo, pren.posti);
+                trovato = true;
+            }
+        }
+        if (!trovato){
+            printf("Nessuna prenotazione trovata\n");
+        }
+        fclose(file);
+    }
+}
+
+// funzione per controllare se una prenotazione è in elenco dal codice prenotazione
+bool check_prenotazione_c(int n, char *path){
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+    } else {
+
+        // leggiamo il file e carichiamo ogni riga in una struttura Prenotazione.
+        char riga[MAX_LUNG_PORTATA];
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            // carichiamo la riga come tipo Prenotazione
+            Prenotazione pren = carica_prenotazioni(riga);
+            // se il codice della prenotazione è uguale a quello passato come argomento allora eliminiamo la prenotazione
+            if (pren.codice == n){
+                return true;
+            }
+        }
+    }
+    return false;
+
+}
+
+// funzione per controllare se una prenotazione è in elenco dall'username
+bool check_prenotazione_u(char *username, char *path){
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+    } else {
+
+        // leggiamo il file e carichiamo ogni riga in una struttura Prenotazione.
+        char riga[MAX_LUNG_PORTATA];
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            // carichiamo la riga come tipo Prenotazione
+            Prenotazione pren = carica_prenotazioni(riga);
+            // se il codice della prenotazione è uguale a quello passato come argomento allora eliminiamo la prenotazione
+            if (strcmp(pren.username, username) == 0){
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+// funzione per creare un ordine
+OrdineSingolo crea_ordine(Portata *menu, int num_portate, OrdineCompleto ordine){
+    // chiediamo la categoria del menu da visualizzare
+    char categoria[50];
+    do {
+        
+        printf("Cosa vuoi ordinare? (Antipasto, Primo, Secondo, Contorno, Dolce, Bevande): ");
+        scanf("%s", categoria);
+        // verifichiamo che la categoria sia corretta
+        if (!(strcmp(categoria, "Antipasto") == 0 
+                || strcmp(categoria, "Primo") == 0 
+                || strcmp(categoria, "Secondo") == 0 
+                || strcmp(categoria, "Contorno") == 0 
+                || strcmp(categoria, "Dolce") == 0 
+                || strcmp(categoria, "Bevande") == 0)){
+
+                printf("Categoria non valida. Riprova\n");
+            } else {
+                break;
+            }
+    } while (1);
+
+    // cicliamo le portate per visualizzare solo quelle della categoria scelta
+    printf("\n-------------------------------\n");
+    printf("    Menu %s\n", categoria);
+    printf("-------------------------------\n");
+    for (int i = 0; i < num_portate; i++){
+        if(strcmp(menu[i].categoria, categoria) == 0){
+            printf("%d - %s - %s - %s - %.2f\n", menu[i].codice, menu[i].categoria, menu[i].nome, menu[i].descrizione, menu[i].prezzo);
+        }
+    }
+    printf("-------------------------------\n\n");
+    // chiediamo cosa vuole ordinare
+    OrdineSingolo static ordine_singolo;
+    bool trovata = false;
+    do{
+        printf("Cosa vuoi ordinare? (Inserisci il codice della portata): ");
+        int codice;
+        scanf("%d", &codice);
+        // controlliamo che il codice sia valido
+            for (int i = 0; i < num_portate; i++){
+                if(menu[i].codice == codice){
+                    trovata = true;
+                    printf("Portata trovata\n");
+                    ordine_singolo.portata = menu[i];
+                    // chiediamo la quantità
+                    printf("Quanti ne vuoi ordinare?: ");
+                    scanf("%d", &ordine_singolo.quantita);
+                    break;
+                }
+            }
+        } while(!trovata);
+    
+    return ordine_singolo;
+}          
+
+// funzione per creare un ordine in formato json
+cJSON *crea_ordine_completo_json(OrdineCompleto ordine, int n_ordini){
+    cJSON *ordine_json = cJSON_CreateObject();
+
+    // replichiamo la struttura dell'ordine completo in un file json
+    cJSON_AddNumberToObject(ordine_json, "n_prenotazione", ordine.n_prenotazione);
+    cJSON_AddStringToObject(ordine_json, "username", ordine.username);
+    cJSON_AddStringToObject(ordine_json, "data", ordine.data);
+    cJSON_AddNumberToObject(ordine_json, "tavolo", ordine.tavolo);
+    cJSON *ordine_singolo = cJSON_CreateArray();
+    for(int i = 0; i < n_ordini; i++){
+        cJSON *ordine_singolo_json = cJSON_CreateObject();
+        cJSON_AddNumberToObject(ordine_singolo_json, "codice", ordine.OrdineSingolo[i].portata.codice);
+        cJSON_AddStringToObject(ordine_singolo_json, "categoria", ordine.OrdineSingolo[i].portata.categoria);
+        cJSON_AddStringToObject(ordine_singolo_json, "nome", ordine.OrdineSingolo[i].portata.nome);
+        cJSON_AddStringToObject(ordine_singolo_json, "descrizione", ordine.OrdineSingolo[i].portata.descrizione);
+        cJSON_AddNumberToObject(ordine_singolo_json, "prezzo", ordine.OrdineSingolo[i].portata.prezzo);
+        cJSON_AddNumberToObject(ordine_singolo_json, "quantita", ordine.OrdineSingolo[i].quantita);
+        cJSON_AddItemToArray(ordine_singolo, ordine_singolo_json);
+    }
+    // aggiungiamo l'array di oggetti ordine_singolo_json all'oggetto ordine_json
+    cJSON_AddItemToObject(ordine_json, "ordini", ordine_singolo);
+    cJSON_AddNumberToObject(ordine_json, "conto", ordine.conto_totale);
+
+    return ordine_json;
+}           
+
+// funzione per salvare l'ordine                  
+void salva_ordine(cJSON *ordine, char *path_ordine, char *path_sala){
+    
+    // creiamo un json per la conferma dell'ordine
+    cJSON *conferma = cJSON_CreateObject();
+    cJSON_AddItemToObject(conferma, "ordine", ordine);
+    cJSON_AddStringToObject(conferma, "status", "pending");
+
+    // chiediamo le informazioni per il pagamento
+    char carta_di_credito[50];
+    char scadenza[50];
+    int cvv;
+    // inseriamo la carta di credito composta da 16 numeri
+    printf("\n");
+    printf("\nInseirsci i dati di pagamento\n");
+    do {
+        printf("Inserisci il numero della carta di credito (16 cifre): ");
+        scanf("%s", carta_di_credito);
+    } while(strlen(carta_di_credito) != 16);
+
+    // inseriamo la scadenza della carta di credito espressa come MM/YY
+    do {
+        printf("Inserisci la scadenza della carta di credito (MM/YY): ");
+        scanf("%s", scadenza);
+        // controlliamo che il mese e l'anno siano separati da uno slash
+        if(strchr(scadenza, '/') == NULL){
+            printf("Formato non valido. Riprova\n");
+        } else {
+            // verifichiamo che il mese sia compreso tra 1 e 12 e l'anno tra 24 e 99
+            char *mese = strtok(scadenza, "/");
+            char *anno = strtok(NULL, "/");
+            if(atoi(mese) < 1 || atoi(mese) > 12){
+                printf("Mese non valido deve essere compreso tra 1 e 12. Riprova\n");
+            } else if (atoi(anno) < 24 || atoi(anno) > 99){
+                printf("Anno non valido deve essere >= di 24 e minore di 99. Riprova\n");
+            } else {
+                break;
+            }
+        }
+    } while(1);
+
+    // inseriamo il cvv della carta di credito composto da 3 cifre
+    do {
+        printf("Inserisci il cvv della carta di credito (3 cifre) tra 100 e 999: ");
+        scanf("%d", &cvv);
+    } while(cvv < 100 || cvv > 999);
+    printf("\n");
+
+    // salviamo le informazioni della carta di credito nel file json
+    cJSON_AddStringToObject(conferma, "carta_di_credito", carta_di_credito);
+    /* cJSON_AddStringToObject(conferma, "scadenza", scadenza);
+    cJSON_AddNumberToObject(conferma, "cvv", cvv); */
+    // aggiungiamo un ok per il pagamento e la data e ora del pagamento
+    cJSON_AddStringToObject(conferma, "pagamento", "ok");
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    char data[50];
+    sprintf(data, "%d-%02d-%02d %02d:%02d:%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    cJSON_AddStringToObject(conferma, "data", data);
+
+    // salviamo il file json nella cartella temp
+    salva_file_json(conferma, path_ordine);
+
+    // attendiamo la risposta del server con un ciclo che controlla se lo status è uguale a "pending"
+    printf("\n");
+    cJSON *risposta = carica_file_json(path_ordine);
+    while(strcmp(cJSON_GetObjectItem(risposta, "status")->valuestring, "pending") == 0){
+        printf("In attesa di risposta\n");
+        risposta = carica_file_json(path_ordine);
+        Sleep(1000);
+    }
+    
+    // printiamo a video il path della ricevuta caricandola dalla risposta del server
+    printf("\n");
+    char path_ricevuta[50];
+    strcpy(path_ricevuta, cJSON_GetObjectItem(risposta, "ricevuta")->valuestring);
+    printf("Percorso ricevuta: %s\n", path_ricevuta);
+    // stampiamo la risposta del server
+    printf("\n");
+    time_t t2 = time(NULL);
+    struct tm tm2 = *localtime(&t);
+    if (strcmp(cJSON_GetObjectItem(risposta, "status")->valuestring, "confermato") == 0){
+        printf("%d-%02d-%02d %02d:%02d:%02d: Ordine confermato\n", tm2.tm_year + 1900, tm2.tm_mon + 1, tm2.tm_mday, tm2.tm_hour, tm2.tm_min, tm2.tm_sec);
+        } else {
+        printf("%d-%02d-%02d %02d:%02d:%02d: Ordine non confermato\n", tm2.tm_year + 1900, tm2.tm_mon + 1, tm2.tm_mday, tm2.tm_hour, tm2.tm_min, tm2.tm_sec);
+    }
+
+    // eliminiamo il file ordine.json
+    remove(path_ordine);
+
+    /* // creiamo la ricevuta della risposta del server
+    printf("Creazione ricevuta\n");
+    char path_ricevuta[50];
+    cJSON *ordine_risp = cJSON_GetObjectItem(risposta, "ordine");
+    char *username = cJSON_GetObjectItem(ordine_risp, "username")->valuestring;
+    char data_ordine[50];
+    sprintf(data_ordine, "%d-%02d-%02d_%02d_%02d_%02d", tm2.tm_year + 1900, tm2.tm_mon + 1, tm2.tm_mday, tm2.tm_hour, tm2.tm_min, tm2.tm_sec);
+    sprintf(path_ricevuta, "%s/%s_%s.txt", path_sala, username, data_ordine);
+    printf("Percorso ricevuta: %s\n", path_ricevuta);
+    crea_ricevuta(risposta, path_ricevuta); */
+}      
+
+// funzione per caricare l'ordine                   
+OrdineCompleto carica_ordine(char *riga){
+    
+    OrdineCompleto static ordine;
+    char *parole[5];
+    char *token = strtok(riga, ",");
+    int k = 0;
+    while(token != NULL){
+        parole[k] = token;
+        token = strtok(NULL, ",");
+        k++;
+    }
+    // salviamo le parole in una struttura convertendo i numeri in interi
+    // ordine,prenotazione,data,username,conto,pagato
+    ordine.n_ordine = atoi(parole[0]);
+    ordine.n_prenotazione = atoi(parole[1]);
+    strcpy(ordine.data, parole[2]);
+    strcpy(ordine.username, parole[3]);
+    ordine.conto_totale = atof(parole[4]);
+    // occorre eliminare dall'ultima parola il carattere \n
+    parole[5][strlen(parole[5]) - 1] = '\0';
+    strcpy(ordine.stato, parole[5]);
+    // se il codice della prenotazione è uguale a quello passato come argomento allora eliminiamo la prenotazione
+
+    return ordine;
+}         
+
+// funzione per visualizzare l'ordine               
+void visualizza_ordini(char* username, char *path){
+
+    // leggiamo il file delle prenotazioni.csv nella cartella path_sala
+    // facciamo un ciclo per leggere le righe del file
+    FILE *file = fopen(path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return;
+    } else {
+        bool trovato = false;
+        // leggiamo il file e carichiamo ogni riga in una struttura Prenotazione.
+        char riga[MAX_LUNG_PORTATA];
+        // stampiamo le colonne della prenotazione
+        // ordine,prenotazione,data,username,conto,pagato
+        printf("       \tCod\tPren\tData\t\tUser\tConto\tPagato\n");
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            // carichiamo la riga come tipo Prenotazione
+            OrdineCompleto ordine = carica_ordine(riga);
+            // se l'username è uguale a quello passato eliminiamo la prenotazione
+            if (strcmp(ordine.username, username) == 0){
+                printf("Ordine \t%d\t%d\t%s\t%s\t%.2f\t%s\n", ordine.n_ordine, ordine.n_prenotazione, ordine.data, ordine.username, ordine.conto_totale, ordine.stato);
+                trovato = true;
+            }
+        }
+        if (!trovato){
+            printf("Nessuna prenotazione trovata\n");
+        }
+        fclose(file);
+    }
+}                      
+
+// funzione per eliminare un ordine
+void elimina_ordine(int n_ordine, char *path_sala, char *path_temp){
+    // carichiamo il file csv delle prenotazioni nel path sala 
+    char save_path[50];
+    sprintf(save_path, "%s/ordini.csv", path_sala);
+    FILE *file = fopen(save_path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file o file inesistente\n");
+    } else {
+        // leggiamo il file e carichiamo ogni riga in una struttura OrdineCompleto. 
+        int num_ordine = conta_righe(save_path);
+        printf("Numero di ordinazioni: %d\n", num_ordine);
+        char riga[MAX_LUNG_PORTATA];
+        // carichiamo le righe del file
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            // dividiamo le parole separate dalla virgola
+            OrdineCompleto ordine = carica_ordine(riga);
+
+            // se il codice dell'ordine è uguale a quello passato come argomento allora eliminiamo l'ordine'
+            if (ordine.n_ordine == n_ordine){
+                // procediamo ad eliminare la prenotazione
+                printf("Ordine %d in eliminazione\n", ordine.n_ordine);
+                // creiamo un json per l'ordine da eliminare
+                cJSON *ordine_json = cJSON_CreateObject();
+                cJSON_AddNumberToObject(ordine_json, "n_ordine", ordine.n_ordine);
+                cJSON_AddNumberToObject(ordine_json, "n_prenotazione", ordine.n_prenotazione);
+                cJSON_AddStringToObject(ordine_json, "data", ordine.data);
+                cJSON_AddStringToObject(ordine_json, "username", ordine.username);
+                cJSON_AddNumberToObject(ordine_json, "conto", ordine.conto_totale);
+                cJSON_AddStringToObject(ordine_json, "stato", ordine.stato);
+                cJSON_AddBoolToObject(ordine_json, "confermata", 0);
+
+                // creiamo un file temporaneo per salvare l'ordine da eliminare 
+                char save_path_temp[50];
+                sprintf(save_path_temp, "%s/ordine_canc.json", path_temp);
+                salva_file_json(ordine_json, save_path_temp);
+
+                // creiamo un ciclo per leggere la risposta del server. Se la risposta è confermata allora eliminiamo l'ordine
+                // se dopo 1,5 secondi non abbiamo risposta allora usciamo dal ciclo
+                while(1){
+                    // attendiamo la risposta del server con un ciclo che controlla se "confermata" è uguale a 0
+                    cJSON *risposta = carica_file_json(save_path_temp);
+                    if(cJSON_IsTrue(cJSON_GetObjectItem(risposta, "confermata"))){
+                        printf("Ordine eliminato\n");
+                        // eliminiamo il file temporaneo
+                        remove(save_path_temp);
+                        break;
+                    } else {
+                        int i = 0;
+                        while(cJSON_IsFalse(cJSON_GetObjectItem(risposta, "confermata")) && i < 3){
+                            printf("In attesa di risposta\n");
+                            risposta = carica_file_json(save_path_temp);
+                            Sleep(500);
+                            i++;
+                            if(i == 3){
+                                printf("L'ordine non è stato pagato, non e' possibile eliminarlo\n");
+                            }
+                        }
+                        // eliminiamo il file temporaneo
+                        remove(save_path_temp);
+                        break;
+                    }
+                }
+
+            }
+        }
+        fclose(file);
+    }
+}
+
+// funzione per eliminare tutti gli ordini di un utente
+void elimina_ordinazioni_utente(char* username, char *path_sala, char *path_temp){
+    // carichiamo il file csv delle prenotazioni nel path sala
+    char save_path[50];
+    sprintf(save_path, "%s/ordini.csv", path_sala);
+    
+    // facciamo un ciclo per leggere le righe del file
+    FILE *file = fopen(save_path, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+        return;
+    } else {
+        // leggiamo il file e carichiamo ogni riga in una struttura OrdineCompleto.
+        char riga[MAX_LUNG_PORTATA];
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            // carichiamo la riga come tipo OrdineCompleto
+            OrdineCompleto ordine = carica_ordine(riga);
+            // se l'username è uguale a quello passato eliminiamo la prenotazione
+            if (strcmp(ordine.username, username) == 0){
+                elimina_ordine(ordine.n_ordine, path_sala, path_temp);
+            }
+        }
+    }
+    fclose(file);
+}
+
+// funzione per controllare se un utente ha ordini
+bool check_ordini_utente(char* username, char *path_sala){
+    /* da implementare */
+}   
+
+// funzione per inserire una recensione
+void inserisci_recensione(char *username, char *path_sala, char *path_temp){
+
+    // visualizziamo le prenotazioni dell'username
+    char path_prenotazioni[50];
+    sprintf(path_prenotazioni, "%s/prenotazioni.csv", path_sala);
+    visualizza_prenotazioni(username, path_prenotazioni);
+
+    // se ci sono prenotazioni dell'utente allora procediamo con l'inserimento della recensione
+    if(check_prenotazione_u(username, path_prenotazioni) == 0){
+        printf("Non ci sono prenotazioni per l'utente %s\n", username);
+    } else {
+        // chiediamo il codice della prenotazione per la quale si vuole inserire la recensione
+        int codice;
+        do{
+            printf("Inserisci il codice della prenotazione per la quale vuoi inserire la recensione: ");
+            scanf("%d", &codice);
+            if(check_prenotazione_c(codice, path_prenotazioni) == 0){
+                printf("Prenotazione non trovata. Riprova\n");
+            } else {
+                break;
+            }
+        } while(1);
+
+        // chiediamo all'utente di inserire la recensione
+        char recensione[1000];
+        // controlliamo che la recensione sia compresa tra 1 e 900 caratteri
+        do {
+            printf("Inserisci la tua recensione (max 900 caratteri): ");
+            getchar();
+            fgets(recensione, 1000, stdin);
+            if(strlen(recensione) > 900){
+                printf("Recensione non valida. Riprova\n");
+            } else {
+                break;
+            }
+        } while(1);
+
+        // inseriamo il numero delle stelle da 1 a 5
+        int stelle;
+        do{
+            printf("Inserisci il numero di stelle da 1 a 5: ");
+            scanf("%d", &stelle);
+            if(stelle < 1 || stelle > 5){
+                printf("Numero di stelle non valido. Riprova\n");
+            } else {
+                break;
+            }
+        } while(1);
+
+        // settiamo la data
+        time_t t = time(NULL);
+        struct tm tm = *localtime(&t);
+
+        // creiamo un json per la recensione
+        cJSON *recensione_json = cJSON_CreateObject();
+        cJSON_AddNumberToObject(recensione_json, "codice", codice);
+        cJSON_AddStringToObject(recensione_json, "username", username);
+
+        // rendiamo stringa la data
+        char data[50];
+        sprintf(data, "%d-%02d-%02d %02d:%02d:%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+        cJSON_AddStringToObject(recensione_json, "data", data);
+
+        // eliminiamo l'ultimo carattere \n dalla recensione
+        recensione[strlen(recensione) - 1] = '\0';
+        cJSON_AddStringToObject(recensione_json, "recensione", recensione);
+
+        cJSON_AddNumberToObject(recensione_json, "stelle", stelle);
+        cJSON_AddBoolToObject(recensione_json, "confermata", 0);
+
+        // creiamo un file temporaneo per salvare la recensione
+        char save_path_temp[50];
+        sprintf(save_path_temp, "%s/recensione.json", path_temp);
+        salva_file_json(recensione_json, save_path_temp);
+
+        // attendiamo la risposta del server con un ciclo che controlla se "confermata" è uguale a 0
+        cJSON *risposta = carica_file_json(save_path_temp);
+        while(cJSON_IsFalse(cJSON_GetObjectItem(risposta, "confermata"))){
+            printf("In attesa di risposta\n");
+            risposta = carica_file_json(save_path_temp);
+            Sleep(1000);
+        }
+
+        // eliminiamo il file temporaneo
+        remove(save_path_temp);
+
+        // eliminiamo la prenotazione
+        printf("Eliminazione della prenotazione corrispondente alla recensione\n");
+        elimina_tavolo(codice, path_sala, path_temp);
+
+        // stampiamo la risposta del server
+        if (cJSON_IsTrue(cJSON_GetObjectItem(risposta, "confermata"))){
+            printf("%s: Recensione confermata\n", data);
+        } else {
+            printf("%s: Recensione non confermata\n", data);
+        }
+    }
+
+}
+
+// funzione per caricare la recensione
+Recensione carica_recensione(char *riga){
+    
+    Recensione static recensione;
+    char *parole[5];
+    char *token = strtok(riga, ",");
+    int k = 0;
+    while(token != NULL){
+        parole[k] = token;
+        token = strtok(NULL, ",");
+        k++;
+    }
+    // salviamo le parole in una struttura convertendo i numeri in interi
+    // codice,username,data,recensione,stelle
+    recensione.codice = atoi(parole[0]);
+    strcpy(recensione.username, parole[1]);
+    strcpy(recensione.data, parole[2]);
+    strcpy(recensione.testo, parole[3]);
+    recensione.stelle = atoi(parole[4]);
+
+    return recensione;
+}
+
+// funzione per visualizzare le recensioni
+void visualizza_recensioni(char *path_recensioni){
+
+    // leggiamo il file delle recensioni.csv nella cartella path_sala
+    // facciamo un ciclo per leggere le righe del file
+    FILE *file = fopen(path_recensioni, "r");
+    if(file == NULL){
+        printf("Errore nell'apertura del file\n");
+    } else {
+        // leggiamo il file e carichiamo ogni riga in una struttura Recensione.
+        char riga[MAX_LUNG_PORTATA];
+        // stampiamo le colonne della prenotazione
+        // codice,username,data,recensione,stelle
+        printf("= O = O = O = O = O = O = O = O = O = O = O = O = O = O = O = O =\n");
+        printf("\nElenco delle recensioni\n");
+        printf("---------------------------------\n");
+        int count = 0;
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            if(count > 0){
+                // carichiamo la riga come tipo Recensione
+                Recensione recensione = carica_recensione(riga);
+                // printiamo la recensione in un formato leggibile
+                printf("Recensione n %d\n", recensione.codice);
+                printf("Utente: %s\n", recensione.username);
+                printf("Data: %s\n", recensione.data);
+                // printiamo tanti simboli di stella gialla quanti sono le stelle
+                printf("Stelle: ");
+                for(int i = 0; i < recensione.stelle; i++){
+                    printf("\x1b[33mX ");
+                }
+                printf("\x1b[0m\n");
+                printf("Recensione: %s\n", recensione.testo);
+                printf("---------------------------------\n");
+            } else {
+                count++;
+            }
+        }
+        printf("= O = O = O = O = O = O = O = O = O = O = O = O = O = O = O = O =\n");
+    }
+    fclose(file);
+}
+
+
 
 // ############################################
 // FUNZIONI EFFETTIVE LATO SERVER
@@ -911,6 +1569,21 @@ void approva_account(char *nome_file, char *path_account){
 
     // salviamo l'account
     salva_file_json(account, save_path);
+
+    /* // salviamo lo username in un archivio.csv dove salviamo tutti gli username
+    char path_archivio[50];
+    char *username = cJSON_GetObjectItem(account, "username")->valuestring;
+    sprintf(path_archivio, "%s/archivio.csv", path_account);
+    if(se_esiste(path_account, "archivio", "csv") == 0){
+        FILE *file = fopen(path_archivio, "a");
+        fprintf(file, "%s,\n", username);
+        fclose(file);
+    } else {
+        FILE *file = fopen(path_archivio, "w");
+        fprintf(file, "Elenco Account,\n");
+        fprintf(file, "%s,\n", username);
+        fclose(file);
+    } */
 }
 
 // funzione per sloggare tutti gli utenti
@@ -1237,4 +1910,200 @@ void elimina_prenotazione(char *temp_path, char *path_sala){
     printf("%d-%02d-%02d %02d:%02d:%02d: Prenotazione %d eliminata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, codice);
 
 }
-            
+
+// funzione per confermare l'ordine
+void conferma_ordine(char *temp_path, char *path_sala){
+
+    // carichiamo il file ordine.json
+    char save_path[50];
+    sprintf(save_path, "%s/ordine.json", temp_path);
+    cJSON *temp = carica_file_json(save_path);
+
+    // creiamo il file di archivio degli ordini in csv nella cartella sala
+    char path_ordini[50];
+    sprintf(path_ordini, "%s/ordini.csv", path_sala);
+
+    // creiamo un controllo per vedere se il file esiste
+    int codice = 1;
+    if(!se_esiste(path_sala, "ordini", "csv")){
+        // se il file non esiste allora creiamo il file e scriviamo l'intestazione
+        FILE* file = fopen(path_ordini, "w");
+        fprintf(file, "ordine,prenotazione,data,username,conto,pagato\n");
+        fclose(file);
+    } else {
+        // se il file esiste allora controlliamo l'ultimo codice
+        codice = conta_righe(path_ordini);
+    }
+
+    // estraiamo da temp la voce ordine
+    cJSON *ordine = cJSON_GetObjectItem(temp, "ordine");
+
+    // da ordine estraiamo il campo n_prenotazione, username, data e conto
+    cJSON *n_prenotazione = cJSON_GetObjectItem(ordine, "n_prenotazione");
+    cJSON *username = cJSON_GetObjectItem(ordine, "username");
+    cJSON *data = cJSON_GetObjectItem(ordine, "data");
+    cJSON *conto = cJSON_GetObjectItem(ordine, "conto");
+
+
+
+    // scriviamo l'ordine nel file csv
+    FILE *file = fopen(path_ordini, "a");
+    fprintf(file, "%d,%d,%s,%s,%.2f,%s\n", codice, n_prenotazione->valueint, data->valuestring, username->valuestring, conto->valuedouble, "si");
+    fclose(file);
+
+    // modifichiamo il valore del campo status in confermato
+    cJSON_ReplaceItemInObject(temp, "status", cJSON_CreateString("confermato"));
+
+    // aggiungiamo il numero d'ordine
+    cJSON_AddNumberToObject(temp, "n_ordine", codice);
+
+    // creiamo una variabile temporanea per la data
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+
+    // creiamo la ricevuta
+    //printf("Creazione ricevuta\n");
+    char path_ricevuta[50];
+    char data_ordine[50];
+    sprintf(data_ordine, "%d-%02d-%02d_%02d_%02d_%02d", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+    sprintf(path_ricevuta, "%s/%s_%s.txt", path_sala, username->valuestring, data_ordine);
+    //printf("Percorso ricevuta: %s\n", path_ricevuta);
+    crea_ricevuta(temp, path_ricevuta);
+
+    // aggiungiamo nel file json il percorso della ricevuta
+    cJSON_AddItemToObject(temp, "ricevuta", cJSON_CreateString(path_ricevuta));
+
+    // stampiamo un messaggio di conferma
+    printf("%d-%02d-%02d %02d:%02d:%02d: Ordine %d confermato e ricevuta stampata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, codice);
+
+    // salviamo il file json
+    salva_file_json(temp, save_path);
+
+}
+
+// funzione per creare la ricevuta dell'ordine
+void crea_ricevuta(cJSON *risposta, char *path_ricevuta){
+    // creiamo un file json per la ricevuta dell'ordine
+
+    // creiamo un file txt per la ricevuta dell'ordine con i dati della risposta e salviamolo nel percorso path_ricevuta
+    FILE *file = fopen(path_ricevuta, "w");
+
+    // stampiamo la ricevuta a video
+    fprintf(file, "Ricevuta ordine\n");
+    fprintf(file, "Numero ordine: %d\n", cJSON_GetObjectItem(risposta, "n_ordine")->valueint);
+    fprintf(file, "Descrizione ordine: %s\n", cJSON_Print(cJSON_GetObjectItem(risposta, "ordine")));
+    fprintf(file, "Status: %s\n", cJSON_GetObjectItem(risposta, "status")->valuestring);
+    fprintf(file, "Carta di credito: %s\n", cJSON_GetObjectItem(risposta, "carta_di_credito")->valuestring);
+    // mettiamo il conto
+    fprintf(file, "Conto: %.2f\n", cJSON_GetObjectItem(cJSON_GetObjectItem(risposta, "ordine"), "conto")->valuedouble);
+    fprintf(file, "Pagamento: %s\n", cJSON_GetObjectItem(risposta, "pagamento")->valuestring);
+    fprintf(file, "Data: %s\n", cJSON_GetObjectItem(risposta, "data")->valuestring);
+
+    // chiudiamo il file
+    fclose(file);
+}
+
+// funzione per eliminare l'ordine 
+void elimina_ordinazione(char *temp_path, char *path_sala){
+
+    // carichiamo il file prenotazione_canc.json
+    //printf("Carihco il file temporaneo\n");
+    char save_path[50];
+    sprintf(save_path, "%s/ordine_canc.json", temp_path);
+    cJSON *ordine_canc = carica_file_json(save_path);
+
+    // carichiamo il file prenotazioni.csv
+    //printf("Carico il file delle ordinazioni\n");
+    char path_ordini[50];
+    sprintf(path_ordini, "%s/ordini.csv", path_sala);
+
+    // estraiamo il codide dell'ordine da cancellare
+    int codice = cJSON_GetObjectItem(ordine_canc, "n_ordine")->valueint;
+    //printf("Codice: %d\n", codice);
+
+    // verifichiamo se lo stato è "si" allora procediamo con l'eliminazione 
+    // estraiamo il campo stato dal file json
+    char *stato = cJSON_GetObjectItem(ordine_canc, "stato")->valuestring;
+    //printf("Stato: %s\n", stato);
+    
+    // se lo stato è uguale a "si" allora procediamo con l'eliminazione
+    //printf("Controlliamo lo stato ed effettuiamo la cancellazione dell'ordine\n");
+    if(strcmp(stato, "si") == 0){
+        // apriamo il file in lettura e salviamo tutte le righe in un array di stringhe
+        FILE *file = fopen(path_ordini, "r");
+        char *righe[100];
+        int i = 0;
+        char riga[MAX_LUNG_PORTATA];
+        while(fgets(riga, MAX_PORTATE, file) != NULL){
+            righe[i] = strdup(riga);
+            i++;
+        }
+        fclose(file);
+
+        // apriamo il file in scrittura e riscriviamo tutte le righe tranne quella con il codice uguale a quello da eliminare
+        FILE *file_w = fopen(path_ordini, "w");
+        for (int j = 0; j < i; j++){
+            OrdineCompleto ordine = carica_ordine(righe[j]);
+            if(ordine.n_ordine != codice){
+                fprintf(file_w, "%d,%d,%s,%s,%.2f,%s\n", ordine.n_ordine, ordine.n_prenotazione, ordine.data, ordine.username, ordine.conto_totale, ordine.stato);
+            }
+        }
+        fclose(file_w);
+
+        // aggiorniamo il file prenotazione_canc.json
+        //printf("Aggiorniamo il file temporaneo\n");
+        cJSON_ReplaceItemInObject(ordine_canc, "confermata", cJSON_CreateBool(1));
+        //printf("Salviamo il file temporaneo\n");
+        salva_file_json(ordine_canc, save_path);
+
+        // stampiamo un messaggio di conferma
+        time_t t = time(NULL);
+        struct tm tm = *localtime(&t);
+        printf("%d-%02d-%02d %02d:%02d:%02d: Ordine %d eliminato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, codice);
+    } else {
+        // stampiamo un messaggio di errore
+        time_t t = time(NULL);
+        struct tm tm = *localtime(&t);
+        printf("%d-%02d-%02d %02d:%02d:%02d: Ordine %d non eliminato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, codice);
+    }
+}
+
+// funzione per approvare una recensione
+void approva_recensione(char *temp_path, char *path_recensioni){
+
+    // carichiamo il file recensione.json
+    char save_path[50];
+    sprintf(save_path, "%s/recensione.json", temp_path);
+    cJSON *recensione = carica_file_json(save_path);
+
+    // modifichiamo il valore del campo confermata in 1
+    cJSON_ReplaceItemInObject(recensione, "confermata", cJSON_CreateBool(1));
+
+    // salviamo il file json
+    salva_file_json(recensione, save_path);
+
+    // salviamo una copia della recensione nella cartella sala nel file recensioni.csv
+    char path_recensioni_csv[50];
+    sprintf(path_recensioni_csv, "%s/recensioni.csv", path_recensioni);
+
+    // creiamo un controllo per vedere se il file esiste
+    int codice = conta_righe(path_recensioni_csv);
+    if(!se_esiste(path_recensioni, "recensioni", "csv")){
+        // se il file non esiste allora creiamo il file e scriviamo l'intestazione
+        FILE* file = fopen(path_recensioni_csv, "w");
+        fprintf(file, "codice,username,data,recensione,stelle\n");
+        fprintf(file, "%d,%s,%s,%s,%d\n", codice, cJSON_GetObjectItem(recensione, "username")->valuestring, cJSON_GetObjectItem(recensione, "data")->valuestring, cJSON_GetObjectItem(recensione, "recensione")->valuestring, cJSON_GetObjectItem(recensione, "stelle")->valueint);
+        fclose(file);
+    } else {
+        // se il file esiste allora controlliamo l'ultimo codice
+        // scriviamo la recensione nel file csv
+        FILE *file = fopen(path_recensioni_csv, "a");
+        fprintf(file, "%d,%s,%s,%s,%d\n", codice, cJSON_GetObjectItem(recensione, "username")->valuestring, cJSON_GetObjectItem(recensione, "data")->valuestring, cJSON_GetObjectItem(recensione, "recensione")->valuestring, cJSON_GetObjectItem(recensione, "stelle")->valueint);
+        fclose(file);
+    }
+
+    // stampiamo un messaggio di conferma
+    time_t t = time(NULL);
+    struct tm tm = *localtime(&t);
+    printf("%d-%02d-%02d %02d:%02d:%02d: Recensione approvata e salvata\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+}

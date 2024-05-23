@@ -35,3 +35,16 @@
 #    - Eliminazione di una prenotazione:
 #       PARAM:  -e_tavolo,      two OPTIONS: "username" "numero_prenotazione"
 #
+#    - Effettuare un ordine dal menu:
+#       PARAM:  -ordine,      OPTION: "username" 
+#
+#    - Eliminare un ordine effettuato:
+#       PARAM:  -e_ordine,      two OPTIONS: "username" "numero_ordine"
+#
+#    - Pubblica una recensione:
+#       PARAM:  -recensione,      OPTION: "username"
+#
+#    - Visualizza tutte le recensioni:
+#       PARAM:  -recensioni_all,      no OPTION
+#
+
