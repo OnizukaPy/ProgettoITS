@@ -1,6 +1,6 @@
 # ProgettoITS: La Gang del Bosco
 
-Membri:
+Membri del team:
 
 Ivan Catalano
 Alessio Canessa
@@ -10,44 +10,114 @@ Mirco Càstino
 
 # Definizione delle caratteristiche del progetto
 
-Progettazione, implementazione, documentazione e test di un'applicazione per la gestione di un ristorante.
-Dettagli del progetto:
+Il progetto consiste nel progettare, implementare, documentare e testare un'applicazione per la gestione di un ristorante. Questa app deve avere le seguenti funzionalità:
 
-Creare una applicazione per la gestione di un ristorante.
-Deve essere possibile gestire:
-
+    Gestione utenti,
     Prenotazione Tavoli,
     Gestione del Menu,
     Gestione Ordini,
     Feedback dei Clienti.
 
-Per ogni entità devono essere previste le operazioni di:
+Per ogni entità saranno previste le operazioni di:
 
     inserimento,
-    modifica,
-    visualizzazione,
-    cancellazione.
+    cancellazione,
+    visualizzazione.
 
-I dati devono essere salvati in modo da poter essere utilizzati dopo un riavvio dell’applicazione. (usare preferibilmente un database)
+I dati dovranno essere salvati in modo da poter essere utilizzati dopo un riavvio dell’applicazione. (usare preferibilmente un database)
 L’applicazione dovrebbe essere composta da un modulo client e da un modulo server. (requisito opzionale)
 
 # Analisi dei requisiti
 
+La progettazione dell'applicazione è avvenuta tramite il metodo Scrum, l'utilizzo dei diagrammi Use Case e Sequence e la realizzazione del diagramma di Gantt.
+La prima operazione svolta è stata l'analisi dei requisiti e la pesatura delle card, mediante il metodo del poker.
 
-## Funzionamento del client/server
+Abbiamo deciso di optare per una architettura client/server con la comunicazione mediante file temporanei e archiviazione su file tipo jSON, csv e txt. Il linguaggio di programmazione scelto è C, con l'uso di una libreria esterna dell'autore DaveGamble, cJSON (https://github.com/DaveGamble/cJSON).
 
-# Creazione Account
+# Guida d'uso
 
-La creazione dell'account avviene tramite il client. Una volta creato l'account viene salvato in un file json con nome file uguale allo username dell'account. Il jSON ha questo formato:
+## Avvio del Server
 
-{
-	"nome":	"ivan",
-	"cognome":	"catalano",
-	"username":	"ivan",
-	"password":	"sdvvzrug",
-	"email":	"ivan@ivan.it",
-	"status":	false,
-    "login":    false
-}
+La sequenza di avvio dell'app prevede l'avvio del server per il tramite del comando:
 
-La password viene criptata con il cifrario di cesare con chiave 3. Lo status indica se l'account è connesso o meno e viene aggiornato dal server. Il campo login viene usato invece per determinare una richiesta di connessione
+ 	./server.exe -start
+
+Questo comandlo lancia il server il quale controllerà l'esistenza di tutte le cartelle funzionali al funzionamento del client, creandole in assenza. La seconda operazione che fa è una cancellazione di tutti i file temporanei. Successivamente si mette in ascolto delle richieste che arrivano dal client:
+
+- Richiesta di status (attivo/inattivo) del server
+- Approvazione di account appena creati
+- Login/Logout utenti
+- Richieste di prenotazione di tavoli
+- Richieste di ordinazioni delle portate dal menu (con pagamento ed emissione della ricevuta)
+- Rilascio di recensioni
+
+## Uso del Client:
+
+### Gestione dell'account
+
+Per comprendere le operazioni eseguibili con il client, si può leggere la guida digitando _./Client.exe --help_. I comandi a disposizione sono:
+
+	./client.exe [PARAM] [OPTION/S]
+
+PARAM sono i parametri utilizzabili e sono:
+
+	Creazione account:		-c, senza options. 
+ 
+Consente la creazione di un account. Verranno richiesti i dati utenti e la password verrà cifrata e resa non visibile
+
+ 	Visualizzazione account:	-v, seguito da "username".
+
+Consente di visualizzare i dati dell'account, comprese le prenotazioni e le ordinazioni effettuate.
+
+  	Login e Logout:			-login, -logout, seguiti da "username".
+
+Consentono il login e il logout dell'utente. Verrà richiesta la digitazione della password per entrambe le operazioni.  
+
+	Eliminazione account:		-e, seguito da "username".
+
+L'eliminazione dell'account richiede la digitazione della password e consiste nella cancellazione di tutte le prenotazioni a nome dell'utente. GLi ordini e le recensioni non vengono rimosse, in quanto storico del ristorante. Anche le ricevute emesse non vengono cancellate.
+
+La gestione dell'account avviene tramite l'uso di un file jSON, il cui nome sarà: username.json. Il contenuto del file sarà il seguente:
+
+Il jSON ha questo formato:
+	
+	{
+		"nome":		"ivan",
+		"cognome":	"catalano",
+		"username":	"ivan",
+		"password":	"sdvvzrug",
+		"email":	"pippo@pippo.it",
+		"status":	false,
+	    	"login":    	false
+	}
+
+La password viene criptata con il cifrario di cesare con chiave 3. I valori di "status" e "login" sono quei valori del file che verranno modificati a seconda delle operazioni di login e logout dell'utente, nonché dell'approvazione della creazione da parte del server.
+
+Le operazioni di dialogo tra client e server verranno gestite tramite un file temporaneo dedicato.
+
+### Gestione Sala/Menu
+
+	Visualizzazione del menu:	-menu, senza opzioni.
+
+Il menu del ristorante è editato esternalmente su un file di tipo csv. Questo file viene soltanto letto dal client quando richiesto per la visualizzazione dello stesso dalle varie funzionalità. L'editing è quindi fisico da parte dell'amministratore del sistema o da utente delegato dal ristorante.
+
+	Visualizzazione della sala:	-sala, "data[gg/mm/aaa]".
+
+La visualizzazione della sala prevede il passaggio di una sola option che è la data in formato gg/mm/aaaa. 
+
+Queste due operazioni sono effettuabili senza essere loggati.
+
+
+
+# Gestione Ordine
+
+Una volta effettuato il login, e visualizzato la disponibilità della sala e del menu, si può procedere alla creazione di un ordine attraverso il comando ..... , prima di confermare l ordine verranno chiesti i dati di pagamento. Una volta che l'inoltro dell ordine è completato avviene la conferma del server tramite scrittura del file temporaneo, una volta che viene confermato lo stato dell' ordine esso viene scritto al file "ordini.csv" che è non volatile. Inoltre viene emessa una ricevuta in formato "ricevuta.txt". Se si dovesse eliminare un ordine, lo si può fare in egual modo a seguito del login, digitando il comando .... seguito dal codice dell'ordine, anche qui il client comunica con il server tramite il file temporaneo, una volta che l' ordine è stato cancellato con successo viene aggiornato il file "ordini.csv"
+
+# Gestione Account
+Come citato in precedenza sia il login che il logout richiedono l inserimento della password. L'autenticazione o la conferma in caso di logout vengono confermate dal server tramite scrittura del FILE TEMP. Le modifiche di stato vengono scritte sul file "utente.json" descritto in precedenza.
+Una volta effettuata la procedura di login, si potrà visualizzare il profilo e gli ordini/ prenotazioni con i comandi....., inoltre si potrà eliminare l'account con il comando....
+Se l'utente non avesse ancora un profilo, esso si può creare con il comando .... , qui vengono chieste le generalità, il server approva tramite FILE TEMP, e la conferma di creazione account viene scritta sul file rigido "utente.json" al quale vengono associati n°prenotazioni e ordini.
+
+# Gestione Feedback
+
+Per poter inserire una recensione bisogna disporre di un numero di prenotazione, l' approvazione della recensione avviene tramite il server che comunica con il client tramite FILE TEMP. Il sistema farà riferimento al file "prenotazioni.csv" citato in precedenza, a questo punto la recensione viene scritta sul file "recensioni.csv" visualizzabile da qualsiasi utente loggato con il comando ...
