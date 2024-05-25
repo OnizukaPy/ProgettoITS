@@ -72,8 +72,10 @@ char *decifra(char *stringa, int chiave);                           // funzione 
 // FUNZIONI EFFETTIVE LATO CLIENT
 void print_guida(char *path);                                       // funzione per stampare la guida
 bool status_server(char *temp_path);                                // funzione per controllare lo stato del server
+
 cJSON crea_account(char *path_account);                             // funzione per creare un account
 void visualizza_account(char *path_account, char *path_sala, char *path_ordini);       // funzione per visualizzare gli account
+void mofica_account(char *username, char *path_account);            // funzione per modificare un account
 void login(char *username, char *path_account, char *login_path);   // funzione per effettuare il login
 bool seLoggato(char *username, char *path_account);                 // funzione per controllare se un utente è loggato
 void logout(char *username, char *path_account, char *login_path);  // funzione per effettuare il logout

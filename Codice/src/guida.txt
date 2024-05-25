@@ -13,9 +13,12 @@
 #    - Creazione account:
 #       PARAM:  -c,         no OPTIONS
 #    
+#    - Modifica account:
+#       PARAM:  -m,         one OPTION: "username"
+#      
 #    - Elimina account:
 #       PARAM:  -e,         one OPTION: "username"
-#      
+#
 #    - Visualizza profilo:
 #       PARAM:  -v,         one OPTION: "username"
 #    
