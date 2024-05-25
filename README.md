@@ -21,6 +21,7 @@ Il progetto consiste nel progettare, implementare, documentare e testare un'appl
 Per ogni entità saranno previste le operazioni di:
 
     inserimento,
+    modifica,
     cancellazione,
     visualizzazione.
 
@@ -45,7 +46,7 @@ La sequenza di avvio dell'app prevede l'avvio del server per il tramite del coma
 Questo comandlo lancia il server il quale controllerà l'esistenza di tutte le cartelle funzionali al funzionamento del client, creandole in assenza. La seconda operazione che fa è una cancellazione di tutti i file temporanei. Successivamente si mette in ascolto delle richieste che arrivano dal client:
 
 - Richiesta di status (attivo/inattivo) del server
-- Approvazione di account appena creati
+- Approvazione/modifica di account appena creati/modificati
 - Login/Logout utenti
 - Richieste di prenotazione di tavoli
 - Richieste di ordinazioni delle portate dal menu (con pagamento ed emissione della ricevuta)
@@ -69,13 +70,17 @@ Consente la creazione di un account. Verranno richiesti i dati utenti e la passw
 
 Consente di visualizzare i dati dell'account, comprese le prenotazioni e le ordinazioni effettuate.
 
-  	Login e Logout:			-login, -logout, seguiti da "username".
+	Modificare account:		-m, seguito da "username".
 
-Consentono il login e il logout dell'utente. Verrà richiesta la digitazione della password per entrambe le operazioni.  
+Consente ad un account loggato, di modificare i campi di nome, cognome, mail e password. Lo username non è modificabile.  
 
 	Eliminazione account:		-e, seguito da "username".
 
-L'eliminazione dell'account richiede la digitazione della password e consiste nella cancellazione di tutte le prenotazioni a nome dell'utente. GLi ordini e le recensioni non vengono rimosse, in quanto storico del ristorante. Anche le ricevute emesse non vengono cancellate.
+Consente ad un account loggato, di eliminare l'account, comprese le prenotazioni effettuate. GLi ordini e le recensioni non vengono rimosse, in quanto storico del ristorante. Anche le ricevute emesse non vengono cancellate.
+
+  	Login e Logout:			-login, -logout, seguiti da "username".
+
+Consentono il login e il logout dell'utente. Verrà richiesta la digitazione della password per entrambe le operazioni.  
 
 La gestione dell'account avviene tramite l'uso di un file jSON, il cui nome sarà: username.json. Il contenuto del file sarà il seguente:
 
@@ -91,7 +96,7 @@ Il jSON ha questo formato:
 	    	"login":    	false
 	}
 
-La password viene criptata con il cifrario di cesare con chiave 3. I valori di "status" e "login" sono quei valori del file che verranno modificati a seconda delle operazioni di login e logout dell'utente, nonché dell'approvazione della creazione da parte del server.
+La password viene criptata con il cifrario di cesare con chiave 3. I valori di "login" e "status" sono quei valori del file che verranno modificati, rispettivamente nelle operazioni di login e logout dell'utente e nelle operazioni di creazione/modifica account.
 
 Le operazioni di dialogo tra client e server verranno gestite tramite un file temporaneo dedicato.
 
@@ -103,9 +108,7 @@ Il menu del ristorante è editato esternalmente su un file di tipo csv. Questo f
 
 	Visualizzazione della sala:	-sala, "data[gg/mm/aaa]".
 
-La visualizzazione della sala prevede il passaggio di una sola option che è la data in formato gg/mm/aaaa. 
-
-Queste due operazioni sono effettuabili senza essere loggati.
+La visualizzazione della sala prevede il passaggio di una sola option che è la data in formato gg/mm/aaaa. _Queste due operazioni sono effettuabili senza essere loggati_.
 
 
 
