@@ -18,7 +18,7 @@ Il progetto consiste nel progettare, implementare, documentare e testare un'appl
     Gestione Ordini,
     Feedback dei Clienti.
 
-Per ogni entità saranno previste le operazioni di:
+Per ogni entità (ove logicamente prevedibile) saranno previste le operazioni di:
 
     inserimento,
     modifica,
@@ -54,13 +54,13 @@ Questo comandlo lancia il server il quale controllerà l'esistenza di tutte le c
 
 ## Uso del Client:
 
-### Gestione dell'account
-
 Per comprendere le operazioni eseguibili con il client, si può leggere la guida digitando _./Client.exe --help_. I comandi a disposizione sono:
 
 	./client.exe [PARAM] [OPTION/S]
 
-PARAM sono i parametri utilizzabili e sono:
+### Gestione dell'account
+
+Per la gestione degli utenti i PARAM e le OPTIONS sono:
 
 	Creazione account:		-c, senza options. 
  
@@ -102,25 +102,86 @@ Le operazioni di dialogo tra client e server verranno gestite tramite un file te
 
 ### Gestione Sala/Menu
 
+Per la gestione della sala e del menu i PARAM e le OPTIONS sono:
+
 	Visualizzazione del menu:	-menu, senza opzioni.
 
 Il menu del ristorante è editato esternalmente su un file di tipo csv. Questo file viene soltanto letto dal client quando richiesto per la visualizzazione dello stesso dalle varie funzionalità. L'editing è quindi fisico da parte dell'amministratore del sistema o da utente delegato dal ristorante.
 
-	Visualizzazione della sala:	-sala, "data[gg/mm/aaa]".
+	Visualizzazione della sala:	-sala, seguito da "data[gg/mm/aaa]".
 
 La visualizzazione della sala prevede il passaggio di una sola option che è la data in formato gg/mm/aaaa. _Queste due operazioni sono effettuabili senza essere loggati_.
 
+Il file della sala è di tipo jSON e si compone come segue:
+
+	{
+		"tavoli":	[{
+				"occupato":	false,
+				"posti_liberi":	4,
+				"posti_occupati":	0
+			}, {
+				"occupato":	false,
+				"posti_liberi":	4,
+				"posti_occupati":	0
+			}, {
+				"occupato":	false,
+				"posti_liberi":	4,
+				"posti_occupati":	0
+			}, {
+				"occupato":	false,
+				"posti_liberi":	4,
+				"posti_occupati":	0
+			}],
+		"piena":	false
+	}
 
 
-# Gestione Ordine
 
-Una volta effettuato il login, e visualizzato la disponibilità della sala e del menu, si può procedere alla creazione di un ordine attraverso il comando ..... , prima di confermare l ordine verranno chiesti i dati di pagamento. Una volta che l'inoltro dell ordine è completato avviene la conferma del server tramite scrittura del file temporaneo, una volta che viene confermato lo stato dell' ordine esso viene scritto al file "ordini.csv" che è non volatile. Inoltre viene emessa una ricevuta in formato "ricevuta.txt". Se si dovesse eliminare un ordine, lo si può fare in egual modo a seguito del login, digitando il comando .... seguito dal codice dell'ordine, anche qui il client comunica con il server tramite il file temporaneo, una volta che l' ordine è stato cancellato con successo viene aggiornato il file "ordini.csv"
+## Gestione Prenotazione
 
-# Gestione Account
-Come citato in precedenza sia il login che il logout richiedono l inserimento della password. L'autenticazione o la conferma in caso di logout vengono confermate dal server tramite scrittura del FILE TEMP. Le modifiche di stato vengono scritte sul file "utente.json" descritto in precedenza.
-Una volta effettuata la procedura di login, si potrà visualizzare il profilo e gli ordini/ prenotazioni con i comandi....., inoltre si potrà eliminare l'account con il comando....
-Se l'utente non avesse ancora un profilo, esso si può creare con il comando .... , qui vengono chieste le generalità, il server approva tramite FILE TEMP, e la conferma di creazione account viene scritta sul file rigido "utente.json" al quale vengono associati n°prenotazioni e ordini.
+Per accedere a questa funzionalità occorre essere loggati con il proprio utente. Se non lo si è verrà richiesto il login al momento dell'utilizzo.
+
+Per la gestione della prenotazione i PARAM e le OPTIONS sono:
+
+	Prenotazione di un tavolo:		-p_tavolo, seguito da "username" e "data[gg/mm/aaa]".
+
+La prenotazione del tavolo richiede l'invio dello username e della data in cui si vuole prenotare nel formato gg/mm/aaaa. Il cliente effettuerà dei controlli e se non esiste alcun file di sala lo creerà alla data corrispondente. Se invece è presente farà visualzizare e modificare quel file. Al momento della prenotazione verranno richiesti tavolo e posti. Il client a questo punto elaborerà un file temporaneo per comunicare con il server dove verranno indicati i tavoli e i posti nel file da modificare. Il server farà le modifiche sul file modificando i campi del jSON in modo opportuno e restituirà una conferma nel file temporaneo. Inoltre registrerà la prenotazione in un file di archivio in csv. A questo punto il client darà un messaggio di avvenuta prenotazione.
+
+	Eliminazione di una prenotazone:	-e_tavolo, seguito da "username" e "numero_prenotazione"
+
+Per l'eliminazione del tavolo il procedimento è analogo. In questo caso però è richiesto il numero della prenotazione. Tra client e server avverrà un dialogo con un file temporaneo nel quale vengono trasmesse le informazioni. Il server effettuerà la cancellazione riscrivendo il file di archivio in csv e ripristinando il file jSON della sala corrispondente alla data della prenotazione.
+
+La modifica della prenotazione non ha un comando diretto, ma si effettua eliminando e ricreando la prenotazione.
+
+## Gestione Ordini
+
+Per accedere a questa funzionalità occorre essere loggati con il proprio utente. Se non lo si è verrà richiesto il login al momento dell'utilizzo.
+
+Per la gestione degli ordini i PARAM e le OPTIONS sono:
+
+	Effettuare un ordine dal menu:		--ordine, seguito da "username".
+
+La creazione dell'ordine parte dall'esistenza di una prenotazione in carico all'utente. L'utente a questo punto sceglie la prenotazione a cui collegare l'ordine. A questo punto l'app chiederà quali portate vuole ordinare visualizzando il menu diviso in Antipasti, Primo etc.. Alla fine dell'ordine, verranno chiesti i dati di pagamento. L'app scriverà su un file temporaneo i dati della richiesta di ordine, che il server leggerà. Con questi dati il server aggiornerà il file degli ordini in csv, ed emetterà la ricevuta di pagamento. 
+
+	Eliminare un ordine effettuato:		-e_ordine, seguito da "username" e "numero_ordine"
+
+Per l'eliminazione del tavolo il procedimento è analogo a quello dell'eliminazione della prenotazione. In questo caso però è richiesto il numero dell'ordine. Tra client e server avverrà un dialogo con un file temporaneo nel quale vengono trasmesse le informazioni. Il server effettuerà la cancellazione riscrivendo il file di archivio in csv.
+
+Per l'ordinazione non è prevista una procedura di cancellazione in quanto il pagamento conferma l'ordine e lo esegue. Se non si vuole confermare l'ordine basta interrompere la procedura di pagamento e rifare l'ordine.
 
 # Gestione Feedback
 
-Per poter inserire una recensione bisogna disporre di un numero di prenotazione, l' approvazione della recensione avviene tramite il server che comunica con il client tramite FILE TEMP. Il sistema farà riferimento al file "prenotazioni.csv" citato in precedenza, a questo punto la recensione viene scritta sul file "recensioni.csv" visualizzabile da qualsiasi utente loggato con il comando ...
+La pubblicazione della recensione chiude il cerchio della prenotazione. Pubblicando una recensione viene eliminata la prenotazione, ma non gli ordini e  le ricevute che rimangono in archivio.
+
+Per la gestione delle recensioni i PARAM e le OPTIONS sono:
+
+	Pubblicare una recensione:		-recensione, seguita da "username".
+
+La recensione è dunque pubblicabile solo se esiste una prenotazione collegata all'account.
+
+	Visualizzare tutte le recensioni:	-recensioni_all, senza options.
+
+Questa funzionalità è accessibile senza login e consente di visualizzare tutte le recensioni pubblicate.
+
+Le recensioni non possono essere modificate dal cliente. Eventualmente solo manualmente dal proprietario del ristorante agendo sul file direttamente.
+
