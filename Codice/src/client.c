@@ -88,6 +88,33 @@ int main(int argc, char *argv[]){
             }
         }
 
+        // se l'argomento e' uguale a -m (modifica account) seguito dall'username
+        if(strcmp(argv[1], "-m") == 0){
+            // visualizziamo gli account
+            if(argc == 3){
+                char path_account[50];
+                sprintf(path_account, "%s/%s.json", ACCOUNT, argv[2]);
+                //printf("L'account selezionato e': %s\n", path_account);
+                // controlliamo se l'account esiste ed è loggato
+                if(se_esiste(ACCOUNT, argv[2], "json") == false){
+                    printf("L'account non esiste\n");
+                    return 0;
+                } else {
+                    printf("L'account esiste\n");
+                    printf("Verifica se l'account e' loggato\n");
+                    login(argv[2], ACCOUNT, TEMP);
+                    // verifichiamo che l'account sia loggato
+                    if(seLoggato(argv[2], ACCOUNT) == false){
+                        printf("L'account non e' loggato. Effettua il login\n");
+                        return 0;
+                    }
+                    //modifichiamo l'account
+                    mofica_account(argv[2], path_account);
+                }
+            } else {
+                printf("Errore nell'inserimento dei parametri\n");
+            }
+        }
         // se l'argomento e' uguale a -e (eliminazione account) seguito dall'username
         if(strcmp(argv[1], "-e") == 0){
             // visualizziamo gli account

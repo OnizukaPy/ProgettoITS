@@ -283,9 +283,18 @@ cJSON crea_account(char *path_account){
             flag = 1;
         }
     }
-
-    printf("Inserisci la tua password: ");
-    get_pass(password, MAX);
+    // chiediamo all'utente di inserire la password che abbia almeno 8 caratteri
+    do {
+        printf("Inserisci la tua password (almeno 8 caratteri): ");
+        get_pass(password, MAX);
+        if(strlen(password) < 8){
+            printf("La password deve avere almeno 8 caratteri\n");
+        } else {
+            printf("Password inserita\n");
+        }
+    } while(strlen(password) < 8);
+    /* printf("Inserisci la tua password: ");
+    get_pass(password, MAX); */
     printf("\n");
     printf("Inserisci la tua email: ");
     scanf("%s", email);
@@ -375,6 +384,90 @@ void visualizza_account(char *path_account, char* path_sala, char *path_ordini){
         } */
 
 }
+
+// funzione per modificare un account
+void mofica_account(char *username, char *path_account){
+
+        // apriamo il file json dell'accout in lettura
+        cJSON *account = carica_file_json(path_account);
+
+        // controlliamo se l'account è loggato
+        if(cJSON_IsTrue(cJSON_GetObjectItem(account, "login"))){
+            
+            // chiediamo che campo modificare
+            char campo[MAX];
+            do{
+                printf("Quale campo vuoi modificare? (nome, cognome, email, password): ");
+                scanf("%s", campo);
+                if(strcmp(campo, "nome") != 0 && strcmp(campo, "cognome") != 0 && strcmp(campo, "email") != 0 && strcmp(campo, "password") != 0){
+                    printf("Campo non valido\n");
+                } else {
+                    break;
+                }
+            } while (1);
+            
+            // modifichiamo il campo scelto
+            if(strcmp(campo, "nome") == 0){
+                printf("Inserisci il nuovo nome: ");
+                char nome[MAX];
+                scanf("%s", nome);
+                cJSON_ReplaceItemInObject(account, "nome", cJSON_CreateString(nome));
+            } else if(strcmp(campo, "cognome") == 0){
+                printf("Inserisci il nuovo cognome: ");
+                char cognome[MAX];
+                scanf("%s", cognome);
+                cJSON_ReplaceItemInObject(account, "cognome", cJSON_CreateString(cognome));
+            } else if(strcmp(campo, "email") == 0){
+                printf("Inserisci la nuova email: ");
+                char email[MAX];
+                scanf("%s", email);
+                cJSON_ReplaceItemInObject(account, "email", cJSON_CreateString(email));
+            } else if(strcmp(campo, "password") == 0){
+                // chiediamo all'utente di inserire la password che abbia almeno 8 caratteri
+                char password[MAX];
+                do {
+                    printf("Inserisci la tua password (almeno 8 caratteri): ");
+                    get_pass(password, MAX);
+                    if(strlen(password) < 8){
+                        printf("La password deve avere almeno 8 caratteri\n");
+                    } else {
+                        printf("Password inserita\n");
+                    }
+                } while(strlen(password) < 8);
+                // cifriamo la password
+                char *password_cifrata = cifra(password, CHIAVE);
+                cJSON_ReplaceItemInObject(account, "password", cJSON_CreateString(password_cifrata));
+            }
+
+            // modifichiamo lo status dell'account in 0
+            cJSON_ReplaceItemInObject(account, "status", cJSON_CreateBool(0));
+
+            // salviamo l'account
+            salva_file_json(account, path_account);
+
+            // creiamo un ciclo che controllo se l'account è stato approvato dal server fino a che non sarà approvato l'account non potrà fare il login
+            // il ciclo si ferma quando status è uguale a 1
+            // riapriamo il file json per controllare lo status dell'account
+            cJSON *json = carica_file_json(path_account);
+
+            //cJSON *status = cJSON_GetObjectItemCaseSensitive(json, "status");
+            while(cJSON_GetObjectItem(json, "status")->valueint == 0){
+                printf("Account in attesa di approvazione\n");
+                json = carica_file_json(path_account);
+                // attendiamo 5 secondi
+                Sleep(1000);
+            }
+            // stampiamo un messaggio di account approvato con la data e l'ora
+            time_t t = time(NULL);
+            struct tm tm = *localtime(&t);
+            printf("%d-%02d-%02d %02d:%02d:%02d: Account approvato\n", tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec);
+            
+
+        } else {
+            printf("Account non loggato\n");
+        }
+
+}            
 
 // funzione per effettuare il login
 void login(char *username, char *path_account, char *login_path){

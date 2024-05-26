@@ -1,8 +1,8 @@
 {
-	"nome":	"Ivan",
+	"nome":	"pippo",
 	"cognome":	"Catalano",
 	"username":	"icatalano",
-	"password":	"lydq",
+	"password":	"lydqlydq",
 	"email":	"icatalano@mail.it",
 	"login":	true,
 	"status":	true
